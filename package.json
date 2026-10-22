@@ -12,7 +12,9 @@
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "review:verify": "node scripts/review-verify.mjs",
+    "review:pack": "node --experimental-strip-types scripts/review-pack.mjs"
   },
   "dependencies": {
     "three": "0.186.1"

@@ -17,6 +17,10 @@ test('portrait touch steering, capture release, cancel, rotate, pause, and repla
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 100, y: 500 }] });
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
   await expect(page.locator('#joystick')).toBeHidden();
+  await page.evaluate(() => {
+    const model = window.spaceRunner!.model;
+    for (let i = 0; i < 3; i++) Object.assign(model.field.hazards[i]!, { active: true, x: (i - 1) * 3.7, y: 0, z: -12 - i * 3, radius: 1, kind: i === 0 ? 0 : 1, phase: i === 2 ? 4 : 0 });
+  });
   await page.screenshot({ path: 'test-results/touch-portrait.png' });
   expect(await canvas.evaluate(node => node.width)).toBeLessThanOrEqual(550);
   await page.setViewportSize({ width: 844, height: 390 });

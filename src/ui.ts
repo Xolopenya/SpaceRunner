@@ -44,6 +44,6 @@ export class HUD {
     this.hint.hidden = model.state !== 'PLAYING' || model.elapsed > 9;
     this.damage.hidden = model.state !== 'PLAYING' || model.invulnerability <= 0;
     this.game.dataset.hit = String(!this.damage.hidden);
-    text(this.telemetry, model.state === 'MENU' ? 'GRAYBOX PROTOTYPE / PHASE 01' : `${Math.round(model.speed)} M/S · ROUTE ${model.seed}`);
+    text(this.telemetry, model.state === 'MENU' ? 'SPACE KIT / KENNEY · CC0' : `${Math.round(model.speed)} M/S · ROUTE ${model.seed}`);
   }
 }

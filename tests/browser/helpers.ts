@@ -31,7 +31,8 @@ export async function collide(page: Page, resetCooldown = false) {
 }
 
 export async function endRun(page: Page) {
-  for (let hull = 2; hull >= 0; hull--) {
+  const remaining = Number(await page.locator('#hull').getAttribute('aria-valuenow'));
+  for (let hull = remaining - 1; hull >= 0; hull--) {
     await collide(page, true);
     await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', String(hull));
   }

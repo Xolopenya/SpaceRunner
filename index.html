@@ -14,7 +14,7 @@
       <div class="vignette" aria-hidden="true"></div>
       <header class="topbar">
         <a class="brand" href="./" aria-label="Space Runner home"><span class="brand-mark" aria-hidden="true">↟</span><span>SPACE<span class="brand-light">RUNNER</span></span></a>
-        <span class="build-label">FLIGHT TEST <span>01</span></span>
+        <span class="build-label">FLIGHT TEST <span>02</span></span>
         <button id="pause" class="quiet-button" aria-label="Pause flight" hidden>Ⅱ <span>PAUSE</span></button>
       </header>
 
@@ -23,7 +23,7 @@
         <div class="distance-block"><span class="label">DISTANCE</span><div><strong id="distance">0</strong><span class="unit"> M</span></div></div>
       </section>
 
-      <div id="loading" class="loading" role="status"><span class="loading-pulse"></span>PREPARING FLIGHT SYSTEMS</div>
+      <div id="loading" class="loading" role="status"><span class="loading-pulse"></span><span id="loading-message">PREPARING FLIGHT SYSTEMS</span><button id="retry" class="quiet-button" hidden>Retry loading</button></div>
 
       <section id="menu" class="overlay menu" aria-labelledby="menu-title" hidden>
         <div class="hero-copy">
@@ -47,7 +47,7 @@
       <div id="flight-hint" class="flight-hint" hidden>Follow the cyan openings <span>·</span> WASD / arrows / drag to steer</div>
       <div id="damage" class="damage" role="status" hidden>HULL HIT <span>SHIELD ACTIVE</span></div>
       <div id="joystick" class="joystick" aria-hidden="true" hidden><i></i></div>
-      <footer><span><i></i> STANDALONE FLIGHT</span><span id="telemetry">GRAYBOX PROTOTYPE / PHASE 01</span></footer>
+      <footer><span><i></i> STANDALONE FLIGHT</span><span id="telemetry">SPACE KIT / KENNEY · CC0</span></footer>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

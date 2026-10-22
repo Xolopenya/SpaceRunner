@@ -6,6 +6,7 @@ import { HUD, element } from './ui.ts';
 import { World } from './world.ts';
 import { StandalonePlatform } from './services/platform.ts';
 import type { PlatformAdapter } from './services/platform.ts';
+import { AssetManager } from './assets/asset-manager.ts';
 
 export class Game {
   readonly model = new GameModel();
@@ -19,12 +20,14 @@ export class Game {
   private shownState: GameState = 'LOADING';
   private pauseReason = 'Your flight is paused.';
   private contextLost = false;
+  private readonly assets: AssetManager;
 
-  constructor(platform: PlatformAdapter = new StandalonePlatform()) {
+  constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform()) {
+    this.assets = assets;
     this.platform = platform;
     const canvas = element<HTMLCanvasElement>('flight');
     canvas.tabIndex = 0;
-    this.world = new World(canvas);
+    this.world = new World(canvas, assets);
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     const options = { signal: this.events.signal };
     element('launch').addEventListener('click', () => this.start(), options);
@@ -112,6 +115,7 @@ export class Game {
     this.events.abort();
     this.resizeObserver.disconnect();
     this.world.dispose();
+    this.assets.dispose();
     this.platform.gameplayChanged(false);
   }
 }

@@ -5,6 +5,7 @@ playwright-report/
 test-results/
 .vite/
 .cache/
+review-packages/
 assets/incoming/
 .env
 .env.*

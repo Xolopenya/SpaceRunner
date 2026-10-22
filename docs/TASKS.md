@@ -2,16 +2,16 @@
 
 ## Current implementation plan
 
-1. Phase 0: scaffold strict TypeScript + Vite + Three.js, with development, typecheck, unit test, build, preview, and browser smoke scripts.
-2. Phase 1: implement a fixed-step simulation, damped X/Y flight, bounded playfield, seeded pooled hazards with a reachable safe route, hull/invulnerability, distance/best, state transitions, keyboard/touch, focus pause, and restart.
-3. Verify simulation invariants and the complete browser loop, update actual results here, and commit the first stable playable milestone.
-4. Continue later with licensed models, presentation/audio, device performance checks, and platform packaging. Phase 1 geometry is temporary.
+1. Integrate and verify the six licensed model assets while preserving the stable simulation.
+2. Capture actual verification, resource/download stability and desktop/touch rendering evidence.
+3. Commit PHASE-2-001 on its feature branch, then generate and verify the comprehensive ZIP from HEAD.
+4. Await independent architecture review before any merge or separately authorized Phase 3 work.
 
 ## Acceptance
 
 - [x] Phase 0: inspect environment, initialize minimal app, and confirm build scripts
 - [x] Phase 1: playable graybox with ship controls, camera, hazards, health, score, death, pause, restart
-- [ ] Phase 2: legally sourced models imported, visible, and documented in `docs/ASSETS.md`
+- [x] Phase 2: legally sourced models imported, visible, and documented in `docs/ASSETS.md`
 - [ ] Phase 3: visual polish, UI, responsive touch controls, sound and game feel
 - [ ] Phase 4: tests, browser smoke checks, performance, restart/leak checks
 - [ ] Phase 5: production build and Yandex-specific release checklist
@@ -48,10 +48,24 @@ Browser coverage includes keyboard steering, all pause controls, released keys a
 
 The initial desktop Chrome sample showed 16.7 ms median frame interval, 25 draw calls, and 23 geometries with hazards visible. This is a local desktop sample, not a phone performance claim. Screenshots: ignored `test-results/desktop-hazards.png`, `production-menu.png`, `desktop-game-over.png`, `touch-portrait.png`, and `touch-landscape-paused.png`.
 
-### Remaining work / next milestone
+### Remaining work at the Phase 1 checkpoint (historical)
 
 - Phase 2: obtain the official Kenney pack with narrow download permission, inspect license/archive, integrate models through a caching asset manager, and verify orientation/materials in-browser.
 - Phase 3: sound/mute, model presentation, and further flight feel/pattern tuning.
 - Phase 4 remains open despite early tests: real phones, Safari/Firefox, broader manual playtesting, sustained performance and memory measurements.
 - Phase 5 remains open: real Yandex adapter, release archive/platform checks, and publication approval. See `RELEASE_CHECKLIST.md`.
 - No external models, sounds, or textures were downloaded; no claim of completed v0.1 or Yandex readiness.
+
+## PHASE-2-001 — licensed models and external review
+
+- Verified clean `main` at `e926a72`, read all required guidance/provenance, inspected rendering/lifecycle/core/tests, then ran and saved baseline outputs: strict typecheck, 16 unit tests, build and 6 browser tests passed (37.9 s for browser suite).
+- Created `feature/phase-2-assets` from the stable baseline. Official approved download: Kenney Space Kit; original ZIP license confirms CC0. Selected six native GLBs and original notice only; no conversion or source-byte modifications. Full provenance is in `ASSETS.md`.
+- Replaced main ship and hazard primitives with Speeder A, three meteors, barrel and generator debris. Added async GLTF asset manager, loading progress/error/retry, in-flight cache, centered/normalized templates, shared rigid clones, explicit ownership/disposal and late-load cleanup. Restart/pooling/focus/context behavior preserved.
+- Core simulation, colliders, input, difficulty and seeded spawner files are unchanged. Five visual variants derive from existing kind/phase without consuming extra random values. Model tests verify all hazard vertices fit the logical sphere after normalization.
+- Added six asset tests and three review ZIP/safety tests (25 unit tests total), two model-loading/restart/error browser checks (8 browser tests total), deterministic desktop/all-hazard and touch/asteroid screenshots, and unchanged behavior checks. The new GPU baseline fixture was corrected for lazy impact-buffer upload and current hull; raw failed diagnostic logs are retained with the package.
+- Added `review:verify`, `review:pack`, module-attribution tooling, safe HEAD snapshot collection, binary patch/metadata, authored architecture/implementation reports, actual log/screenshot collection, machine manifest/hash inventory, and dependency-free ZIP integrity verification. Generated archives/evidence are ignored.
+- `npm run review:verify` passed before committing: `npm run typecheck` exit 0; `npm run test` 25/25; `npm run build` exit 0; `npm run test:browser` 8/8 (38.7 s). Static known-credential/whitespace checks and build attribution also exited 0. Raw outputs were saved, not reconstructed.
+- Measured production output: 11 files / **728,722 bytes** uncompressed. Major JS: **635,718 bytes**, gzip **160,921 bytes** measured by Node `zlib.gzipSync` (default options); Vite's own rounded gzip estimate is retained separately in its raw log. All six original model files were SHA256-compared against their ZIP entries and match.
+- Vite's advisory is caused primarily by mandatory Three.js/WebGLRenderer and GLTFLoader. Pre-minification attribution measured 542,768 bytes for `three.module.js`, 365,805 for `three.core.js`, and 84,594 for GLTFLoader. This is attribution, not final chunk size. Actual final chunk/whole-build byte and gzip measurements are generated by review verification; no warning-limit increase or build restructure.
+- Required final checks/exit codes, complete production file sizes, exact test names and screenshots are collected into `logs/`, `reports/VERIFICATION.md` and `reports/manifest.json` inside the review archive. `review:pack` refuses a dirty source tree, reruns verification against the committed state, reads Git blobs, verifies every ZIP entry and checks status again.
+- Remaining limitations: physical phones/Safari/Firefox, sustained heap/GPU profiling, audio/mute and Yandex SDK. Sphere proxies still approximate irregular silhouettes. No known unresolved regression in verified flows; Phase 3 was not started, and no merge/push/publication occurred.

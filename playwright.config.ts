@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30_000,
   workers: 1,
   fullyParallel: false,
-  reporter: 'list',
+  reporter: process.env.REVIEW_RESULT_DIR ? [['list'], ['json', { outputFile: `${process.env.REVIEW_RESULT_DIR}/browser-results.json` }]] : 'list',
   use: {
     channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
     headless: true,

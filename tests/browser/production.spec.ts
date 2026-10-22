@@ -5,6 +5,7 @@ test('static production output loads locally and plays with no debug seam or run
   page.on('request', request => requests.push(request.url()));
   await page.goto('/?debug');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
+  expect(requests.filter(url => url.endsWith('.glb'))).toHaveLength(6);
   await page.screenshot({ path: 'test-results/production-menu.png' });
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();
   await page.getByRole('button', { name: 'Launch run' }).click();

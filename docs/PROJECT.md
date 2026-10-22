@@ -1,6 +1,6 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. The current milestone is a playable Phase 1 graybox. Preserve the complete run loop while replacing temporary geometry with licensed assets in Phase 2.
+Third-person endless avoidance flight for desktop and mobile. The current milestone integrates six licensed Kenney GLBs into the playable Phase 1 loop, preserving the existing simulation and controls.
 
 ## Controls and rules
 
@@ -18,6 +18,7 @@ X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while haz
 | `src/core/obstacles.ts`, `random.ts` | Seeded policy, reusable hazard/wave slots, route budget |
 | `src/game-loop.ts` | 120 Hz fixed simulation, capped 100 ms frame delta, one animation loop |
 | `src/world.ts` | Three.js scene, camera, pooled visuals, particles, disposal |
+| `src/assets/` | Model catalog, asynchronous GLTF loading/cache, normalization/cloning, shared resource ownership |
 | `src/input.ts` | Once-per-game keyboard/pointer listeners, pointer capture, input clearing |
 | `src/game.ts`, `ui.ts` | Lifecycle wiring, resize/focus/context handling, DOM screens/HUD |
 | `src/services/` | Safe score persistence and standalone/future platform seam |
@@ -32,6 +33,8 @@ Speed rises from 20 to 34 units/s over 120 s. Density rises from 0.52 to 0.97 an
 
 ## Rendering and scope
 
-Procedural graybox ship/obstacles, Points starfield/particles, shared hazard meshes, a distant planet, and inexpensive engine cones. No textures, postprocessing, downloaded art, or audio. Camera distance expands in portrait to preserve horizontal playfield visibility. DPR caps are 1.4 on narrow displays and 1.75 otherwise; playfield display aspect ratio is capped at 2:1 with letterboxing on wider screens.
+Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Points starfield/particles, a distant planet, guides and inexpensive engine cones remain procedural. No textures, postprocessing or audio. Camera distance expands in portrait to preserve horizontal playfield visibility. DPR caps are 1.4 on narrow displays and 1.75 otherwise; playfield display aspect ratio is capped at 2:1 with letterboxing on wider screens.
 
-Licensed glTF loading/caching is deferred until real assets exist in Phase 2. Platform methods are currently standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification.
+Boot preloads six local GLBs before Game creation, with progress/error/retry. AssetManager owns imported resources; World borrows rigid clones and owns only its procedural geometry/materials. Restart does no loading or cloning. Original files are unchanged; runtime centers pivots, normalizes ship width/hazard radius, and adjusts metallic/roughness for the existing lights. Five hazard visuals derive from existing kind/phase, with no extra PRNG draws. See `review/PHASE-2-001/ARCHITECTURE.md` for contracts, disposal/cancellation details and risks.
+
+Platform methods remain standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification. Review tooling packages committed blobs and actual verification evidence without shipping development files to the game.

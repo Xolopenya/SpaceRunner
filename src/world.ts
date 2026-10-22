@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { CONFIG } from './config.ts';
 import { GameModel } from './core/game-model.ts';
 import { Random } from './core/random.ts';
+import { AssetManager } from './assets/asset-manager.ts';
+import { HAZARD_MODELS, hazardVariant } from './assets/catalog.ts';
+import { ResourceOwner } from './assets/resources.ts';
 
 function outline(width: number, height: number, color: number, opacity: number): THREE.LineLoop {
   const points = [
@@ -28,8 +31,9 @@ export class World {
   private burstLife = 0;
   private cameraZ = 14;
   private disposed = false;
+  private readonly resources = new ResourceOwner();
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, assets: AssetManager) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
     this.renderer.setClearColor(CONFIG.render.background);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -42,18 +46,13 @@ export class World {
     rim.position.set(10, -4, -8);
     this.scene.add(rim);
 
-    this.createShip();
+    this.createShip(assets);
     this.scene.add(this.ship);
 
-    // Graybox meshes share geometry/material; every hazard slot is allocated once.
-    const geometries = [new THREE.IcosahedronGeometry(1, 0), new THREE.BoxGeometry(1.25, 1.25, 1.25), new THREE.DodecahedronGeometry(1, 0)];
-    const materials = [0x8b829b, 0xc08d6e, 0x6c8fa2].map(color => new THREE.MeshStandardMaterial({ color, roughness: 0.85, flatShading: true }));
+    // Every slot borrows five rigid model clones; no loading/allocation on spawn.
     for (let i = 0; i < CONFIG.hazards.capacity; i++) {
       const group = new THREE.Group();
-      for (let kind = 0; kind < geometries.length; kind++) {
-        const mesh = new THREE.Mesh(geometries[kind], materials[kind]);
-        group.add(mesh);
-      }
+      for (const id of HAZARD_MODELS) group.add(assets.clone(id));
       group.visible = false;
       this.hazards.push(group);
       this.scene.add(group);
@@ -97,41 +96,19 @@ export class World {
     this.burst = new THREE.Points(burstGeometry, new THREE.PointsMaterial({ color: 0xffae74, size: 0.12, transparent: true, opacity: 0, depthWrite: false }));
     this.burst.frustumCulled = false;
     this.scene.add(this.burst);
+    this.resources.track(this.scene, assets.resources);
   }
 
-  private createShip(): void {
-    const hull = new THREE.MeshStandardMaterial({ color: 0xd8e4ec, roughness: 0.4, metalness: 0.35, flatShading: true });
-    const dark = new THREE.MeshStandardMaterial({ color: 0x19344b, roughness: 0.5, metalness: 0.45 });
+  private createShip(assets: AssetManager): void {
+    this.ship.add(assets.clone('ship'));
     const mint = new THREE.MeshBasicMaterial({ color: 0x70ffe0 });
-    const body = new THREE.Mesh(new THREE.ConeGeometry(0.5, 2.4, 4), hull);
-    body.rotation.x = -Math.PI / 2;
-    body.scale.z = 0.62;
-    this.ship.add(body);
-    const shape = new THREE.Shape();
-    shape.moveTo(-1.55, 0.72);
-    shape.lineTo(-0.3, -0.75);
-    shape.lineTo(0.3, -0.75);
-    shape.lineTo(1.55, 0.72);
-    shape.lineTo(0.35, 0.34);
-    shape.lineTo(-0.35, 0.34);
-    shape.closePath();
-    const wings = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false }), hull);
-    wings.rotation.x = Math.PI / 2;
-    this.ship.add(wings);
-    const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.2, 0.7), dark);
-    cockpit.position.set(0, 0.25, -0.15);
-    this.ship.add(cockpit);
-    for (const x of [-0.62, 0.62]) {
-      const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.75, 8), dark);
-      engine.rotation.x = Math.PI / 2;
-      engine.position.set(x, -0.04, 0.55);
-      this.ship.add(engine);
-      const glow = new THREE.Mesh(new THREE.CircleGeometry(0.17, 12), mint);
-      glow.position.set(x, -0.04, 0.94);
+    for (const x of [-0.56, 0.56]) {
+      const glow = new THREE.Mesh(new THREE.CircleGeometry(0.12, 12), mint);
+      glow.position.set(x, -0.21, 1.48);
       this.ship.add(glow);
       const flame = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.15, 8), new THREE.MeshBasicMaterial({ color: 0x57e8ef, transparent: true, opacity: 0.52, blending: THREE.AdditiveBlending, depthWrite: false }));
       flame.rotation.x = Math.PI / 2;
-      flame.position.set(x, -0.04, 1.4);
+      flame.position.set(x, -0.21, 1.95);
       this.flames.push(flame);
       this.ship.add(flame);
     }
@@ -170,7 +147,8 @@ export class World {
       group.position.set(hazard.x, hazard.y, hazard.z);
       group.scale.setScalar(hazard.radius);
       group.rotation.set(model.elapsed * hazard.spin + hazard.phase, model.elapsed * hazard.spin * 0.7, hazard.phase);
-      group.children.forEach((mesh, kind) => { mesh.visible = hazard.kind === kind; });
+      const variant = hazardVariant(hazard.kind, hazard.phase);
+      for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
     }
     for (let i = 0; i < this.gates.length; i++) {
       const wave = model.field.waves[i]!;
@@ -209,16 +187,7 @@ export class World {
 
   dispose(): void {
     this.disposed = true;
-    const geometries = new Set<THREE.BufferGeometry>();
-    const materials = new Set<THREE.Material>();
-    this.scene.traverse(node => {
-      if (node instanceof THREE.Mesh || node instanceof THREE.Points || node instanceof THREE.Line) {
-        geometries.add(node.geometry);
-        for (const material of Array.isArray(node.material) ? node.material : [node.material]) materials.add(material);
-      }
-    });
-    geometries.forEach(geometry => geometry.dispose());
-    materials.forEach(material => material.dispose());
+    this.resources.dispose();
     this.renderer.dispose();
   }
 }

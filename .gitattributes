@@ -1,0 +1,3 @@
+# Preserve original model binaries and the upstream license notice byte-for-byte.
+public/assets/kenney-space/*.glb binary
+public/assets/kenney-space/LICENSE.txt -text -whitespace
