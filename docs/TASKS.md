@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. PHASE-3-001: remove misleading gate visuals while preserving waves/flight/camera.
-2. Measure real GLB bounds, calibrate only misleading proxies, and add development-only collider diagnostics.
-3. Verify numerical/behavior/visual regressions; commit and push only `feature/phase-3-readability`.
-4. Produce current-task review evidence/ZIP, provide PR or compare URL, and await review before merging.
+1. PHASE-3-002: verify approved main and capture matched build/render baselines.
+2. Add focused, bounded environment/engine/impact rendering with mobile/reduced-motion tiers; preserve approved gameplay/camera.
+3. Verify lifecycle, performance and actual screenshots; commit and push only `feature/phase-3-space-vfx`.
+4. Produce current VFX review evidence/ZIP and PR or compare URL; await review before merging.
 
 ## Acceptance
 
@@ -85,3 +85,16 @@ The initial desktop Chrome sample showed 16.7 ms median frame interval, 25 draw 
 - Full numerical findings, approximations and debug usage are in `COLLISIONS.md`. Remaining limits: conservative sphere/box seam/rotation errors, forgiving decorative ship wings, physical phones/Safari/Firefox and sustained profiling. Overall Phase 3 audio/polish remains open; this task is only readability/calibration.
 - Final pre-commit `npm run review:verify`: all 8 checks exited 0; typecheck passed, 35 unit tests passed, 11 browser tests passed (52.4 s). Measured 11 production files / **730,988 bytes**; JS **637,927 bytes** / Node gzip **161,785 bytes**. Compared with the fresh baseline this is +2,212 total bytes (~0.30%) and +2,209 JS bytes (~0.35%). Production contains no debugger class/module; its enabled development fixture adds only 2 shared GPU geometries. The existing Vite advisory remains.
 - Delivery: commit verified changes, push only the authorized feature branch, supply authenticated PR or compare URL, generate/reopen the local ignored PHASE-3-001 ZIP, and confirm main stays at the approved baseline. Exact final identifiers/results are in the generated review manifest and completion report.
+
+## PHASE-3-002 — space atmosphere and flight VFX
+
+- Read required guidance, tasks/project, actual rendering/core/assets/debug/tests and review tooling. Fetched origin; clean main and origin/main both contained approved `d3d3aaaaaf0c7af52e4043cf57c15899ce77147e`, with 0 ahead/behind. Created `feature/phase-3-space-vfx` from main. No new dependency or asset downloads were needed.
+- Captured fresh baseline typecheck, 35 unit tests, build and 11 browser tests, plus a matched six-hazard rendering sample. Baseline output: 730,988 bytes / 11 files; Chrome 155.0.8059.85, same AMD GPU, desktop 1280×800 DPR 1 and mobile emulation 390×844 DPR 2/effective 1.4. Both samples: 16.7 ms median RAF / 36 draw calls / 30 geometries / 1 texture.
+- Extracted separately owned `SpaceBackground`, `EngineVFX` and `ImpactVFX`, with rendering-only settings. Added three deterministic star layers, subtle nebula shader, planet/ring/rim, edge speed streaks, bank-aligned cyan cores/plasma and a combined reusable two-engine ribbon buffer. Further dimmed blue corner fragments after visual inspection; green gates remain absent.
+- Improved actual hitSerial-triggered amber sparks/ring and replaced whole-ship strobing with a low-intensity shield shimmer. Final impact completes after propulsion stops. Pause/focus freezes histories, particles and animation clocks; restart clears existing pools without new resources or requests.
+- Mobile tiers reduce draw counts in both orientations; reduced motion removes streaks and softens parallax/pulsation/trails/bursts. No new textures, runtime URLs, audio, SDK, gameplay states or model-transform changes. Approved core/input/loop/asset-normalization files and camera/banking formulas remain unchanged and are acceptance-checked.
+- Added seven focused unit tests and four browser checks, retaining prior assertions. The initial Node unit attempt rejected constructor parameter-property syntax; converted it to an ordinary field, then all tests passed. Raw attempts are retained. Current eight screenshots show desktop, engine crop, speed, actual damage, portrait, landscape, production route 42 and working collider diagnostics. Fixtures are identified in the VFX report; production is an untouched run.
+- Pre-commit `npm run review:verify` passed all nine commands: typecheck; 42 unit tests; build; 15 browser tests (1.6 minutes); whitespace/static checks; build attribution; collision audit; matched VFX diagnostics. Production: **742,461 bytes**, 11 files, JS **649,400 bytes**, Node gzip **165,472 bytes**. Total increase: **11,473 bytes / 1.57%**. Existing Vite advisory remains.
+- Matched implementation sample retained 16.7 ms median RAF on both viewports, 43 draw calls / 34 geometries / 1 texture. Initial CPU submission medians changed desktop 2.3→2.1 ms and mobile emulation 1.8→2.0 ms; small sample noise is not an optimization claim. Five all-model restarts retain 37 geometries/1 texture; debug 39/1 and the same 73-child root; VFX-specific fixture 28/1, same buffers, one emitter and six GLB downloads.
+- Updated current review task/baseline/reports/screenshots. Packaging reruns committed verification, includes raw baseline/final performance and machine-readable comparisons, and rejects mismatched browser/GPU/viewports/seed/hazard counts. Source snapshot, binary patch, secret/path protections and full ZIP integrity checks remain in place. Final delivery identifiers and package size are reported by the generated manifest/completion report.
+- Overall Phase 3 remains open for audio and broader acceptance. This task excludes audio, Yandex SDK and gameplay redesign. Physical phones, Safari/Firefox, sustained thermal/heap/GPU timings and external architecture/player acceptance remain unverified; no merge or main push is authorized.

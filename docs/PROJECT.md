@@ -1,6 +1,6 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. The current milestone removes confusing route markers and calibrates measured thin/debris collisions while preserving the approved controls, camera and procedural generation.
+Third-person endless avoidance flight for desktop and mobile. The current milestone adds space atmosphere, responsive propulsion trails and localized impact feedback while preserving approved flight, camera, calibrated collisions and procedural generation.
 
 ## Controls and rules
 
@@ -18,7 +18,8 @@ X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while haz
 | `src/core/hazard-profile.ts`, `hazard-collision.ts` | Measured box bounds, shared orientation, continuous sphere/box intersection and reusable query state |
 | `src/core/obstacles.ts`, `random.ts` | Seeded policy, reusable hazard/wave slots, route budget |
 | `src/game-loop.ts` | 120 Hz fixed simulation, capped 100 ms frame delta, one animation loop |
-| `src/world.ts` | Three.js scene, camera, pooled visuals, particles, disposal |
+| `src/world.ts` | Three.js scene/camera, pooled hazard transforms, VFX coordination and disposal |
+| `src/visuals/` | Separately owned starfield/nebula/planet, engine ribbons, impact pool and rendering-only quality/timing |
 | `src/assets/` | Model catalog, asynchronous GLTF loading/cache, normalization/cloning, shared resource ownership |
 | `src/debug/` | Optional development-only wire bounds, diagnostics and private resource ownership |
 | `src/input.ts` | Once-per-game keyboard/pointer listeners, pointer capture, input clearing |
@@ -35,11 +36,15 @@ Speed rises from 20 to 34 units/s over 120 s. Density rises from 0.52 to 0.97 an
 
 ## Rendering and scope
 
-Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Points starfield/particles, a distant planet, dim disconnected blue corner guides and inexpensive engine cones remain procedural. Green safe-wave rectangles are removed; logical safe corridors/waves remain. No textures, postprocessing or audio. Camera distance expands in portrait to preserve horizontal playfield visibility. DPR caps are 1.4 on narrow displays and 1.75 otherwise; playfield display aspect ratio is capped at 2:1 with letterboxing on wider screens.
+Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Three star layers, edge streaks, a subtle procedural nebula, distant planet/rim/ring, cyan engine cores/ribbons and amber impact particles provide depth and speed. Blue corner fragments are very dim; green safe-wave rectangles remain removed while logical corridors/waves remain. No external textures, postprocessing or audio. Camera distance expands in portrait using the unchanged approved formula. DPR caps are 1.4 for coarse pointers or a viewport short side below 600 px, and 1.75 otherwise; the display aspect remains capped at 2:1 with letterboxing.
 
 Boot preloads six local GLBs before Game creation, with progress/error/retry. AssetManager owns imported resources; World borrows rigid clones and owns only its procedural geometry/materials. Restart does no loading or cloning. Original files are unchanged; runtime centers pivots, normalizes ship width/hazard radius, and adjusts metallic/roughness for the existing lights. Five hazard visuals derive from existing kind/phase, with no extra PRNG draws. See `review/PHASE-2-001/ARCHITECTURE.md` for contracts, disposal/cancellation details and risks.
 
 Platform methods remain standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification. Review tooling packages committed blobs and actual verification evidence without shipping development files to the game.
+
+## PHASE-3-002 visual lifecycle
+
+World delegates to `SpaceBackground`, `EngineVFX` and `ImpactVFX`, each with private `ResourceOwner` ownership. It tracks its own resources before attaching these roots, preserving imported shared GLB resources. Star movement derives from frozen run distance; engine time/history freeze on pause; impact time may finish after death. Restart reuses all roots/buffers and clears history/bursts. Reduced motion removes edge streaks, slows decorative parallax and softens engines/impacts. Mobile lowers star/streak/particle draw counts without changing gameplay or reallocating resources. See `review/PHASE-3-002/ARCHITECTURE.md`, `VFX-IMPLEMENTATION.md` and `PERFORMANCE.md` for contracts and evidence limits.
 
 ## PHASE-3-001 collision and diagnostics
 

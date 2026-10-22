@@ -103,10 +103,25 @@ const assets = MODEL_ASSETS.map(model => {
 });
 const measurements = config.collisionMeasurements ? JSON.parse(await readFile(join(directory, 'collision-measurements.json'), 'utf8')) : undefined;
 if (measurements) add('reports/COLLISION-MEASUREMENTS.json', JSON.stringify(measurements, null, 2) + '\n');
+const performanceMeasurements = config.performanceMeasurements ? {
+  baseline: JSON.parse(await readFile(join(baselineDirectory, 'vfx-performance.json'), 'utf8')),
+  final: JSON.parse(await readFile(join(directory, 'vfx-performance.json'), 'utf8')),
+} : undefined;
+if (performanceMeasurements) {
+  const before = performanceMeasurements.baseline, after = performanceMeasurements.final;
+  if (before.browser !== after.browser || before.samples.length !== after.samples.length) throw new Error('Performance browser/fixture mismatch');
+  for (let i = 0; i < before.samples.length; i++) {
+    const a = before.samples[i], b = after.samples[i];
+    for (const key of ['tier', 'viewport', 'seed', 'activeHazards', 'frames', 'renderPixelRatio', 'gpu']) {
+      if (JSON.stringify(a[key]) !== JSON.stringify(b[key])) throw new Error(`Performance fixture mismatch: ${key}`);
+    }
+  }
+  add('reports/PERFORMANCE-MEASUREMENTS.json', JSON.stringify(performanceMeasurements, null, 2) + '\n');
+}
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements,
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

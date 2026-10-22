@@ -25,7 +25,7 @@ GLBs contain rigid meshes and flat material colors, with no skinning, animation,
 
 ## Original environmental elements
 
-The distant planet, stars, corridor guides, engine glow and impact particles remain repository-authored geometry in `src/world.ts`. Temporary Phase 1 ship and hazard meshes have been removed. No other external art is included.
+The distant planet, stars, corner guides, engine glow and impact particles are repository-authored rendering. PHASE-3-002 moves environment/engine/impact ownership into `src/visuals/`, adds an original procedural sky shader, planet rim, combined exhaust ribbons, sparks/ring and shield shimmer. No external image/texture/audio assets, downloads or new libraries are introduced. Temporary Phase 1 ship and hazard meshes have been removed. All six GLB files and their normalization remain unchanged.
 
 PHASE-3-001 retains all six GLB files and render normalization unchanged. Measured additional collision boxes for the half meteor, barrel and generator are documented in `COLLISIONS.md`; no new asset download or conversion is involved.
 

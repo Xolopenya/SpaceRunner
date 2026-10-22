@@ -3,7 +3,7 @@ import { test, expect } from './helpers';
 test('static production output loads locally and plays with no debug seam or runtime CDN', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', request => requests.push(request.url()));
-  await page.goto('/?debug=colliders');
+  await page.goto('/?debug=colliders&seed=42');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
   expect(requests.filter(url => url.endsWith('.glb'))).toHaveLength(6);
   await page.screenshot({ path: 'test-results/production-menu.png' });
@@ -17,6 +17,8 @@ test('static production output loads locally and plays with no debug seam or run
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PLAYING');
   await expect.poll(() => page.locator('#distance').textContent()).not.toBe('0');
   await page.screenshot({ path: 'test-results/phase3-production-gameplay.png' });
+  await expect.poll(async () => Number(await page.locator('#distance').textContent()), { timeout: 9000 }).toBeGreaterThan(130);
+  await page.screenshot({ path: 'test-results/vfx-production-preview.png' });
   await page.keyboard.press('KeyP');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PAUSED');
   const notice = await page.request.get('/THIRD_PARTY_NOTICES.txt');
