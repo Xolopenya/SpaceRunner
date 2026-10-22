@@ -11,7 +11,7 @@ npm ci --ignore-scripts
 npm run dev
 ```
 
-Open the local URL printed by Vite (normally http://127.0.0.1:5173). Click **Launch run**. Fly through the cyan openings, avoid incoming rocks/debris, and survive with three hull points. Distance is your score; a best score is saved locally when a run ends. If storage is unavailable, the best remains available for the current session.
+Open the local URL printed by Vite (normally http://127.0.0.1:5173). Click **Launch run**. Read the gaps between incoming rocks/debris and survive with three hull points. Distance is your score; a best score is saved locally when a run ends. If storage is unavailable, the best remains available for the current session.
 
 | Action | Controls |
 | --- | --- |
@@ -34,9 +34,11 @@ npm run preview
 
 `test` runs deterministic simulation/storage tests with Node's test runner. `test:browser` uses **installed Google Chrome**, starts development (5173) and production preview (4173) servers, and covers desktop, emulated touch, and static production output. Run `build` first. If Chrome is unavailable, install it from its official vendor or set `PLAYWRIGHT_CHANNEL` to an installed supported channel such as `msedge`. Browser installation is not automated. Screenshots and failure traces go into ignored `test-results/`. No lint tool is configured.
 
-`build` produces a static `dist/` with relative asset paths. `preview` serves it locally (normally http://127.0.0.1:4173). Do not open `index.html` directly with `file://`. A Vite warning about the Three.js chunk exceeding 500 kB is currently expected; the entire Phase 1 output is under 1 MB uncompressed.
+`build` produces a static `dist/` with relative asset paths. `preview` serves it locally (normally http://127.0.0.1:4173). Do not open `index.html` directly with `file://`. A Vite warning about the Three.js chunk exceeding 500 kB is currently expected; the current game output is under 1 MB uncompressed.
 
 For a reproducible route, append `?seed=42`. In development only, `?debug&seed=42` exposes `window.spaceRunner` for diagnostics and automated fixtures. The production build omits this access. Startup loads six local GLBs before showing Launch; failed required models show an error and Retry loading.
+
+For development collision visualization, open **http://127.0.0.1:5173/?debug=colliders&seed=42**. Pink is the player sphere, amber is the original hazard sphere, and mint is the extra calibrated box for thin/debris variants. Both hazard bounds must overlap the player at the same time. The overlay gives shape/position information; no debug UI or geometry module is shipped in production. See [collision measurements, limits and CCD details](docs/COLLISIONS.md). `node --experimental-strip-types scripts/collision-audit.mjs` remeasures the local GLBs.
 
 ## External review package
 
@@ -46,15 +48,15 @@ npm run review:verify
 npm run review:pack
 ```
 
-`review:verify` captures the four required checks, static checks and build-module attribution in ignored `.cache/review/PHASE-2-001/final/`. `review:pack` requires a clean committed tree, reruns verification, reads snapshot blobs from HEAD, creates the binary baseline patch and reports, collects actual logs/screenshots, then writes and reopens `review-packages/PHASE-2-001-review-<HEAD_SHORT>.zip`. It verifies each entry's size/CRC/content, lists entries, reports ZIP size/hash and checks Git status. No ZIP dependency is added. Neither the ZIP nor its evidence cache enters Git.
+`review:verify` captures the four required checks, static checks, build-module attribution and collision measurements in ignored `.cache/review/PHASE-3-001/final/`. `review:pack` requires a clean committed tree, reruns verification, reads snapshot blobs from HEAD, creates the binary baseline patch and reports, collects actual logs/screenshots, then writes and reopens `review-packages/PHASE-3-001-review-<HEAD_SHORT>.zip`. It verifies each entry's size/CRC/content, lists entries, reports ZIP size/hash and checks Git status. No ZIP dependency is added. Neither the ZIP nor its evidence cache enters Git.
 
-The archive is a self-contained review package: full relevant source/GLBs/license, Git changes, architecture/implementation/asset/verification reports, machine manifest, raw logs, screenshots and a content hash inventory. It excludes .git internals, node_modules, caches, source-download ZIPs, dist, environment/private-key files and detected credential signatures. Known-pattern checking is not an exhaustive security audit.
+The archive is a self-contained review package: full relevant source/GLBs/license, Git changes, architecture/implementation/asset/collision/verification reports, machine manifest, raw logs, screenshots and a content hash inventory. Current-task prose/limitations/screenshots come from `review.config.json`. It excludes .git internals, node_modules, caches, source-download ZIPs, dist, environment/private-key files and detected credential signatures. Known-pattern checking is not an exhaustive security audit.
 
 To reuse for another milestone, update `review.config.json` with its task id, baseline, report sources and expected screenshots before committing. `npm run review:pack -- --task TASK-ID --baseline COMMIT` overrides the first two values. Keep the authored reports relevant to that milestone. Installed Chrome/local socket access is needed for verification; this command does not upload anything.
 
 ## Milestone and limitations
 
-Phases 0–2 are implemented: playable flight plus the licensed Kenney Speeder A, three meteor models, cargo barrel and generator debris. Templates load once and share resources across pooled clones and restarts; collider/gameplay rules remain unchanged. Audio, physical mobile-device performance checks, and Yandex SDK/release work remain. This is not a moderation-ready Yandex release.
+Phases 0–2 and PHASE-3-001 readability/calibration are implemented: playable flight, licensed Kenney models, no misleading safe-gate rectangles, targeted collision bounds and development wireframes. Templates/resources remain shared across restarts; approved flight/camera/spawner tuning is unchanged. Audio, further presentation work, physical mobile-device performance checks, and Yandex SDK/release work remain. This is not a moderation-ready Yandex release.
 
 See [project architecture and tuning](docs/PROJECT.md), [progress and verification results](docs/TASKS.md), and [release checklist](docs/RELEASE_CHECKLIST.md).
 

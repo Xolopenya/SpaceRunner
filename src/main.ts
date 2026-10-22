@@ -1,6 +1,7 @@
 import './styles.css';
 import { Game } from './game.ts';
 import { AssetManager } from './assets/asset-manager.ts';
+import type { ColliderDebugFactory } from './debug/types.ts';
 
 declare global {
   interface Window { spaceRunner?: Game }
@@ -24,7 +25,13 @@ async function boot(): Promise<void> {
       if (!disposed) message.textContent = `LOADING FLIGHT MODELS ${completed}/${total} · ${label}`;
     });
     if (disposed) return;
-    game = new Game(assets);
+    let debugFactory: ColliderDebugFactory | undefined;
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'colliders') {
+      const { ColliderDebugger } = await import('./debug/collider-debugger.ts');
+      if (disposed) return;
+      debugFactory = scene => new ColliderDebugger(scene);
+    }
+    game = new Game(assets, undefined, debugFactory);
     // Opt-in test inspection only; omitted from the production build by Vite.
     if (import.meta.env.DEV && new URLSearchParams(location.search).has('debug')) window.spaceRunner = game;
   } catch (error) {

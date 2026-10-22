@@ -11,7 +11,4 @@ export type ModelId = typeof MODEL_ASSETS[number]['id'];
 export type ModelSpec = typeof MODEL_ASSETS[number];
 export const HAZARD_MODELS: readonly ModelId[] = ['meteor', 'meteor-detailed', 'meteor-half', 'barrel', 'generator'];
 
-/** Preserve the original PRNG draw count and logical hazard kinds. */
-export function hazardVariant(kind: number, phase: number): number {
-  return kind === 0 ? 0 : kind === 1 ? (phase < Math.PI ? 1 : 2) : (phase < Math.PI ? 3 : 4);
-}
+export { hazardVariant } from '../core/hazard-profile.ts';

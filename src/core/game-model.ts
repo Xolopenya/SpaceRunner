@@ -1,5 +1,5 @@
 import { CONFIG, difficulty } from '../config.ts';
-import { sweptSphereHit } from './collision.ts';
+import { HazardCollision } from './hazard-collision.ts';
 import { ObstacleField } from './obstacles.ts';
 import { Ship } from './ship.ts';
 import type { Axis } from './ship.ts';
@@ -16,6 +16,9 @@ export class GameModel {
   invulnerability = 0;
   hitSerial = 0;
   seed = 1;
+  private readonly collisions = new HazardCollision();
+  private readonly relativeFrom = { x: 0, y: 0, z: 0 };
+  private readonly relativeTo = { x: 0, y: 0, z: 0 };
 
   get score(): number { return Math.floor(this.distance); }
   get speed(): number { return difficulty(this.elapsed).speed; }
@@ -49,11 +52,13 @@ export class GameModel {
     if (this.invulnerability > 0) return;
     for (const hazard of this.field.hazards) {
       if (!hazard.active) continue;
-      if (sweptSphereHit(
-        { x: previousX - hazard.x, y: previousY - hazard.y, z: -(hazard.z - travel) },
-        { x: this.ship.x - hazard.x, y: this.ship.y - hazard.y, z: -hazard.z },
-        hazard.radius + CONFIG.ship.radius,
-      )) {
+      this.relativeFrom.x = previousX - hazard.x;
+      this.relativeFrom.y = previousY - hazard.y;
+      this.relativeFrom.z = -(hazard.z - travel);
+      this.relativeTo.x = this.ship.x - hazard.x;
+      this.relativeTo.y = this.ship.y - hazard.y;
+      this.relativeTo.z = -hazard.z;
+      if (this.collisions.hit(this.relativeFrom, this.relativeTo, hazard, this.elapsed, dt)) {
         hazard.active = false;
         this.hull--;
         this.hitSerial++;

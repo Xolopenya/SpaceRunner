@@ -13,8 +13,8 @@ export const test = base.extend<{ cleanConsole: void }>({
 
 export { expect };
 
-export async function launch(page: Page) {
-  await page.goto('/?debug&seed=42');
+export async function launch(page: Page, url = '/?debug&seed=42') {
+  await page.goto(url);
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
   await page.getByRole('button', { name: 'Launch run' }).click();
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PLAYING');

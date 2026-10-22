@@ -8,7 +8,7 @@ import { gzipSync } from 'node:zlib';
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const git = (...args) => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024 });
 
-export async function verify(taskId) {
+export async function verify(taskId, extraChecks = []) {
   const directory = resolve(root, '.cache/review', taskId, 'final');
   await mkdir(directory, { recursive: true });
   const head = git('rev-parse', 'HEAD').toString().trim();
@@ -19,6 +19,11 @@ export async function verify(taskId) {
   commands.push({ name: 'diff-check', command: 'git diff --check', executable: 'git', args: ['diff', '--check'] });
   commands.push({ name: 'source-safety', command: 'node scripts/review-static.mjs', executable: process.execPath, args: ['scripts/review-static.mjs'] });
   commands.push({ name: 'build-analysis', command: 'node scripts/build-analysis.mjs', executable: process.execPath, args: ['scripts/build-analysis.mjs'] });
+  for (const check of extraChecks) {
+    if (!/^[a-z0-9-]+$/.test(check.name) || !/^scripts\/[a-z0-9-]+\.mjs$/.test(check.script) || commands.some(command => command.name === check.name)) throw new Error('Unsafe/duplicate review check');
+    const args = check.stripTypes ? ['--experimental-strip-types', check.script] : [check.script];
+    commands.push({ name: check.name, command: `node ${args.join(' ')}`, executable: process.execPath, args });
+  }
   const checks = [];
   for (const command of commands) {
     const log = `${command.name.replaceAll(':', '-')}.log`;
@@ -54,5 +59,5 @@ export async function verify(taskId) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const config = JSON.parse(await readFile(join(root, 'review.config.json'), 'utf8'));
-  await verify(config.taskId);
+  await verify(config.taskId, config.extraChecks);
 }

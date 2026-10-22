@@ -27,6 +27,8 @@ GLBs contain rigid meshes and flat material colors, with no skinning, animation,
 
 The distant planet, stars, corridor guides, engine glow and impact particles remain repository-authored geometry in `src/world.ts`. Temporary Phase 1 ship and hazard meshes have been removed. No other external art is included.
 
+PHASE-3-001 retains all six GLB files and render normalization unchanged. Measured additional collision boxes for the half meteor, barrel and generator are documented in `COLLISIONS.md`; no new asset download or conversion is involved.
+
 ## Runtime library notice
 
 Three.js 0.186.1 is the production runtime dependency, obtained through the npm registry on 2026-10-22. Author: three.js authors. Source: https://github.com/mrdoob/three.js. License: MIT, read from the installed package's `LICENSE`. The complete notice is preserved in `public/THIRD_PARTY_NOTICES.txt` and copied into the static build. Dependencies are version-pinned in `package-lock.json`; `node_modules` is excluded from Git. Development tooling is not shipped in the production bundle.

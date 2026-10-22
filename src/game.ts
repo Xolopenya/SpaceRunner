@@ -7,6 +7,7 @@ import { World } from './world.ts';
 import { StandalonePlatform } from './services/platform.ts';
 import type { PlatformAdapter } from './services/platform.ts';
 import { AssetManager } from './assets/asset-manager.ts';
+import type { ColliderDebugFactory } from './debug/types.ts';
 
 export class Game {
   readonly model = new GameModel();
@@ -22,12 +23,12 @@ export class Game {
   private contextLost = false;
   private readonly assets: AssetManager;
 
-  constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform()) {
+  constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory) {
     this.assets = assets;
     this.platform = platform;
     const canvas = element<HTMLCanvasElement>('flight');
     canvas.tabIndex = 0;
-    this.world = new World(canvas, assets);
+    this.world = new World(canvas, assets, debugFactory);
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     const options = { signal: this.events.signal };
     element('launch').addEventListener('click', () => this.start(), options);

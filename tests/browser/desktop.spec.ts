@@ -37,7 +37,7 @@ test('six GLBs load once, all variants render, and restarts retain shared GPU re
     await page.waitForTimeout(150);
   }
   await showModels();
-  await page.screenshot({ path: 'test-results/desktop-models.png' });
+  await page.screenshot({ path: 'test-results/phase3-all-models.png' });
   const memory = await page.evaluate(() => ({ ...window.spaceRunner!.world.renderer.info.memory }));
   for (let run = 0; run < 5; run++) {
     await page.keyboard.press('KeyP');
@@ -106,7 +106,7 @@ test('collision feedback, invulnerability, death, persisted best, and bounded re
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'GAME_OVER');
   const best = Number((await page.locator('#final-best').textContent())?.replaceAll(',', ''));
   expect(best).toBeGreaterThan(10);
-  await page.screenshot({ path: 'test-results/desktop-game-over.png' });
+  await page.screenshot({ path: 'test-results/phase3-game-over.png' });
   const baseline = await page.evaluate(() => ({ ...window.spaceRunner!.world.renderer.info.memory }));
   for (let run = 0; run < 5; run++) {
     await page.getByRole('button', { name: 'Fly again' }).click();

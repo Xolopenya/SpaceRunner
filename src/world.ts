@@ -5,13 +5,16 @@ import { Random } from './core/random.ts';
 import { AssetManager } from './assets/asset-manager.ts';
 import { HAZARD_MODELS, hazardVariant } from './assets/catalog.ts';
 import { ResourceOwner } from './assets/resources.ts';
+import { hazardOrientation } from './core/hazard-profile.ts';
+import type { ColliderDebugFactory, ColliderDebugView } from './debug/types.ts';
 
-function outline(width: number, height: number, color: number, opacity: number): THREE.LineLoop {
-  const points = [
-    new THREE.Vector3(-width / 2, -height / 2, 0), new THREE.Vector3(width / 2, -height / 2, 0),
-    new THREE.Vector3(width / 2, height / 2, 0), new THREE.Vector3(-width / 2, height / 2, 0),
-  ];
-  return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color, transparent: true, opacity }));
+function cornerGuide(): THREE.LineSegments {
+  const points: THREE.Vector3[] = [];
+  for (const x of [-7.1, 7.1]) for (const y of [-4.6, 4.6]) {
+    points.push(new THREE.Vector3(x, y, 0), new THREE.Vector3(x - Math.sign(x) * 1.2, y, 0));
+    points.push(new THREE.Vector3(x, y, 0), new THREE.Vector3(x, y - Math.sign(y) * 1.2, 0));
+  }
+  return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x376583, transparent: true, opacity: 0.11 }));
 }
 
 export class World {
@@ -21,8 +24,9 @@ export class World {
   private readonly ship = new THREE.Group();
   private readonly flames: THREE.Mesh[] = [];
   private readonly hazards: THREE.Group[] = [];
-  private readonly gates: THREE.LineLoop[] = [];
-  private readonly frames: THREE.LineLoop[] = [];
+  private readonly frames: THREE.LineSegments[] = [];
+  private readonly angles = { x: 0, y: 0, z: 0 };
+  private readonly collisionDebug?: ColliderDebugView;
   private readonly stars: THREE.Points;
   private readonly originalStars: Float32Array;
   private readonly burst: THREE.Points;
@@ -33,7 +37,7 @@ export class World {
   private disposed = false;
   private readonly resources = new ResourceOwner();
 
-  constructor(canvas: HTMLCanvasElement, assets: AssetManager) {
+  constructor(canvas: HTMLCanvasElement, assets: AssetManager, debugFactory?: ColliderDebugFactory) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
     this.renderer.setClearColor(CONFIG.render.background);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -57,14 +61,9 @@ export class World {
       this.hazards.push(group);
       this.scene.add(group);
     }
-    for (let i = 0; i < CONFIG.waves.capacity; i++) {
-      const gate = outline(CONFIG.waves.safeHalfWidth * 2, CONFIG.bounds.y * 2 + 0.8, 0x69f4d3, 0.46);
-      gate.visible = false;
-      this.gates.push(gate);
-      this.scene.add(gate);
-    }
     for (let i = 0; i < 9; i++) {
-      const frame = outline(14.2, 9.2, 0x376583, 0.19);
+      const frame = cornerGuide();
+      frame.name = `environment-corner-guide-${i}`;
       this.frames.push(frame);
       this.scene.add(frame);
     }
@@ -97,6 +96,7 @@ export class World {
     this.burst.frustumCulled = false;
     this.scene.add(this.burst);
     this.resources.track(this.scene, assets.resources);
+    this.collisionDebug = debugFactory?.(this.scene);
   }
 
   private createShip(assets: AssetManager): void {
@@ -146,15 +146,10 @@ export class World {
       if (!hazard.active) continue;
       group.position.set(hazard.x, hazard.y, hazard.z);
       group.scale.setScalar(hazard.radius);
-      group.rotation.set(model.elapsed * hazard.spin + hazard.phase, model.elapsed * hazard.spin * 0.7, hazard.phase);
+      hazardOrientation(hazard, model.elapsed, this.angles);
+      group.rotation.set(this.angles.x, this.angles.y, this.angles.z);
       const variant = hazardVariant(hazard.kind, hazard.phase);
       for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
-    }
-    for (let i = 0; i < this.gates.length; i++) {
-      const wave = model.field.waves[i]!;
-      const gate = this.gates[i]!;
-      gate.visible = wave.active && wave.z < 1;
-      gate.position.set(wave.safeX, 0, wave.z);
     }
     for (let i = 0; i < this.frames.length; i++) this.frames[i]!.position.z = -i * 18 + model.distance % 18 - 5;
     const positions = this.stars.geometry.getAttribute('position') as THREE.BufferAttribute;
@@ -182,11 +177,13 @@ export class World {
     this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, 2.4 + model.ship.y * 0.12, blend);
     this.camera.position.z = this.cameraZ;
     this.camera.lookAt(0, 0, -28);
+    this.collisionDebug?.update(model);
     this.renderer.render(this.scene, this.camera);
   }
 
   dispose(): void {
     this.disposed = true;
+    this.collisionDebug?.dispose();
     this.resources.dispose();
     this.renderer.dispose();
   }

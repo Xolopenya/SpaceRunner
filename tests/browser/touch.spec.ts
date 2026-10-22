@@ -21,12 +21,12 @@ test('portrait touch steering, capture release, cancel, rotate, pause, and repla
     const model = window.spaceRunner!.model;
     for (let i = 0; i < 3; i++) Object.assign(model.field.hazards[i]!, { active: true, x: (i - 1) * 3.7, y: 0, z: -12 - i * 3, radius: 1, kind: i === 0 ? 0 : 1, phase: i === 2 ? 4 : 0 });
   });
-  await page.screenshot({ path: 'test-results/touch-portrait.png' });
+  await page.screenshot({ path: 'test-results/phase3-mobile-gameplay.png' });
   expect(await canvas.evaluate(node => node.width)).toBeLessThanOrEqual(550);
   await page.setViewportSize({ width: 844, height: 390 });
   await page.getByRole('button', { name: 'Pause flight' }).tap();
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PAUSED');
-  await page.screenshot({ path: 'test-results/touch-landscape-paused.png' });
+  await page.screenshot({ path: 'test-results/phase3-mobile-paused.png' });
   const resume = page.getByRole('button', { name: 'Resume flight' });
   const box = await resume.boundingBox();
   expect(box!.y).toBeGreaterThanOrEqual(0);

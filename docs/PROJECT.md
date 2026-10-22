@@ -1,6 +1,6 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. The current milestone integrates six licensed Kenney GLBs into the playable Phase 1 loop, preserving the existing simulation and controls.
+Third-person endless avoidance flight for desktop and mobile. The current milestone removes confusing route markers and calibrates measured thin/debris collisions while preserving the approved controls, camera and procedural generation.
 
 ## Controls and rules
 
@@ -14,11 +14,13 @@ X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while haz
 | --- | --- |
 | `src/config.ts` | Playfield, movement, difficulty, pool sizes, render caps |
 | `src/core/game-model.ts` | Explicit state machine, run data, health, distance, collision integration |
-| `src/core/ship.ts`, `collision.ts` | Pure movement and swept-sphere collision math |
+| `src/core/ship.ts`, `collision.ts` | Pure movement and continuous sphere/rounded-box collision math |
+| `src/core/hazard-profile.ts`, `hazard-collision.ts` | Measured box bounds, shared orientation, continuous sphere/box intersection and reusable query state |
 | `src/core/obstacles.ts`, `random.ts` | Seeded policy, reusable hazard/wave slots, route budget |
 | `src/game-loop.ts` | 120 Hz fixed simulation, capped 100 ms frame delta, one animation loop |
 | `src/world.ts` | Three.js scene, camera, pooled visuals, particles, disposal |
 | `src/assets/` | Model catalog, asynchronous GLTF loading/cache, normalization/cloning, shared resource ownership |
+| `src/debug/` | Optional development-only wire bounds, diagnostics and private resource ownership |
 | `src/input.ts` | Once-per-game keyboard/pointer listeners, pointer capture, input clearing |
 | `src/game.ts`, `ui.ts` | Lifecycle wiring, resize/focus/context handling, DOM screens/HUD |
 | `src/services/` | Safe score persistence and standalone/future platform seam |
@@ -33,8 +35,14 @@ Speed rises from 20 to 34 units/s over 120 s. Density rises from 0.52 to 0.97 an
 
 ## Rendering and scope
 
-Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Points starfield/particles, a distant planet, guides and inexpensive engine cones remain procedural. No textures, postprocessing or audio. Camera distance expands in portrait to preserve horizontal playfield visibility. DPR caps are 1.4 on narrow displays and 1.75 otherwise; playfield display aspect ratio is capped at 2:1 with letterboxing on wider screens.
+Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Points starfield/particles, a distant planet, dim disconnected blue corner guides and inexpensive engine cones remain procedural. Green safe-wave rectangles are removed; logical safe corridors/waves remain. No textures, postprocessing or audio. Camera distance expands in portrait to preserve horizontal playfield visibility. DPR caps are 1.4 on narrow displays and 1.75 otherwise; playfield display aspect ratio is capped at 2:1 with letterboxing on wider screens.
 
 Boot preloads six local GLBs before Game creation, with progress/error/retry. AssetManager owns imported resources; World borrows rigid clones and owns only its procedural geometry/materials. Restart does no loading or cloning. Original files are unchanged; runtime centers pivots, normalizes ship width/hazard radius, and adjusts metallic/roughness for the existing lights. Five hazard visuals derive from existing kind/phase, with no extra PRNG draws. See `review/PHASE-2-001/ARCHITECTURE.md` for contracts, disposal/cancellation details and risks.
 
 Platform methods remain standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification. Review tooling packages committed blobs and actual verification evidence without shipping development files to the game.
+
+## PHASE-3-001 collision and diagnostics
+
+The two round meteors retain their spheres. Half meteor, barrel and generator now require continuous overlap with both the original outer sphere and a measured model-aligned box. Rounded box edges/corners use point-to-box distance over the sphere's overlap time interval; a small midpoint rotation bound prevents tunneling. The old outer limit guarantees that no previously safe corridor becomes blocked. Ship radius, movement/camera, health and difficulty settings are unchanged.
+
+`?debug=colliders` on the development server dynamically loads a private wireframe view. Disabled mode creates no debug resources; production strips the module. World updates/disposes the optional view, whose two wire geometries are separately owned from scenery and GLB resources. Restart reuses its player/72 hazard slots. See `COLLISIONS.md` and `review/PHASE-3-001/ARCHITECTURE.md` for measurements, numerical guarantees and known conservative limits.

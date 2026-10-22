@@ -1,6 +1,6 @@
 # Future release checks
 
-The Phase 2 prototype is standalone and is not ready for Yandex moderation.
+The current prototype is standalone and is not ready for Yandex moderation.
 
 - [x] Static Vite output with root `index.html`, relative bundled asset paths, and no external runtime CDN.
 - [x] Code/rendering independent of the future platform lifecycle/storage adapter.

@@ -5,6 +5,7 @@ import { createZip, readZip } from './zip.mjs';
 import { excludedPath, containsSecret } from './review-safety.mjs';
 import { root, git, verify } from './review-verify.mjs';
 import { MODEL_ASSETS } from '../src/assets/catalog.ts';
+import { verificationReport } from './review-reports.mjs';
 
 const config = JSON.parse(await readFile(join(root, 'review.config.json'), 'utf8'));
 const options = process.argv.slice(2);
@@ -43,7 +44,7 @@ for (const required of ['AGENTS.md', 'package.json', 'package-lock.json', 'src/m
   if (!entries.some(entry => entry.name === `project_snapshot/${required}`)) throw new Error(`Required snapshot file missing/excluded: ${required}`);
 }
 
-const { directory, result } = await verify(config.taskId);
+const { directory, result } = await verify(config.taskId, config.extraChecks);
 if (git('rev-parse', 'HEAD').toString().trim() !== head || git('status', '--porcelain=v1', '--untracked-files=all').toString().trim()) throw new Error('Repository changed during verification; package not written.');
 const generatedAt = new Date().toISOString();
 const changedRaw = git('diff', '--name-status', '--find-renames', baseline, head).toString();
@@ -100,16 +101,17 @@ const assets = MODEL_ASSETS.map(model => {
   const bytes = entries.find(entry => entry.name === `project_snapshot/${path}`).data;
   return { name: model.label, id: model.id, file: path, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), author: 'Kenney', source: 'https://kenney.nl/assets/space-kit', license: 'CC0 1.0', originalFormat: 'GLB', conversion: 'None; original file bytes unchanged', transform: 'width' in model ? `Center pivot, width ${model.width}, Y rotation ${model.rotationY}` : 'Center pivot, unit vertex radius; scale by logical hazard radius' };
 });
+const measurements = config.collisionMeasurements ? JSON.parse(await readFile(join(directory, 'collision-measurements.json'), 'utf8')) : undefined;
+if (measurements) add('reports/COLLISION-MEASUREMENTS.json', JSON.stringify(measurements, null, 2) + '\n');
 const manifest = {
-  project: 'Space Runner', taskId: config.taskId, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
+  project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions,
-  limitations: ['Physical mobile devices, Safari/Firefox and sustained performance remain unverified.', 'Audio and Yandex SDK are outside Phase 2.', 'Screenshots containing all variants use documented deterministic fixtures.'],
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements,
+  limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');
-const fileTable = result.productionBuild.files.map(file => `| ${file.path} | ${file.bytes} | ${file.gzipBytes ?? '—'} |`).join('\n');
-add('reports/VERIFICATION.md', `# Actual verification\n\nTask: ${config.taskId}\nHEAD: ${head}\nGenerated: ${generatedAt}\n\n${result.checks.map(check => `- \`${check.command}\`: exit ${check.exitCode}; raw output: \`logs/${check.log}\`.`).join('\n')}\n\n${unitTests.length} unit tests and ${browserTests.length} browser tests passed. Exact names/results are in manifest.json and browser-results.json. The missing-model test intentionally produces an HTTP 404, verifies blocked launch, and recovers through Retry. Other browser tests require clean console/network logs.\n\n## Production measurements\n\nTotal uncompressed: **${result.productionBuild.totalBytes} bytes**.\n\n| File | Bytes | JS gzip bytes |\n| --- | ---: | ---: |\n${fileTable}\n\nThe >500 kB Vite advisory remains visible in build.log. The single application chunk includes tree-shaken Three.js/WebGLRenderer and GLTFLoader; model binaries are separate static files. Module attribution before minification is preserved in build-analysis.log. Splitting the same mandatory startup code would not reduce its total bytes; no warning limit was raised.\n\n## Evidence boundaries\n\nDesktop and emulated touch use installed Chrome; screenshots show actual WebGL rendering. desktop-models.png uses all five hazards positioned by the test and a paused simulation with its overlay hidden; touch-portrait.png positions three asteroid variants. Other screenshots use normal gameplay fixtures documented in the tests. GPU geometry/texture stability is checked over five restarts after warming the impact effect. An initial diagnostic failure (30→31 geometries when the burst first rendered) is preserved if available; the fixture now warms it before measuring. No physical-phone/Safari/Firefox claim is made.\n\n## Snapshot safety\n\nRegular tracked HEAD blobs only; no .git database, dependencies, cache, source ZIP, production bundle, environment files or browser profiles. Known-credential signatures are checked; this is not an exhaustive secret audit. Exclusions: ${JSON.stringify(exclusions)}.\n`);
-add('README-REVIEW.md', `# ${config.taskId} external architecture review\n\nReview branch ${branch} at ${head} against ${baseline}.\n\nStart with reports/IMPLEMENTATION.md, ARCHITECTURE.md, ASSETS.md, VERIFICATION.md, and manifest.json. The complete committed sources and GLBs are in project_snapshot/. changes/ contains a binary-capable patch and Git metadata. logs/ and screenshots/ contain actual verification evidence.\n\nTo reconstruct: copy project_snapshot to a new directory, use Node 22.12+ and npm, then run npm ci --ignore-scripts, npm run typecheck, npm run test, npm run build. Installed Chrome is required for npm run test:browser. No local machine access is needed to inspect the sources/assets. Do not merge without reviewing resource ownership, normalization, core gameplay invariance and remaining device coverage.\n`);
+add('reports/VERIFICATION.md', verificationReport(config, result, { unit: unitTests.length, browser: browserTests.length }, head, generatedAt, exclusions));
+add('README-REVIEW.md', `# ${config.taskId} external architecture review\n\nReview branch ${branch} at ${head} against ${baseline}.\n\nStart with ${Object.keys(config.reports).map(name => `reports/${name}`).join(', ')}, reports/VERIFICATION.md and reports/manifest.json. Complete committed sources and GLBs are in project_snapshot/. changes/ contains a binary-capable patch and Git metadata; logs/ and screenshots/ contain actual current-task evidence.\n\nTo reconstruct: copy project_snapshot to a new directory, use Node 22.12+ and npm, then run npm ci --ignore-scripts, npm run typecheck, npm run test, npm run build. Installed Chrome is required for npm run test:browser. Review behavior changes, collision/fairness guarantees, ownership and evidence limitations before recommending a merge.\n`);
 const contentInventory = entries.map(entry => ({ path: entry.name, bytes: entry.data.length, sha256: createHash('sha256').update(entry.data).digest('hex') }));
 add('reports/content-inventory.json', JSON.stringify(contentInventory, null, 2) + '\n');
 entries.sort((a, b) => a.name.localeCompare(b.name));

@@ -10,11 +10,11 @@
   </head>
   <body>
     <main id="game" data-state="LOADING">
-      <canvas id="flight" aria-label="Space Runner flight area. Steer with WASD, arrow keys, or drag. Follow the cyan openings."></canvas>
+      <canvas id="flight" aria-label="Space Runner flight area. Steer with WASD, arrow keys, or drag. Avoid the incoming obstacles."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <header class="topbar">
         <a class="brand" href="./" aria-label="Space Runner home"><span class="brand-mark" aria-hidden="true">↟</span><span>SPACE<span class="brand-light">RUNNER</span></span></a>
-        <span class="build-label">FLIGHT TEST <span>02</span></span>
+        <span class="build-label">FLIGHT TEST <span>03</span></span>
         <button id="pause" class="quiet-button" aria-label="Pause flight" hidden>Ⅱ <span>PAUSE</span></button>
       </header>
 
@@ -29,7 +29,7 @@
         <div class="hero-copy">
           <div class="eyebrow"><span></span> OUTER BELT / SOLO FLIGHT</div>
           <h1 id="menu-title">A little ship.<br />An endless<br /><em>frontier.</em></h1>
-          <p>Thread the asteroid field. Find the cyan openings.<br class="desktop-break" /> See how far you can go.</p>
+          <p>Read the gaps. Dodge the incoming debris.<br class="desktop-break" /> See how far you can go.</p>
           <button id="launch" class="primary">Launch run <span aria-hidden="true">↗</span></button>
           <div class="controls"><span><kbd>W A S D</kbd> / <kbd>↑ ↓ ← →</kbd> to steer</span><span>Drag anywhere to fly on touch</span><span><kbd>ESC</kbd> or <kbd>P</kbd> to pause</span></div>
         </div>
@@ -44,7 +44,7 @@
         <div class="panel"><div class="eyebrow">FLIGHT RECORDER / END OF RUN</div><h2 id="over-title">Signal lost.</h2><p>The frontier will be here for your next flight.</p><div class="results"><div><span class="label">DISTANCE</span><strong><span id="final-score">0</span><small> M</small></strong></div><div><span class="label">PERSONAL BEST</span><strong><span id="final-best">0</span><small> M</small></strong></div></div><button id="replay" class="primary">Fly again <span aria-hidden="true">↗</span></button><p id="seed" class="small"></p></div>
       </section>
 
-      <div id="flight-hint" class="flight-hint" hidden>Follow the cyan openings <span>·</span> WASD / arrows / drag to steer</div>
+      <div id="flight-hint" class="flight-hint" hidden>Read the gaps. Avoid the debris. <span>·</span> WASD / arrows / drag to steer</div>
       <div id="damage" class="damage" role="status" hidden>HULL HIT <span>SHIELD ACTIVE</span></div>
       <div id="joystick" class="joystick" aria-hidden="true" hidden><i></i></div>
       <footer><span><i></i> STANDALONE FLIGHT</span><span id="telemetry">SPACE KIT / KENNEY · CC0</span></footer>
