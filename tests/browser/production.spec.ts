@@ -13,12 +13,17 @@ test('static production output loads locally and plays with no debug seam or run
   const script = await (await page.request.get(scriptUrl)).text();
   expect(script).not.toContain('collision-debug-root');
   expect(script).not.toContain('collider-debug-info');
+  await page.getByRole('button', { name: 'Sound settings', exact: true }).click();
+  await expect(page.locator('#sound-status')).toHaveText('Audio enabled.');
+  await page.screenshot({ path: 'test-results/audio-production-settings.png' });
+  await page.getByRole('button', { name: 'Close sound settings' }).click();
   await page.getByRole('button', { name: 'Launch run' }).click();
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PLAYING');
   await expect.poll(() => page.locator('#distance').textContent()).not.toBe('0');
   await page.screenshot({ path: 'test-results/phase3-production-gameplay.png' });
   await expect.poll(async () => Number(await page.locator('#distance').textContent()), { timeout: 9000 }).toBeGreaterThan(130);
   await page.screenshot({ path: 'test-results/vfx-production-preview.png' });
+  await page.screenshot({ path: 'test-results/audio-production-preview.png' });
   await page.keyboard.press('KeyP');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PAUSED');
   const notice = await page.request.get('/THIRD_PARTY_NOTICES.txt');

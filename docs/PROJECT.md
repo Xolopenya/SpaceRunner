@@ -1,10 +1,10 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. The current milestone adds space atmosphere, responsive propulsion trails and localized impact feedback while preserving approved flight, camera, calibrated collisions and procedural generation.
+Third-person endless avoidance flight for desktop and mobile. Current audio adds propulsion synthesis, damage/UI feedback, ambient music and preferences while preserving approved flight, camera, calibrated collisions, VFX and procedural generation.
 
 ## Controls and rules
 
-WASD / arrows steer on X and Y; press/drag the flight area for touch or mouse steering. Release to brake. Escape/P and HUD buttons pause/resume. Focus/visibility loss pauses until explicit resume. Three hull points, 1.6 seconds of invulnerability per hit, distance-based score, persisted best, and one-click replay.
+WASD / arrows steer on X and Y; press/drag the flight area for touch or mouse steering. Release to brake. Escape/P and HUD buttons pause/resume. M toggles mute; Sound settings in menu/pause controls master/music/SFX. Focus/visibility loss pauses and silences audio until explicit resume. Three hull points, 1.6 seconds of invulnerability per hit, distance-based score, persisted best, and one-click replay.
 
 X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while hazards and scenery move toward +Z. The ship's logical collider is a sphere separate from its decorative wings/engines.
 
@@ -20,6 +20,7 @@ X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while haz
 | `src/game-loop.ts` | 120 Hz fixed simulation, capped 100 ms frame delta, one animation loop |
 | `src/world.ts` | Three.js scene/camera, pooled hazard transforms, VFX coordination and disposal |
 | `src/visuals/` | Separately owned starfield/nebula/planet, engine ribbons, impact pool and rendering-only quality/timing |
+| `src/audio/` | Native context/graph ownership, original synthesis/music, bounded SFX, safe preferences and accessible sound dialog |
 | `src/assets/` | Model catalog, asynchronous GLTF loading/cache, normalization/cloning, shared resource ownership |
 | `src/debug/` | Optional development-only wire bounds, diagnostics and private resource ownership |
 | `src/input.ts` | Once-per-game keyboard/pointer listeners, pointer capture, input clearing |
@@ -36,11 +37,17 @@ Speed rises from 20 to 34 units/s over 120 s. Density rises from 0.52 to 0.97 an
 
 ## Rendering and scope
 
-Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Three star layers, edge streaks, a subtle procedural nebula, distant planet/rim/ring, cyan engine cores/ribbons and amber impact particles provide depth and speed. Blue corner fragments are very dim; green safe-wave rectangles remain removed while logical corridors/waves remain. No external textures, postprocessing or audio. Camera distance expands in portrait using the unchanged approved formula. DPR caps are 1.4 for coarse pointers or a viewport short side below 600 px, and 1.75 otherwise; the display aspect remains capped at 2:1 with letterboxing.
+Kenney Speeder A, three meteors, cargo barrel and generator debris replace the ship/hazard primitives. Three star layers, edge streaks, a subtle procedural nebula, distant planet/rim/ring, cyan engine cores/ribbons and amber impact particles provide depth and speed. Blue corner fragments are very dim; green safe-wave rectangles remain removed while logical corridors/waves remain. No external textures or postprocessing; audio is original synthesis. Camera distance expands in portrait using the unchanged approved formula. DPR caps are 1.4 for coarse pointers or a viewport short side below 600 px, and 1.75 otherwise; the display aspect remains capped at 2:1 with letterboxing.
 
 Boot preloads six local GLBs before Game creation, with progress/error/retry. AssetManager owns imported resources; World borrows rigid clones and owns only its procedural geometry/materials. Restart does no loading or cloning. Original files are unchanged; runtime centers pivots, normalizes ship width/hazard radius, and adjusts metallic/roughness for the existing lights. Five hazard visuals derive from existing kind/phase, with no extra PRNG draws. See `review/PHASE-2-001/ARCHITECTURE.md` for contracts, disposal/cancellation details and risks.
 
 Platform methods remain standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification. Review tooling packages committed blobs and actual verification evidence without shipping development files to the game.
+
+## PHASE-3-003 audio lifecycle
+
+`Game` submits existing model values and gestures to one `AudioManager`. The core model and renderer know nothing about Web Audio. After a permitted gesture, four native continuous sources feed SFX/music buses and a headroom-controlled master. Original generated buffers are cached once; temporary voices are capped at six and cleaned on completion. `hitSerial` selects one normal or final hit event; silent/locked states consume it without later replay. Pause fades continuous sound, backgrounding suspends the context even in menus, final damage finishes its one-shots, and restart preserves the graph. HMR/disposal closes it and invalidates late initialization.
+
+`space-runner.audio.v1` stores only validated preferences, independently of best scores. The menu/pause native dialog supports touch/keyboard and reports blocked/unavailable audio truthfully. Reloads never bypass autoplay. See `review/PHASE-3-003/ARCHITECTURE.md`, `AUDIO-LIFECYCLE.md`, `AUDIO-DESIGN.md` and `PERFORMANCE.md` for routing, ownership, actual signal diagnostics and pending manual listening acceptance.
 
 ## PHASE-3-002 visual lifecycle
 

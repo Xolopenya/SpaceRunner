@@ -8,10 +8,14 @@ import { StandalonePlatform } from './services/platform.ts';
 import type { PlatformAdapter } from './services/platform.ts';
 import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
+import { AudioManager } from './audio/audio-manager.ts';
+import { SoundPanel } from './audio/sound-panel.ts';
 
 export class Game {
   readonly model = new GameModel();
   readonly world: World;
+  readonly audio = new AudioManager();
+  private readonly soundPanel: SoundPanel;
   private readonly ui = new HUD();
   private readonly input: InputManager;
   private readonly loop: GameLoop;
@@ -30,19 +34,34 @@ export class Game {
     canvas.tabIndex = 0;
     this.world = new World(canvas, assets, debugFactory);
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
+    this.soundPanel = new SoundPanel(this.audio);
     const options = { signal: this.events.signal };
     element('launch').addEventListener('click', () => this.start(), options);
     element('replay').addEventListener('click', () => this.start(), options);
-    element('pause').addEventListener('click', () => this.pause('Your flight is paused.'), options);
+    element('pause').addEventListener('click', () => this.pause('Your flight is paused.', true), options);
     element('resume').addEventListener('click', () => this.resume(), options);
-    window.addEventListener('blur', () => this.pause('Window focus lost. Resume when you are ready.'), options);
+    window.addEventListener('blur', () => {
+      this.pause('Window focus lost. Resume when you are ready.');
+      this.audio.background();
+    }, options);
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) this.pause('Flight paused while the page was hidden.');
+      if (document.hidden) {
+        this.pause('Flight paused while the page was hidden.');
+        this.audio.background();
+      }
+    }, options);
+    window.addEventListener('keydown', event => {
+      if (event.code !== 'KeyM' || event.repeat || event.ctrlKey || event.metaKey || event.altKey || (event.target instanceof HTMLElement && event.target.matches('input, textarea, select, [contenteditable]'))) return;
+      event.preventDefault();
+      this.audio.setSettings({ muted: !this.audio.settings.muted });
+      this.audio.activate();
+      this.soundPanel.update();
     }, options);
     canvas.addEventListener('webglcontextlost', event => {
       event.preventDefault();
       this.contextLost = true;
       this.pause('Graphics context lost. Waiting for recovery…');
+      this.audio.background();
       element<HTMLButtonElement>('resume').disabled = true;
     }, options);
     canvas.addEventListener('webglcontextrestored', () => {
@@ -61,6 +80,8 @@ export class Game {
     this.world.reset();
     this.loop = new GameLoop(dt => this.model.step(dt, this.input.axis), dt => {
       this.syncState();
+      this.audio.update(this.model);
+      this.soundPanel.update();
       this.ui.update(this.model);
       this.world.render(this.model, dt);
     });
@@ -76,17 +97,20 @@ export class Game {
     const parsed = parameter === null || parameter.trim() === '' ? NaN : Number(parameter);
     const seed = Number.isFinite(parsed) ? parsed >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0]!;
     this.input.clear();
+    this.audio.resetRun();
     this.model.start(seed);
     this.world.reset();
     this.syncState();
+    this.audio.activate('launch');
   }
 
-  private pause(reason: string): void {
+  private pause(reason: string, sound = false): void {
     this.input.clear();
     if (this.model.state !== 'PLAYING') return;
     this.pauseReason = reason;
     this.model.pause();
     this.syncState();
+    if (sound) this.audio.activate('pause');
   }
 
   private resume(): void {
@@ -94,10 +118,11 @@ export class Game {
     this.input.clear();
     this.model.resume();
     this.syncState();
+    this.audio.activate('resume');
   }
 
   private togglePause(): void {
-    if (this.model.state === 'PLAYING') this.pause('Your flight is paused.');
+    if (this.model.state === 'PLAYING') this.pause('Your flight is paused.', true);
     else if (this.model.state === 'PAUSED') this.resume();
   }
 
@@ -107,6 +132,7 @@ export class Game {
     if (this.model.state === 'GAME_OVER') this.platform.scores.record(this.model.score);
     this.platform.gameplayChanged(this.model.state === 'PLAYING');
     this.shownState = this.model.state;
+    this.audio.update(this.model);
     this.ui.showState(this.model, this.platform.scores.best, this.pauseReason);
   }
 
@@ -114,6 +140,8 @@ export class Game {
     this.loop.stop();
     this.input.dispose();
     this.events.abort();
+    this.soundPanel.dispose();
+    this.audio.dispose();
     this.resizeObserver.disconnect();
     this.world.dispose();
     this.assets.dispose();

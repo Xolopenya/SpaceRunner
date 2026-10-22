@@ -59,6 +59,7 @@ add('changes/changed-files.txt', changedRaw);
 add('changes/commits.txt', git('log', '--reverse', '--format=%H%n%s%n', `${baseline}..${head}`));
 add('changes/head.txt', head + '\n');
 add('changes/branch.txt', branch + '\n');
+add('changes/remotes.txt', git('remote', '-v'));
 add('changes/working-tree-status.txt', git('status', '--porcelain=v1', '--untracked-files=all'));
 add('changes/SUMMARY.md', `# ${config.taskId}\n\nBaseline: ${baseline}\nFinal HEAD: ${head}\nBranch: ${branch}\n\nSee reports/IMPLEMENTATION.md for significant changes. Snapshot blobs are read from HEAD; no working-directory source files are copied.\n\nExclusions: ${JSON.stringify(exclusions)}\n`);
 
@@ -82,6 +83,14 @@ for (const name of await readdir(join(root, '.cache/review', config.taskId))) {
 for (const name of config.screenshots) {
   if (posix.basename(name) !== name || !name.endsWith('.png')) throw new Error('Unsafe screenshot name');
   add(`screenshots/${name}`, await readFile(join(root, 'test-results', name)));
+}
+const audioPreviews = [];
+for (const name of config.audioPreviews ?? []) {
+  if (posix.basename(name) !== name || !name.endsWith('.wav')) throw new Error('Unsafe audio preview name');
+  const bytes = await readFile(join(root, 'test-results', name));
+  if (bytes.toString('ascii', 0, 4) !== 'RIFF' || bytes.toString('ascii', 8, 12) !== 'WAVE' || bytes.readUInt32LE(4) + 8 !== bytes.length) throw new Error('Invalid audio preview WAV');
+  add(`audio/${name}`, bytes);
+  audioPreviews.push({ file: `audio/${name}`, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), provenance: 'Native OfflineAudioContext render of the actual synthesis/gain graph; not a microphone recording or subjective listening approval.' });
 }
 
 const unitOutput = await readFile(join(directory, 'test.log'), 'utf8');
@@ -118,10 +127,16 @@ if (performanceMeasurements) {
   }
   add('reports/PERFORMANCE-MEASUREMENTS.json', JSON.stringify(performanceMeasurements, null, 2) + '\n');
 }
+const audioMeasurements = config.audioMeasurements ? {
+  live: JSON.parse(await readFile(join(directory, 'audio-live.json'), 'utf8')),
+  offline: JSON.parse(await readFile(join(directory, 'audio-browser.json'), 'utf8')),
+  restarts: JSON.parse(await readFile(join(directory, 'audio-restarts.json'), 'utf8')),
+} : undefined;
+if (audioMeasurements) add('reports/AUDIO-DIAGNOSTICS.json', JSON.stringify(audioMeasurements, null, 2) + '\n');
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements,
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

@@ -32,12 +32,13 @@
           <p>Read the gaps. Dodge the incoming debris.<br class="desktop-break" /> See how far you can go.</p>
           <button id="launch" class="primary">Launch run <span aria-hidden="true">↗</span></button>
           <div class="controls"><span><kbd>W A S D</kbd> / <kbd>↑ ↓ ← →</kbd> to steer</span><span>Drag anywhere to fly on touch</span><span><kbd>ESC</kbd> or <kbd>P</kbd> to pause</span></div>
+          <button class="quiet-button sound-open" data-sound-open>Sound settings</button>
         </div>
         <div class="menu-record"><span class="label">PERSONAL BEST</span><strong><span id="menu-best">0</span> <small>M</small></strong><span>Every run is a new route.</span></div>
       </section>
 
       <section id="paused" class="overlay modal-overlay" aria-labelledby="paused-title" hidden>
-        <div class="panel"><div class="eyebrow">SYSTEMS ON HOLD</div><h2 id="paused-title">Take a breath.</h2><p id="pause-reason">Your flight is paused.</p><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><p class="small">WASD / arrow keys or drag to steer · ESC / P to pause</p></div>
+        <div class="panel"><div class="eyebrow">SYSTEMS ON HOLD</div><h2 id="paused-title">Take a breath.</h2><p id="pause-reason">Your flight is paused.</p><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><button class="quiet-button sound-open" data-sound-open>Sound settings</button><p class="small">WASD / arrows or drag · ESC / P to pause · M to mute</p></div>
       </section>
 
       <section id="game-over" class="overlay modal-overlay" aria-labelledby="over-title" hidden>
@@ -47,6 +48,18 @@
       <div id="flight-hint" class="flight-hint" hidden>Read the gaps. Avoid the debris. <span>·</span> WASD / arrows / drag to steer</div>
       <div id="damage" class="damage" role="status" hidden>HULL HIT <span>SHIELD ACTIVE</span></div>
       <div id="joystick" class="joystick" aria-hidden="true" hidden><i></i></div>
+      <dialog id="sound-settings" class="sound-dialog" aria-labelledby="sound-title" aria-describedby="sound-status">
+        <div class="sound-heading"><div><div class="eyebrow">FLIGHT SYSTEMS / AUDIO</div><h2 id="sound-title">Sound settings</h2></div><button id="sound-close" class="quiet-button" aria-label="Close sound settings">✕</button></div>
+        <p id="sound-status" role="status">Sound starts after Launch or a sound control.</p>
+        <label for="sound-master">Master volume <output id="sound-master-value" for="sound-master" aria-hidden="true">65%</output></label>
+        <input id="sound-master" type="range" min="0" max="100" step="1" value="65" />
+        <label for="sound-music">Music volume <output id="sound-music-value" for="sound-music" aria-hidden="true">35%</output></label>
+        <input id="sound-music" type="range" min="0" max="100" step="1" value="35" />
+        <label for="sound-sfx">Sound effects volume <output id="sound-sfx-value" for="sound-sfx" aria-hidden="true">75%</output></label>
+        <input id="sound-sfx" type="range" min="0" max="100" step="1" value="75" />
+        <button id="sound-mute" class="quiet-button" aria-pressed="false">Mute sound</button>
+        <p class="small">M to mute · Preferences save on this device.<br />Original synthesized sounds and ambient music.</p>
+      </dialog>
       <footer><span><i></i> STANDALONE FLIGHT</span><span id="telemetry">SPACE KIT / KENNEY · CC0</span></footer>
     </main>
     <script type="module" src="/src/main.ts"></script>

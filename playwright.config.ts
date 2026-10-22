@@ -18,6 +18,7 @@ export default defineConfig({
     { name: 'desktop', testMatch: 'desktop.spec.ts' },
     { name: 'readability', testMatch: 'readability.spec.ts' },
     { name: 'vfx', testMatch: 'vfx.spec.ts' },
+    { name: 'audio', testMatch: 'audio.spec.ts' },
     { name: 'touch', testMatch: 'touch.spec.ts', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } },
     { name: 'production', testMatch: 'production.spec.ts', use: { baseURL: 'http://127.0.0.1:4173' } },
   ],

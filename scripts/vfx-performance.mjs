@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 
 // The same held six-hazard fixture is used before and after the rendering change.
 // Rendering-only sample: no simulation, changing hazard count or gameplay RNG.
-const directory = resolve(process.env.REVIEW_RESULT_DIR || '.cache/review/PHASE-3-002/final');
+const directory = resolve(process.env.REVIEW_RESULT_DIR || '.cache/review/PHASE-3-003/final');
 await mkdir(directory, { recursive: true });
 const server = await createServer({ server: { host: '127.0.0.1', port: 5184, strictPort: true } });
 await server.listen();
@@ -33,16 +33,19 @@ try {
         active: true, x: (i % 3 - 1) * 3.4, y: i < 3 ? 1.5 : -1.5,
         z: -16 - i * 4, radius: 1, spin: 0.4, kind: i === 0 ? 0 : i < 3 ? 1 : 2, phase: i % 2 ? 4 : 0,
       });
-      const intervals = [], renderTimes = [];
+      const intervals = [], renderTimes = [], audioTimes = [];
       let previous;
       for (let frame = 0; frame < 240; frame++) {
         const now = await new Promise(resolve => requestAnimationFrame(resolve));
         model.elapsed += 1 / 60;
         model.distance += model.speed / 60;
+        const audioStart = performance.now();
+        game.audio?.update(model);
+        const audioMs = performance.now() - audioStart;
         const start = performance.now();
         game.world.render(model, 1 / 60);
         const renderMs = performance.now() - start;
-        if (frame >= 60) { intervals.push(now - previous); renderTimes.push(renderMs); }
+        if (frame >= 60) { intervals.push(now - previous); renderTimes.push(renderMs); audioTimes.push(audioMs); }
         previous = now;
       }
       const stats = values => {
@@ -52,7 +55,7 @@ try {
       const renderer = game.world.renderer;
       const gl = renderer.getContext();
       const extension = gl.getExtension('WEBGL_debug_renderer_info');
-      return { viewport: { width: innerWidth, height: innerHeight, devicePixelRatio }, seed: model.seed, activeHazards: model.field.hazards.filter(hazard => hazard.active).length, frames: intervals.length, frameIntervalMs: stats(intervals), renderCpuMs: stats(renderTimes), drawCalls: renderer.info.render.calls, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures, renderPixelRatio: renderer.getPixelRatio(), gpu: extension ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL) : 'unavailable' };
+      return { viewport: { width: innerWidth, height: innerHeight, devicePixelRatio }, seed: model.seed, activeHazards: model.field.hazards.filter(hazard => hazard.active).length, frames: intervals.length, frameIntervalMs: stats(intervals), renderCpuMs: stats(renderTimes), ...(game.audio ? { audio: { status: game.audio.status, updateCpuMs: stats(audioTimes) } } : {}), drawCalls: renderer.info.render.calls, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures, renderPixelRatio: renderer.getPixelRatio(), gpu: extension ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL) : 'unavailable' };
     });
     if (errors.length) throw new Error(errors.join('\n'));
     samples.push({ tier: mobile ? 'mobile-emulation' : 'desktop', ...sample });

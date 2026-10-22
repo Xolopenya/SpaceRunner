@@ -104,3 +104,17 @@ footer i { display: inline-block; width: 4px; height: 4px; background: var(--min
   .flight-hint { bottom: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .loading-pulse { animation: none; } .primary { transition: none; } }
+.sound-open { margin-top: 18px; min-height: 44px; }
+.sound-dialog { color: #eaf1f8; background: linear-gradient(135deg, #122136, #0b1323); border: 1px solid #4b617b; border-radius: 14px; padding: 28px; width: min(430px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; box-shadow: 0 30px 120px #0008; }
+.sound-dialog::backdrop { background: #030914c9; backdrop-filter: blur(5px); }
+.sound-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.sound-heading h2 { font-size: 28px; margin: 14px 0 18px; }
+.sound-dialog button { min-height: 44px; min-width: 44px; }
+.sound-dialog label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #c0d3e1; }
+.sound-dialog output { color: var(--mint); font-variant-numeric: tabular-nums; }
+.sound-dialog input[type='range'] { display: block; width: 100%; height: 44px; margin: 0 0 10px; accent-color: var(--mint); touch-action: pan-y; cursor: pointer; }
+.sound-dialog input:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; border-radius: 4px; }
+.sound-dialog #sound-mute { width: 100%; margin-top: 6px; }
+.sound-dialog p { font-size: 12px; margin-bottom: 18px; }
+.sound-dialog .small { font-size: 10px; margin: 18px 0 0; }
+@media (max-height: 580px) { .sound-open { margin-top: 9px; } .sound-dialog { padding: 20px; } .sound-dialog h2 { margin: 8px 0 12px; } }

@@ -29,6 +29,12 @@ The distant planet, stars, corner guides, engine glow and impact particles are r
 
 PHASE-3-001 retains all six GLB files and render normalization unchanged. Measured additional collision boxes for the half meteor, barrel and generator are documented in `COLLISIONS.md`; no new asset download or conversion is involved.
 
+## Original audio — PHASE-3-003, 2026-10-23
+
+Engine, hull/shield/destruction, UI effects and the 16-second stereo ambient composition are generated from repository-authored code in `src/audio/synthesis.ts`. No third-party audio recordings, samples, downloaded tracks, remote runtime URLs or additional libraries are used. No external audio attribution/license is claimed; Kenney's CC0 applies only to its models. The source composition and synthesis are included in the review snapshot.
+
+Review-only `audio-flight-preview.wav` and `audio-music-preview.wav` are native OfflineAudioContext renders of the same graph, with explicit generated-PCM provenance and integrity hashes in the review manifest. They are not microphone recordings, listening approvals or shipped audio assets, and remain in ignored test/review directories. Original 3D asset bytes and their licenses are unchanged.
+
 ## Runtime library notice
 
 Three.js 0.186.1 is the production runtime dependency, obtained through the npm registry on 2026-10-22. Author: three.js authors. Source: https://github.com/mrdoob/three.js. License: MIT, read from the installed package's `LICENSE`. The complete notice is preserved in `public/THIRD_PARTY_NOTICES.txt` and copied into the static build. Dependencies are version-pinned in `package-lock.json`; `node_modules` is excluded from Git. Development tooling is not shipped in the production bundle.
