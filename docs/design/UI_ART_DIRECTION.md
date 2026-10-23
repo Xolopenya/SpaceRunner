@@ -1,12 +1,14 @@
 # Space Runner interface art direction
 
-Status: **proposal for owner approval**, PHASE-3-004A. Approved playable baseline: `5efda476f725df038bfb46ebbf9d65aaec2b646f`. No production integration is authorized by this document.
+Status: **Concept A approved by the owner and implemented in PHASE-3-004B**, 2026-10-23. Approval and production integration are explicitly authorized by the PHASE-3-004B brief. Approved design baseline: `80f292347109e64c1c20d3b12b447048a89fc7bd`. The PHASE-3-004A prototypes and historical review evidence remain unchanged.
+
+Production source is `index.html`, `src/styles.css` and `src/ui.ts`. See `../review/PHASE-3-004B/IMPLEMENTATION.md` and `UI-ACCESSIBILITY.md` for responsive adaptations, real state/audio integration and current verification. The prototype-boundary table below records the original study; production uses real model values and the existing SoundPanel.
 
 ## Thesis and recommendation
 
 Minimalist flight instrumentation for a fast, atmospheric, low-poly space arcade.
 
-Recommend **A — Flight Instrumentation**. Use an angular, two-line SPACE RUNNER title, a single cyan launch surface and a short, factual steering hint. During flight, remove the title entirely. Put three hull segments at upper left, distance and pause at upper right, and keep the central approach area open. The visible ship, planet and exhaust are the main illustration.
+Implement **A — Flight Instrumentation**. Use an angular, two-line SPACE RUNNER title, a single cyan launch surface and a short, factual steering hint. During flight, remove the title entirely. Put three hull segments at upper left, distance and pause at upper right, and keep the central approach area open. The visible ship, planet and exhaust are the main illustration.
 
 This creates a game identity through the relationship between title, numerical hierarchy, physical scene and immediate actions. No marketing headline, feature card, decorative dashboard gauge, rounded modal stack, build label or permanent brand banner is needed. Each line earns its place by identifying the game, explaining an input, reporting existing state or enabling an action.
 
@@ -50,4 +52,4 @@ Hover changes take 120ms with a 3px directional movement; reduced motion removes
 
 ## Approval and remaining risk
 
-The recommendation is based on rendered static states, not player preference testing. Verify it over moving hazards before production acceptance, including damage timing, long localized labels, larger scores, touch reach, physical safe areas and screen-reader behavior. The full game and audio are unchanged; no subjective listening approval is implied. B/C are desktop alternatives; only A receives full mobile/audio exploration. A separate owner-approved task must wire any chosen layout to the real HUD and SoundPanel.
+The owner selected A after the static study. PHASE-3-004B integrates it with real flight, damage, pause reasons, persisted scores and audio controls. Production checks include moving flight, actual hits/replays, long-distance fixtures, keyboard/touch, reduced motion and native safe-area environment overrides. Physical devices, localization, screen-reader user testing and broader player preference remain unverified. Gameplay/rendering/audio implementation is preserved; no subjective listening approval is implied. B/C remain unchanged desktop alternatives.

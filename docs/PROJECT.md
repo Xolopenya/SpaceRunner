@@ -1,6 +1,6 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. Current audio adds propulsion synthesis, damage/UI feedback, ambient music and preferences while preserving approved flight, camera, calibrated collisions, VFX and procedural generation.
+Third-person endless avoidance flight for desktop and mobile. The approved Concept A interface now presents real flight, hull, distance, pause/results and native audio settings. Gameplay, camera, calibrated collisions, VFX, procedural generation and audio ownership remain unchanged.
 
 ## Controls and rules
 
@@ -45,7 +45,7 @@ Platform methods remain standalone no-ops except safe local storage; no Yandex S
 
 ## PHASE-3-004A design exploration
 
-The subsequent PHASE-3-004A exploration is isolated in `design/ui-concepts/`: three browser-rendered UI alternatives, real approved-game backgrounds and a proposed A direction in `docs/design/`. Its review state/sliders are independent of Game/AudioManager and do not save settings or play audio. The original DOM/style/runtime remain unchanged; no design has owner approval or production integration yet. Repository UI guidance is in `.agents/skills/space-runner-ui-design/SKILL.md`.
+PHASE-3-004A remains isolated in `design/ui-concepts/`: three browser-rendered UI alternatives and real approved-game backgrounds. Its review state/sliders remain independent of Game/AudioManager and do not save settings or play audio. The owner approved A in PHASE-3-004B; production now adapts the original `HUD` and DOM/styles using local Oxanium 500/Plex Mono 400, live hull counts/pause metrics, safe-area layouts and full large-score formatting. SoundPanel/Game/input/rendering/core remain unchanged. See `review/PHASE-3-004B/` for integration, accessibility, build/measurement boundaries and reference deviations. Repository UI guidance remains in `.agents/skills/space-runner-ui-design/SKILL.md`.
 
 ## PHASE-3-003 audio lifecycle
 

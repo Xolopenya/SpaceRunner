@@ -56,3 +56,9 @@ The two original notices are retained byte-for-byte by a narrowly scoped `.gitat
 Six design reference backgrounds are canvas-only PNGs captured from this repository's approved baseline `5efda476f725df038bfb46ebbf9d65aaec2b646f`, using the existing Kenney models and original procedural scene. Their viewport/model values/browser/method and hashes are in `design/ui-concepts/assets/capture-provenance.json`. Production DOM siblings were hidden only while the test browser captured the canvas and then restored. No new world artwork was generated or downloaded.
 
 Race the Sun, Hyperburner and WipEout images remain reference links in `docs/design/UI_REFERENCE_RESEARCH.md`. No proprietary reference screenshot, logo or game asset is bundled in the repository or review package.
+
+## Production typography — PHASE-3-004B, 2026-10-23
+
+Concept A approval authorizes production use of the existing local Oxanium 500 and IBM Plex Mono 400 files. These two TTFs and their two full notices are copied unchanged to `public/assets/fonts/`. Their authors, official source URLs and SHA256 values are the same as the design-font table above; current review diagnostics independently verify every copied font/notice against `design/ui-concepts/assets/fonts/sources.json`. No new download, conversion, subsetting, dependency or CDN is involved. Unused Oxanium 700 stays design-only.
+
+Production font bytes total **157,232**; the two notices total **8,840**. `.gitattributes` preserves original production notice bytes/whitespace, as for the historical design notices. CSS/preloads request only the two local used fonts. The small Sound settings arrow is repository-authored CSS/SVG background decoration with empty generated text so it does not alter accessible names. No comparison screenshot or prototype control is copied into public or the production entry graph.

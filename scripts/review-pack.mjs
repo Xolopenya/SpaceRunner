@@ -142,10 +142,19 @@ if (designMeasurements) {
   }
   add('reports/UI-CONCEPT-DIAGNOSTICS.json', JSON.stringify(designMeasurements, null, 2) + '\n');
 }
+const uiProductionMeasurements = config.uiProductionMeasurements ? JSON.parse(await readFile(join(directory, 'ui-production.json'), 'utf8')) : undefined;
+if (uiProductionMeasurements) {
+  if (uiProductionMeasurements.baseline !== baseline || uiProductionMeasurements.screenshots.length !== config.screenshots.length) throw new Error('Production UI evidence identity mismatch');
+  for (const shot of uiProductionMeasurements.screenshots) {
+    const entry = entries.find(entry => entry.name === `screenshots/${shot.name}`);
+    if (!entry || createHash('sha256').update(entry.data).digest('hex') !== shot.sha256) throw new Error(`Production UI screenshot mismatch: ${shot.name}`);
+  }
+  add('reports/UI-PRODUCTION-DIAGNOSTICS.json', JSON.stringify(uiProductionMeasurements, null, 2) + '\n');
+}
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, designMeasurements,
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, designMeasurements, uiProductionMeasurements,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

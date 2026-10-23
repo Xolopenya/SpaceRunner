@@ -3,64 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#050b19" />
+    <meta name="theme-color" content="#050a14" />
     <meta name="description" content="Pilot a small ship through an endless asteroid field. A Space Runner playable prototype." />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%2370ffe0' d='M20 4 36 34 20 26 4 34Z'/%3E%3C/svg%3E" />
-    <title>Space Runner — Flight test</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%238cdeeb' d='M20 4 36 34 20 26 4 34Z'/%3E%3C/svg%3E" />
+    <link rel="preload" href="/assets/fonts/oxanium-medium.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/assets/fonts/ibm-plex-mono-regular.ttf" as="font" type="font/ttf" crossorigin />
+    <title>Space Runner</title>
   </head>
   <body>
     <main id="game" data-state="LOADING">
       <canvas id="flight" aria-label="Space Runner flight area. Steer with WASD, arrow keys, or drag. Avoid the incoming obstacles."></canvas>
       <div class="vignette" aria-hidden="true"></div>
-      <header class="topbar">
-        <a class="brand" href="./" aria-label="Space Runner home"><span class="brand-mark" aria-hidden="true">↟</span><span>SPACE<span class="brand-light">RUNNER</span></span></a>
-        <span class="build-label">FLIGHT TEST <span>03</span></span>
-        <button id="pause" class="quiet-button" aria-label="Pause flight" hidden>Ⅱ <span>PAUSE</span></button>
-      </header>
-
       <section id="hud" class="hud" aria-label="Flight status" hidden>
-        <div class="hull-block"><span class="label">HULL INTEGRITY</span><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div></div>
-        <div class="distance-block"><span class="label">DISTANCE</span><div><strong id="distance">0</strong><span class="unit"> M</span></div></div>
+        <div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="hull-count">3</span><small>/3</small></span></div></div>
+        <div class="distance-block"><span class="label">DISTANCE</span><div class="number-line"><strong id="distance">0</strong><span class="unit">m</span></div></div>
+        <button id="pause" class="pause-button" aria-label="Pause flight" hidden><span class="pause-mark" aria-hidden="true"></span><span>Pause</span></button>
       </section>
-
-      <div id="loading" class="loading" role="status"><span class="loading-pulse"></span><span id="loading-message">PREPARING FLIGHT SYSTEMS</span><button id="retry" class="quiet-button" hidden>Retry loading</button></div>
-
+      <section id="loading" class="loading" aria-labelledby="loading-title"><span class="mode-label">SPACE RUNNER</span><h1 id="loading-title">Preparing flight.</h1><p id="loading-message" role="status">Preparing flight systems…</p><button id="retry" class="primary" hidden>Retry loading <span aria-hidden="true">↻</span></button></section>
       <section id="menu" class="overlay menu" aria-labelledby="menu-title" hidden>
-        <div class="hero-copy">
-          <div class="eyebrow"><span></span> OUTER BELT / SOLO FLIGHT</div>
-          <h1 id="menu-title">A little ship.<br />An endless<br /><em>frontier.</em></h1>
-          <p>Read the gaps. Dodge the incoming debris.<br class="desktop-break" /> See how far you can go.</p>
-          <button id="launch" class="primary">Launch run <span aria-hidden="true">↗</span></button>
-          <div class="controls"><span><kbd>W A S D</kbd> / <kbd>↑ ↓ ← →</kbd> to steer</span><span>Drag anywhere to fly on touch</span><span><kbd>ESC</kbd> or <kbd>P</kbd> to pause</span></div>
-          <button class="quiet-button sound-open" data-sound-open>Sound settings</button>
+        <div class="menu-copy">
+          <div class="menu-heading"><span class="mode-label">ENDLESS FLIGHT</span><h1 id="menu-title" class="game-title" aria-label="Space Runner"><span>SPACE</span><span>RUNNER<span class="title-cut" aria-hidden="true"></span></span></h1><p class="mission-line">Avoid debris. Fly further.</p></div>
+          <div class="menu-actions"><button id="launch" class="primary">Launch run <span aria-hidden="true">↗</span></button><button class="sound-open text-button" data-sound-open>Sound settings</button><div class="controls"><p class="steer"><span class="desktop-control"><kbd>WASD</kbd> / <kbd>↑ ↓ ← →</kbd> &nbsp; Steer</span><span class="touch-control">Drag anywhere to steer</span></p><p><kbd>ESC / P</kbd> &nbsp; Pause &nbsp; / &nbsp; <kbd>M</kbd> &nbsp; Mute</p></div></div>
         </div>
-        <div class="menu-record"><span class="label">PERSONAL BEST</span><strong><span id="menu-best">0</span> <small>M</small></strong><span>Every run is a new route.</span></div>
+        <aside class="menu-record record"><span class="label">PERSONAL BEST</span><div class="number-line"><strong id="menu-best">0</strong><span class="unit">m</span></div></aside>
       </section>
-
-      <section id="paused" class="overlay modal-overlay" aria-labelledby="paused-title" hidden>
-        <div class="panel"><div class="eyebrow">SYSTEMS ON HOLD</div><h2 id="paused-title">Take a breath.</h2><p id="pause-reason">Your flight is paused.</p><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><button class="quiet-button sound-open" data-sound-open>Sound settings</button><p class="small">WASD / arrows or drag · ESC / P to pause · M to mute</p></div>
+      <section id="paused" class="overlay paused" aria-labelledby="paused-title" hidden>
+        <div class="state-copy">
+          <div class="state-heading"><span class="state-label">FLIGHT PAUSED</span><h2 id="paused-title" class="state-title">Hold<br /> position.</h2><p id="pause-reason" class="state-description">Your flight is paused.</p></div>
+          <div class="state-actions"><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><button class="sound-open text-button" data-sound-open>Sound settings</button><div class="controls"><p class="steer"><span class="desktop-control"><kbd>WASD</kbd> / <kbd>↑ ↓ ← →</kbd> &nbsp; Steer</span><span class="touch-control">Drag anywhere to steer</span></p><p><kbd>ESC / P</kbd> &nbsp; Resume &nbsp; / &nbsp; <kbd>M</kbd> &nbsp; Mute</p></div></div>
+        </div>
+        <div class="paused-metrics"><span class="label">DISTANCE</span><div class="number-line result-number"><strong id="paused-score">0</strong><span class="unit">m</span></div><div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="paused-hull" class="hull" role="meter" aria-label="Paused hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="paused-hull-count">3</span><small>/3</small></span></div></div></div>
       </section>
-
-      <section id="game-over" class="overlay modal-overlay" aria-labelledby="over-title" hidden>
-        <div class="panel"><div class="eyebrow">FLIGHT RECORDER / END OF RUN</div><h2 id="over-title">Signal lost.</h2><p>The frontier will be here for your next flight.</p><div class="results"><div><span class="label">DISTANCE</span><strong><span id="final-score">0</span><small> M</small></strong></div><div><span class="label">PERSONAL BEST</span><strong><span id="final-best">0</span><small> M</small></strong></div></div><button id="replay" class="primary">Fly again <span aria-hidden="true">↗</span></button><p id="seed" class="small"></p></div>
+      <section id="game-over" class="overlay game-over" aria-labelledby="over-title" hidden>
+        <div class="state-copy"><div class="state-heading"><span class="state-label">HULL DEPLETED</span><h2 id="over-title" class="state-title">End of flight.</h2></div><div class="result"><span class="label">DISTANCE</span><div class="number-line result-number"><strong id="final-score">0</strong><span class="unit">m</span></div></div><div class="state-actions"><button id="replay" class="primary">Fly again <span aria-hidden="true">↗</span></button><p id="seed" class="route"></p></div></div>
+        <aside class="record"><span class="label">PERSONAL BEST</span><div class="number-line"><strong id="final-best">0</strong><span class="unit">m</span></div></aside>
       </section>
-
-      <div id="flight-hint" class="flight-hint" hidden>Read the gaps. Avoid the debris. <span>·</span> WASD / arrows / drag to steer</div>
-      <div id="damage" class="damage" role="status" hidden>HULL HIT <span>SHIELD ACTIVE</span></div>
+      <div id="flight-hint" class="flight-hint" hidden><span class="desktop-control">WASD / arrows to steer</span><span class="touch-control">Drag to steer</span><span class="hint-divider" aria-hidden="true">·</span>Avoid the debris</div>
+      <div id="damage" class="damage" role="status" hidden><strong>Hull hit</strong><span>Impact protection active</span></div>
       <div id="joystick" class="joystick" aria-hidden="true" hidden><i></i></div>
+      <div id="telemetry" class="flight-speed" hidden></div>
       <dialog id="sound-settings" class="sound-dialog" aria-labelledby="sound-title" aria-describedby="sound-status">
-        <div class="sound-heading"><div><div class="eyebrow">FLIGHT SYSTEMS / AUDIO</div><h2 id="sound-title">Sound settings</h2></div><button id="sound-close" class="quiet-button" aria-label="Close sound settings">✕</button></div>
+        <header class="sound-heading"><h2 id="sound-title">Audio</h2><button id="sound-close" class="text-button" aria-label="Close sound settings">Close <span aria-hidden="true">×</span></button></header>
         <p id="sound-status" role="status">Sound starts after Launch or a sound control.</p>
-        <label for="sound-master">Master volume <output id="sound-master-value" for="sound-master" aria-hidden="true">65%</output></label>
-        <input id="sound-master" type="range" min="0" max="100" step="1" value="65" />
-        <label for="sound-music">Music volume <output id="sound-music-value" for="sound-music" aria-hidden="true">35%</output></label>
-        <input id="sound-music" type="range" min="0" max="100" step="1" value="35" />
-        <label for="sound-sfx">Sound effects volume <output id="sound-sfx-value" for="sound-sfx" aria-hidden="true">75%</output></label>
-        <input id="sound-sfx" type="range" min="0" max="100" step="1" value="75" />
-        <button id="sound-mute" class="quiet-button" aria-pressed="false">Mute sound</button>
-        <p class="small">M to mute · Preferences save on this device.<br />Original synthesized sounds and ambient music.</p>
+        <div class="sound-channels">
+          <div class="sound-channel"><label for="sound-master">Master volume <output id="sound-master-value" for="sound-master" aria-hidden="true">65%</output></label><input id="sound-master" type="range" min="0" max="100" step="1" value="65" /></div>
+          <div class="sound-channel"><label for="sound-music">Music volume <output id="sound-music-value" for="sound-music" aria-hidden="true">35%</output></label><input id="sound-music" type="range" min="0" max="100" step="1" value="35" /></div>
+          <div class="sound-channel"><label for="sound-sfx">Sound effects volume <output id="sound-sfx-value" for="sound-sfx" aria-hidden="true">75%</output></label><input id="sound-sfx" type="range" min="0" max="100" step="1" value="75" /></div>
+        </div>
+        <button id="sound-mute" class="secondary" aria-pressed="false">Mute sound</button>
+        <p class="sound-note"><kbd>M</kbd> to mute · Preferences save on this device.<br /> Original synthesized sounds and ambient music.</p>
       </dialog>
-      <footer><span><i></i> STANDALONE FLIGHT</span><span id="telemetry">SPACE KIT / KENNEY · CC0</span></footer>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. PHASE-3-004A: inspect approved baseline and UI states; research three reference games and font licenses.
-2. Build three isolated browser concepts; explore A in portrait, landscape and audio settings with real game captures.
-3. Render/inspect comparisons, verify unchanged production and existing regressions, and add the repository design skill.
-4. Commit/push only `feature/phase-3-ui-concepts`; produce/verify the current review ZIP. Await owner concept approval before production implementation.
+1. PHASE-3-004B: verify approved main/design and preserve fresh production/screenshots/build/rendering baselines.
+2. Integrate approved Concept A into the existing DOM/HUD and real sound dialog, preserving game/input/audio/rendering behavior.
+3. Verify original regressions plus live UI, long values, mobile/safe areas, focus and reference comparisons; document necessary adaptations.
+4. Commit/push only `feature/phase-3-ui-implementation`; produce/verify the architecture ZIP and PR/compare URL. No main merge or push.
 
 ## Acceptance
 
@@ -143,3 +143,34 @@ The initial desktop Chrome sample showed 16.7 ms median frame interval, 25 draw 
 | `node scripts/build-analysis.mjs` | Exit 0; unchanged Three.js chunk advisory |
 
 Review configuration now targets this task/full approved baseline and 29 current design screenshots. The existing packer retains committed source/binary patch/metadata/logs/inventory protections and additionally checks each design screenshot against its diagnostics hash. Delivery uses a clean tested feature commit, feature-only push and a reopened integrity-checked ZIP; generated manifest identifies exact HEAD/branch/checks/hash. No merge/main push or production UI integration is authorized. Physical devices, moving-hazard design acceptance, localization, subjective listening and owner concept approval remain pending; overall Phase 3 stays open.
+
+## PHASE-3-004B — Approved Concept A production integration, 2026-10-23
+
+- The owner's new brief explicitly approves Concept A and production integration. Read the required guidance/design documents, original UI/Game/Input/SoundPanel/AudioManager and approved study sources/screenshots. Clean main and fetched origin/main both contained `80f292347109e64c1c20d3b12b447048a89fc7bd`; created the requested `feature/phase-3-ui-implementation` from that main.
+- Preserved fresh old-production menu/flight/pause/audio/death captures in three viewports, four unchanged approved Concept A desktop images and a matched rendering/build baseline before editing runtime. Baseline output was 758,188 bytes / 11 files. Historical concept sources and evidence remain unchanged.
+- Integrated A into the original DOM/HUD: angular stacked title, local Oxanium/Plex Mono, cyan/navy/amber, open flight center, live hull numerals/distance, real pause reason/metrics, final/best distance/route, replay, actual loading progress/failure/retry and the existing native sound dialog. Game, input, core/PRNG/collisions, World/camera/VFX, loader and AudioManager/SoundPanel implementations remain unchanged. Review diagnostics compare 73 protected inputs with the approved baseline.
+- Copied only the two used licensed TTFs and their complete notices from approved local sources; all four hashes match. No new dependency/download was required. Added the same narrowly scoped production-notice Git attribute so original license bytes survive staging.
+- Responsive checks cover desktop 1440×900, portrait 390×844, landscape 844×390, tablet/smaller desktop and short screens down to 320×568 / 667×320. Full six-digit through 1,234,567,890 m values fit; native safe-area overrides, >=44px controls, touch through informational HUD, focus/return/Escape, reduced motion and actual preferences are exercised. Deliberate readable-label, variable-status, short-height and number-size adaptations are documented in `review/PHASE-3-004B/`.
+- Added nine UI tests without changing existing test files. Initial UI checks caught a too-short natural-distance wait and very-short-landscape HUD overlap; both were corrected. The first full browser run found a CSS decorative arrow entering Sound settings' accessible name (26 passed / 6 failed); empty generated text plus an SVG background preserves the original exact names. Audio/production recheck passed all nine tests. Full verification then passed 53 unit / 32 browser tests. Visual review also corrected a paused frozen-model capture missing its normal HUD sync; its nine-test recheck passed. Raw failed/corrected attempts remain in the review logs.
+- Inspected real HUD, damage, menu/pause/results, desktop/portrait/landscape audio, large score, loading failure and built-production renders plus before/approved/current comparison boards. A final landscape note-spacing correction was rebuilt successfully. Current build is 931,551 bytes / 15 files (+173,363 / 22.86%), mostly fonts/notices (166,072); JS 663,045 / Node gzip 169,576. No design images, review controls, runtime CDN or unused bold font ship.
+- Matched pre-commit rendering retained 16.7ms median / 17ms p95 RAF in both viewports and 43 draw calls / 34 geometries / 1 texture. The cached HUD diagnostic recorded zero mutations / 141 stable nodes across 5,000 updates; its timer-limited timing excludes full rendering/paint. Physical-device/assistive-technology/player acceptance remains pending, so overall Phase 3 stays open.
+- Current review metadata collects 43 PNGs, original/approved provenance, fonts/licenses, source, binary patch, Git metadata, architecture/accessibility/build reports, all command logs and integrity inventory. Delivery reruns verification from clean committed HEAD and packages its exact identifiers/results. Feature-only push is authorized; main stays unchanged. `gh auth status` reports no logged-in GitHub hosts, so delivery supplies the specified compare URL instead of a PR. No gameplay research, upgrades, monetization or Yandex work was started.
+
+### Executed commands and results
+
+| Command | Actual result before milestone commit |
+| --- | --- |
+| `git status --short`; `git fetch origin`; `git rev-list --left-right --count main...origin/main` | Clean approved baseline; fetch exit 0; `0 0` |
+| `git switch -c feature/phase-3-ui-implementation` | Exit 0 |
+| `node scripts/ui-production-baseline.mjs` | Exit 0; 15 old-UI + four unchanged approved screenshots and build/provenance metadata |
+| `node scripts/vfx-performance.mjs` with baseline `REVIEW_RESULT_DIR` | Exit 0; matched six-hazard, 180-frame baseline in two viewports |
+| `npm run review:verify` | Corrected full run exit 0; all nine commands passed |
+| `npm run typecheck` | Exit 0 |
+| `npm run test` | Exit 0; 53 passed / 0 failed |
+| `npm run build` | Exit 0; final 931,551 bytes / 15 files; existing Three.js chunk advisory |
+| `npm run test:browser` | Exit 0; 32 passed (2.2 minutes), Chrome 155.0.8059.85 |
+| `npx playwright test --project=audio --project=production` | Exit 0; nine passed (35.8s) after accessible-name correction |
+| `npx playwright test --project=ui` | Exit 0; nine passed (39.9s) after capture sync correction |
+| `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit 0; whitespace/safety/build attribution passed |
+| `node scripts/ui-production-review.mjs` | Exit 0; 73 protected files, 43 PNGs, matching font/license hashes, stable HUD and measured build delta |
+| `gh auth status` | Exit 1; no authenticated GitHub host; compare-link fallback applies |
