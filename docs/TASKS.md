@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. GAMEPLAY-001A: verify stable main includes the approved UI milestone; audit actual generator, dynamics, collision and pool contracts.
-2. Measure fixed-seed current behavior using non-invasive research tooling; distinguish source facts, measured proxies and player hypotheses.
-3. Produce eight reviewable design documents covering continuous flow, stateful fairness, pacing, patterns, decisions, tests and the B roadmap. Keep production unchanged.
-4. Verify existing regressions/scope, commit/push only `feature/gameplay-001a-field-design`, and validate the local review ZIP. Do not start B before external approval.
+1. GAMEPLAY-001B-1: verify main contains approved research `c447ee5`; read all eight design records and actual source, then create the requested feature branch.
+2. Implement isolated planned-hazard contracts, keyed full-XY proposals, half-open ownership, bounded transactions and structural checks. Keep all live gameplay inputs unchanged.
+3. Test golden seeds, seams/counts/reset, measure real old/new output, and render actual distribution plots; record limitations and B-2 interface only.
+4. Run existing regressions/static/diagnostics, review changes, commit/push the feature branch and validate its review ZIP. B-2 still requires external review.
 
 ## Acceptance
 
@@ -204,3 +204,32 @@ Review configuration now targets this task/full approved baseline and 29 current
 | `gh auth status` | Exit1; no logged-in GitHub hosts; compare fallback applies |
 
 Final design consistency review corrected the research proposal's scheduling arithmetic:24-unit ownership cells are grouped into48–144-unit planning transactions, not one cell per one-second job. A144-tick deadline fits the minimum1.4118s transaction cadence at speed34. The proposed horizon/work limits are15s, two beams/518,400 state propagations plus up to7,200 replay steps within589,824 propagation-budget steps. Narrow-query cost and phone timing remain unmeasured gates. This follow-up changes documentation only; the B implementation remains unauthorized. The final review package is regenerated from the follow-up commit rather than rewriting the first published research commit.
+
+## GAMEPLAY-001B-1 — continuous field foundation, 2026-10-23
+
+- Read the B-1 brief, full AGENTS/master brief, all eight approved design records and actual field/GameModel/Ship/collision/config/review contracts. Verified clean main and origin/main include approved `c447ee52d3fcc891c6c9e633eb604905c5a99443`, with zero divergence; created `feature/gameplay-001b-field-foundation` from main.
+- Added three isolated pure modules for immutable planned data/settings, keyed random-access proposals, structural checks and a future-validator interface only. All existing production source/config/assets/tests are unchanged. No live import or player flag; no trajectory validator, director, patterns, score change or B-2 work. No dependency or asset installation was necessary.
+- Actual half-open 24-unit ownership examines neighboring independently displaced anchors; owners contain 0–2 objects. Transactions cover 48–144 units, normally at most seven candidates, explicit buffer cap12/context hard32/soft24. Production72-record pool and rendering ownership are untouched. All-or-none proposal errors/structural rejection do not mutate a world or consume later random draws; runtime atomic publication remains deferred.
+- Added 12 tests (65 total), including three unrounded golden hashes, all transaction lengths/order/retry, full XY coverage, counts/finite metadata, canonical IDs/duplicate anchors, cross-cell separation, bounds/numeric limits, immutable snapshots/reset, capacity rejection, explicit validator test-double rejection and real GameModel isolation. Real structural stress passed 256 seeds×1024 cells. Corrected one initial seam test fixture that selected an empty cell; it now exercises separation across populated adjacent owners.
+- Actual16-seed matched pass-distance window[0,19200): old28,403 objects/9.24577 per100, B-1 12,794/4.16471; same-depth adjacency82.3088%→0%. Candidate gap min/median/p95/max12.1320/23.9444/32.2842/35.8755; zero separation failures. Owner histogram3,209/6,388/3,203 for0/1/2 objects. Exact reverse-transaction replay/reset passed all16 seeds. Raw metrics also report a steady distance window and old object separation under the new screen.
+- Added real-data depth/XY/gap plots and inspected them plus the unchanged production screenshot. Source boundary verifies83 approved files with only checkout newline normalization permitted; no production import, dependency/asset request or resource change. Build filenames/sizes match available approved manifest:931,609 bytes/15 files. Fresh output hashes are recorded; historical byte hashes are not fabricated.
+- Local timing/memory methods and values, sampler cadence limitations, bypass analysis and B-2 boundaries are in `review/GAMEPLAY-001B-1/`. First successful benchmark log is preserved separately; final package reruns record fresh timing/memory. Neither structural validity nor positive stripe probes proves fairness, safety, fun or readiness. Physical phone/other engine/human testing remains unverified.
+- Full precommit verification passed all nine checks below, including65 unit tests and32 installed-Chrome browser tests (2.2 minutes). Existing asset404 fixtures are deliberate; original Vite chunk advisory remains. README/project/review config now describe actual B-1 work. Packaging/ZIP safety implementation is unchanged.
+- GitHub CLI authentication check returned exit1 (no logged-in hosts); feature compare delivery applies. Tested commit, feature-only push and exact-HEAD package are the remaining delivery operations; their generated SHA/status/logs/ZIP inventory are reported at handoff. No main push, merge or force operation is authorized or performed. B-2 needs external review approval.
+
+| Exact command | Observed precommit result |
+| --- | --- |
+| `git fetch origin`; `git merge-base --is-ancestor c447ee52d3fcc891c6c9e633eb604905c5a99443 main` and `origin/main` | Exit0; approved baseline on both |
+| `git rev-list --left-right --count main...origin/main`; `git switch -c feature/gameplay-001b-field-foundation main` | `0 0`; branch created |
+| `node --experimental-strip-types --test tests/field-generator.test.ts` | Exit0;12 passed |
+| `npm run typecheck` | Exit0 |
+| `npm run test` | Exit0;65 passed,0 failed |
+| `npm run build` | Exit0;931,609 bytes/15 files; existing Three.js advisory |
+| `npm run test:browser` | Exit0;32 passed (2.2m) |
+| `git diff --check` | Exit0 |
+| `node scripts/review-static.mjs` | Exit0; known-pattern safety check |
+| `node scripts/build-analysis.mjs` | Exit0 |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0; existing real GLB/profile audit |
+| `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0; real sampling/replay/ranges/context/boundary/memory assertions and three plots |
+| `npm run review:verify` | Exit0; all nine checks above, raw logs and JSON saved |
+| `gh auth status` | Exit1; no authenticated host, compare fallback |

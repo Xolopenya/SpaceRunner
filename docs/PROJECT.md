@@ -65,4 +65,8 @@ The two round meteors retain their spheres. Half meteor, barrel and generator no
 
 ## GAMEPLAY-001A research
 
-The current generator remains unchanged. Its new [audit](game-design/CURRENT_GENERATOR_AUDIT.md) measures coplanar waves and identifies permanent safe X±2 stripes under the current collision envelope. The [continuous-field proposal](game-design/CONTINUOUS_FIELD_ARCHITECTURE.md), [conditional fairness contract](game-design/PROCEDURAL_FAIRNESS.md) and accompanying decision/test/implementation records are research for external review, not an implemented generator. GAMEPLAY-001B requires independent architecture approval. Existing controls, physics, camera, UI, audio, VFX, assets, score and health stay as approved.
+The live generator remains unchanged. The [audit](game-design/CURRENT_GENERATOR_AUDIT.md) measures coplanar waves and permanent safe X±2 stripes. The eight game-design records preserve the approved research baseline. The subsequent owner-authorized B-1 foundation is described below; later milestones still require external review.
+
+## GAMEPLAY-001B-1 isolated foundation
+
+`core/field-generator.ts`, `field-settings.ts` and `field-types.ts` provide immutable planned hazards, keyed random-access ambient proposals and structural checks. Tests/research tooling alone import them. Depth anchors use separate keyed pose/depth streams, actual half-open24-unit ownership and48–144-unit transactions; each owner has0–2 hazards. Candidate12/context32 bounds are separate from the unchanged live72-record pool. The future validator has an interface only: structure does not imply a reachable path. There is no live flag, publisher, director, encounter library, scoring or new asset. See [implemented architecture](review/GAMEPLAY-001B-1/ARCHITECTURE.md), [measurements](review/GAMEPLAY-001B-1/PERFORMANCE.md) and TASKS. B-2 requires external review approval.

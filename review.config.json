@@ -1,41 +1,30 @@
 {
-  "taskId": "GAMEPLAY-001A",
-  "baseline": "f1a651e5d2a6079aadf51a31e6ca929e25bf0d31",
+  "taskId": "GAMEPLAY-001B-1",
+  "baseline": "c447ee52d3fcc891c6c9e633eb604905c5a99443",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "CURRENT_GENERATOR_AUDIT.md": "docs/game-design/CURRENT_GENERATOR_AUDIT.md",
-    "ARCHITECTURE.md": "docs/game-design/CONTINUOUS_FIELD_ARCHITECTURE.md",
-    "PROCEDURAL_FAIRNESS.md": "docs/game-design/PROCEDURAL_FAIRNESS.md",
-    "ENCOUNTER_PATTERN_LIBRARY.md": "docs/game-design/ENCOUNTER_PATTERN_LIBRARY.md",
-    "DIFFICULTY_AND_PACING.md": "docs/game-design/DIFFICULTY_AND_PACING.md",
-    "GENERATOR_TEST_PLAN.md": "docs/game-design/GENERATOR_TEST_PLAN.md",
-    "IMPLEMENTATION.md": "docs/game-design/GAMEPLAY_001B_IMPLEMENTATION_PLAN.md",
-    "GAMEPLAY_DECISIONS.md": "docs/game-design/GAMEPLAY_DECISIONS.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-1/ARCHITECTURE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-1/IMPLEMENTATION.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-1/PERFORMANCE.md"
   },
-  "screenshots": [
-    "gameplay-current-depth.png",
-    "gameplay-continuous-concept.png",
-    "gameplay-reachability-concept.png",
-    "gameplay-pattern-concepts.png"
-  ],
+  "screenshots": ["field-actual-depth.png", "field-actual-xy.png", "field-actual-gaps.png"],
   "extraChecks": [
     { "name": "collision-audit", "script": "scripts/collision-audit.mjs", "stripTypes": true },
-    { "name": "generator-research", "script": "scripts/generator-research.mjs", "stripTypes": true }
+    { "name": "field-foundation", "script": "scripts/field-foundation-benchmark.mjs", "stripTypes": true }
   ],
   "evidenceNotes": [
-    "Research and design milestone only. No proposed generator, validator, scoring mechanic or new asset is implemented.",
-    "The research script compares 82 original production/test/design inputs to the actual stable main baseline, including all gameplay and presentation sources, assets and dependency manifests.",
-    "Baseline observations call the real ObstacleField at 120Hz for 16 fixed seeds and 600 simulated seconds each, with an exact seed-42 replay. These collision-independent streams are not natural player run lengths.",
-    "Stationary contact probes use actual calibrated HazardCollision queries; radius, phase and rotation remain real. A metadata corridor change is not a mandatory player maneuver.",
-    "One diagram plots actual existing generator output. Three conceptual figures are hand-positioned illustrations, explicitly labelled as unimplemented and uncertified; none is a fake game screenshot.",
-    "Research JSON includes methods, full seed-42 events, per-seed distributions, protected-source hashes, conclusions and limitations. Timing describes the existing-generator diagnostic, not future validator or phone performance.",
-    "The four required checks retain every existing assertion. Deliberate recoverable asset-404 cases are expected test fixtures; other browser flows require clean errors."
+    "Real isolated B-1 candidate builder, not imported by any production entry. All baseline production inputs and tests are compared to approved research; fresh build hashes and optional historical name/size comparison are recorded.",
+    "Existing tests remain unchanged. New tests pin full-precision goldens and sweep256 seeds x1024 ownership cells, including adjacent context. Structure does not imply reachability.",
+    "Benchmarks compare16 seeds over center-pass-distance[0,19200). Old output is collected at120Hz for600s. New output is a distance-only ambient stream with no bootstrap, acceptance, director or runtime. Also report[4200,19200) separately.",
+    "Three plots contain actual old/new data only; they are not game screenshots or witness diagrams.",
+    "Timing is local Node generation/inspection. Memory uses an --expose-gc child with bounded last-snapshot retention. No browser FPS, phone, validator or human-fun claim follows.",
+    "Unchanged browser tests cover resource/network ownership. No dependency, asset, scene object or feature flag was added. Deliberate asset404 recovery remains an expected fixture."
   ],
   "limitations": [
-    "External architecture approval is required before GAMEPLAY-001B. Proposed parameter values, budgets and acceptance targets are not measured results or approved tuning.",
-    "Finite witness search proves only a checked trajectory from its exact publication state under the documented dynamics/collision contract; no all-input, continuous-state or human-reaction guarantee is claimed.",
-    "State-aware acceptance is proposed to depend on input history as well as seed. Replay semantics and exploitability need review.",
-    "No future generator rejection rate, validator benchmark, clearance distribution or human-playtest outcome exists yet.",
-    "Physical phones, Safari/Firefox, sustained sessions and assistive-technology acceptance remain unverified. Existing Vite chunk advisory remains."
+    "Not safe for production gameplay: no trajectory validator, witness replay, stale-root check, runtime publication, bootstrap or scheduling. B-2 requires external review approval.",
+    "Experimental ambient-v1 retains a24-unit anchor cadence and averages about4.17 objects/100 units. Encounters and pacing remain deferred.",
+    "Structural validity checks bounded logical context only; future publisher must reserve every slot and validate current player state before any atomic publication.",
+    "Finite probes do not prove every stationary trajectory eventually collides. Full XY support removes the old lane-stripe argument, not every possible exploit.",
+    "Physical phones, Safari/Firefox and human playtesting remain unverified. Existing Vite chunk advisory remains."
   ]
 }
