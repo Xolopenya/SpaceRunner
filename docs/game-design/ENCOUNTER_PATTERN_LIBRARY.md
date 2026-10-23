@@ -9,7 +9,7 @@ Four intents are sufficient for the first hybrid field. These are candidates for
 | Alternating avoidance | 4–6 objects, 2–3 decisions | 84–132 units | Controlled reversals with sufficient braking time |
 | Vertical weave | 4–6 objects, 2–3 decisions | 84–132 units | Make vertical control useful without compulsory lane gates |
 
-Counts replace part of the ambient allowance rather than adding an unchecked second density layer. Depth spans may cross several 24-unit ownership cells; reserve the whole encounter privately and certify it as one candidate. A pattern must not be published in fragments whose later continuation has not been checked. Start with the existing five variants and radius 0.65–1.1. No new assets or moving centers.
+Counts replace part of the ambient allowance rather than adding an unchecked second density layer. Depth spans may cross several 24-unit ownership cells; reserve the whole encounter within a 48–144-unit planning transaction and certify it as one candidate. A pattern must not be published in fragments whose later continuation has not been checked. It must fit the remaining pacing section or explicitly reserve its completion before recovery. Start with the existing five variants and radius 0.65–1.1. No new assets or moving centers.
 
 ## A. Scattered field
 

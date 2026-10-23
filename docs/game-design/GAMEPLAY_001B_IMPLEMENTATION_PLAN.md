@@ -6,7 +6,7 @@ Recommendation: a distance-indexed hybrid stream plus four small encounter inten
 
 ## B-1 — Data contracts and isolated stream foundation
 
-Expected files: new `src/core/field-generator.ts` and focused tests, a small future field-settings module, existing `obstacles.ts` facade. Introduce stable IDs, pass-distance coordinates, half-open 24-unit ownership cells, bounded candidate storage and atomic pool reservation. Seed keyed local RNG streams; record version/replay inputs. Build full-XY, varying-depth ambient candidates in tests only.
+Expected files: new `src/core/field-generator.ts` and focused tests, a small future field-settings module, existing `obstacles.ts` facade. Introduce stable IDs, pass-distance coordinates, half-open24-unit ownership cells, bounded48–144-unit planning transactions and atomic pool reservation. Ownership granularity must not set a one-cell-per-job throughput bottleneck. Seed keyed local RNG streams; record version/replay inputs. Build full-XY, varying-depth ambient candidates in tests only.
 
 Acceptance: real candidate determinism/range/overlap/cell/pool/reset tests pass; existing production default remains old generator. No UI switch, new asset or movement tuning. Explicitly check that no fixed X-band bypass follows from the new placement constraints. Source remains pure core with no renderer/DOM dependency. This milestone depends on approved replay/capacity contracts, not on a speculative generalized content framework.
 

@@ -64,12 +64,13 @@ Starting parameters (all subject to B-2 benchmarking):
 | Search state | Exact x,y,vx,vy,t,D; never snap dynamics to lane centers |
 | Hash pruning cells | 0.25-unit XY and 0.5-unit/s velocity bins; retain at most two exact representatives per cell before global beam pruning |
 | Beam | 16 states per macro layer; deterministic lexicographic ranking and tie IDs |
-| Horizon | Dynamic through last committed/candidate opportunity + neutral braking; hard cap 12s |
-| Candidate cells | 24 units; planning frontier initially ≤192 units ahead; no committed center beyond root D+216 |
+| Horizon | Dynamic through last committed/candidate opportunity + neutral braking; hard cap 15s |
+| Ownership / transaction | 24-unit ownership cells; reserve 2–6 cells (48–144 units) per planning job; no per-cell synchronous wall |
+| Planning lead | First unpublished center initially ≥root D+128; last center ≤root D+272 |
 | Terminal reserve | 16 units after the furthest center; no other committed objects in this tail |
-| Work | At most two beam searches and four direct witness replays per cell |
+| Work | At most two beam searches and four direct witness replays per transaction |
 | Incremental chunk | ≤4096 state propagations and ≤8192 narrow queries per fixed tick; fixed operation counts, not wall-clock stopping |
-| Publication deadline | Root tick +120; publish at this fixed tick even if search finishes early |
+| Publication deadline | Root tick +144 (1.2s); publish at this fixed tick even if search finishes early |
 
 Cell bins are solely pruning keys, not legal positions or guaranteed reachable regions. Retained nodes store their exact predecessor/action chain. Prefer fewer control changes, conservative clearance, non-boundary positions and low terminal velocity; stable IDs break ties. A discarded exact state might have been the only solution: **false rejection is expected**. Never connect two representatives merely because they share a bin, interpolate a shortcut, or accept their averaged state. Pruning cannot establish a false collision-free witness if every returned sequence is replayed from the real root.
 
@@ -78,7 +79,7 @@ The 0.15 margin is extra clearance for readability/numerical reserve. It is **no
 ## 5. Candidate, fallback and publication pseudocode
 
 ```text
-beginCell(root, committed, cellId):
+beginTransaction(root, committed, reservedCellIds):
     snapshot := copy exact state, held input, absolute times and committed poses
     assert fixed slot/horizon bounds; reserve empty terminal tail
     base := search(snapshot, committed, reactionPrefix, terminalTail)
@@ -114,19 +115,21 @@ The four-replay budget includes independent verification of successful search ou
 
 If the base witness is blocked by new candidate objects, one deterministic simplification may remove those **unpublished** objects intersecting it. Replay the whole union afterward, not just the removed subset. Committed visible geometry must never move or disappear. Omitting every new object cannot worsen an already certified base continuation; it can still leave previously committed hazards unavoidable from a later mistaken player state.
 
-Stale roots require a publication-state replay even when the path worked at the planning snapshot. Actions replay at the new absolute time; do not blindly splice old future endpoints or grant the player a teleport. Collision/terminal/warning checks apply again. A finite independent replay failure means no publication. The final replay is short, ≤1440 substeps per witness, but its main-thread cost still needs measurement.
+Stale roots require a publication-state replay even when the path worked at the planning snapshot. Actions replay at the new absolute time; do not blindly splice old future endpoints or grant the player a teleport. Collision/terminal/warning checks apply again. A finite independent replay failure means no publication. The final replay is ≤1800 substeps per witness; its main-thread cost still needs measurement.
 
 ## 6. Seams, warning distance and endless extension
 
-Validation includes **all** committed hazards whose temporal collision interval intersects the planning horizon, including prior cells, candidate cells and overlapping depth intervals. A cell's exit includes velocity, not only position. Do not reset velocity at a seam or test patterns independently. Last-center distance ≤216 ahead plus 16-unit tail is ≤232 units; at the minimum forward speed 20, travel consumes ≤11.6s. A 12s horizon can cover this plus the real terminal check only if actual discrete prediction confirms it. At maximum forward speed, neutral braking lasts ≤0.325s on the discrete grid and travels ≤11.05 forward units; 16 units allow the maximum 1.67-unit outer exit plus braking and residual reserve. Reject a horizon overrun instead of truncating unsafe future hazards.
+Validation includes **all** committed hazards whose temporal collision interval intersects the planning horizon, including prior transactions, candidate cells and overlapping depth intervals. An exit includes velocity, not only position. Do not reset velocity at a seam or test patterns independently. Last-center distance ≤272 ahead plus 16-unit tail is ≤288 units; at minimum speed20, travel consumes ≤14.4s. A 15s horizon covers this bound, subject to the real discrete terminal check. At maximum forward speed, neutral braking lasts ≤0.325s and travels ≤11.05 forward units; 16 units allow the maximum 1.67-unit outer exit plus braking and reserve. Reject overruns instead of truncating unsafe future hazards.
 
-A 192-unit planning lead and a one-second logical deadline leave ≥158 units ahead at speed34. Publication still requires `first contact ETA >= response prefix + actual maneuver/settling witness requirement + readability reserve`. The lead is a bound for computation and continuity, not a demand that the first run wait 192 units. Bootstrap candidates are gentle and separately certified from the actual launch state; proposed first contact at 6–8s must exceed four seconds of warmup plus the derived small-maneuver budget. No Launch delay or empty initial 192-unit flight is acceptable.
+A 128-unit initial lead and 1.2s logical deadline leave ≥87.2 units to the first center at speed34. Publication still requires `first contact ETA >= response prefix + first required maneuver/settling allowance + readability reserve`; later maneuvers are checked against their own collision windows, not all charged before the first contact. The lead is a compute bound, not an instruction to wait an entire horizon before the first hazard. Bootstrap is gentle and separately certified from the launch state; first contact at6–8s must exceed four seconds of warmup plus the small-maneuver budget. No Launch delay or empty initial horizon-length flight is acceptable.
+
+**Sustained scheduling:** a transaction advances at least48 units. At speed34 its minimum request interval is `48/34=1.4118s`, exceeding the1.2s deadline and leaving about0.212s of serial scheduling reserve. Include a one-step `34/120` lead guard when testing request thresholds; enforce the stated horizon bounds after discrete threshold overshoot. A 24-unit job per second would fall behind and is explicitly disallowed. Longer patterns reserve their full span, up to144 units, before publication. Apply director/quota constraints across all owned cells and keep object depths independent; batching planner work must not recreate visible wave planes. Bootstrap/omissions are explicit exceptions to normal continuity, counted in acceptance metrics.
 
 At each successful extension there is a path through the entire committed field into an empty braking tail. Repeatedly extending without invalidating the current witness supports continued survival **in principle for a compatible sequence of inputs**, with omission as the safety fallback. It is not a computed invariant viable set for every future state. A player can abandon the witness, hesitate too long or steer into a committed hazard. “Always a gap” and finite endpoint reachability are weaker statements than this contract.
 
 ## 7. Cost, limitations and references
 
-With K=9, B=16, N≤1440 integration steps and M≤32 hazards, brute worst-case work is `O(B*K*N*M)` collision candidates per search; two searches allow ≤414,720 state propagations before cheap replays. Temporal broad phase should remove most narrow queries. Store at most 16×61 retained nodes plus bounded scratch/parents, fixed 32-hazard context and four replay buffers; proposed planner memory target ≤512KiB, to be measured. Work-query limits may force a deadline omission even when propagation count fits. Fixed logical work/publication ticks preserve reproducibility; they do **not** establish a 2ms browser budget on unknown hardware. The B-2 performance gate must pass before integration, otherwise reduce approved workload or evaluate a worker without changing certificate semantics.
+With K=9, B=16, N≤1800 integration steps and M≤32 hazards, brute worst-case work is `O(B*K*N*M)` collision candidates per search. Two searches allow ≤518,400 state propagations plus ≤7,200 direct-replay steps. The 144-tick propagation allowance is `4096*144=589,824`, covering that arithmetic bound. Temporal broad phase should remove most narrow queries; query limits can still force an omission. Store at most16×76 retained nodes plus bounded scratch/parents, fixed32-hazard context and four replay buffers; proposed planner memory target ≤512KiB, to be measured. Fixed logical work/publication ticks preserve reproducibility; they do **not** establish a2ms browser budget on unknown hardware. B-2 must measure sustained transaction throughput, narrow-query limits and publication replay cost; otherwise reduce approved workload or evaluate a worker without changing certificate semantics.
 
 False positives remain possible if movement/query reuse, absolute time, phase/variant mapping, margin monotonicity or stale-root replay is wrong; those are critical implementation tests. Finite-control/pruning/horizon false negatives, excess conservatism, fallback-induced empty stretches and state-veto exploits are expected research risks. Human readability and reaction are not mathematical consequences of a successful witness. No measurements of this unimplemented validator are claimed.
 

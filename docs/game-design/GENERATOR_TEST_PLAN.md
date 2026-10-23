@@ -24,6 +24,7 @@ Use real candidate builders, integrated dynamics, shared collision queries and a
 | D08 | Pattern cooldown/entry/exit rules and capped/asymptotic director parameters hold after hours of simulation |
 | D09 | Fixed bounded retries use keyed substreams; a rejected cell does not shift future proposal randomness |
 | D10 | Fallback and stale-root paths preserve committed geometry; no teleport, immunity credit, forced death or hidden health edit |
+| D11 | At speed34, minimum48-unit transactions and144-tick deadlines sustain the generation frontier; full-pattern reservations, bootstrap and omissions cannot create a growing queue or recurring empty runway |
 
 Golden records include quantized-for-reporting poses plus full-precision replay hashes. Reporting quantization must not enter simulation or collider acceptance. Verify exact hashes within a supported engine/version; separately characterize cross-engine floating differences before claiming portable bitwise replays.
 

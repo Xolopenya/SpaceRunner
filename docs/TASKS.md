@@ -202,3 +202,5 @@ Review configuration now targets this task/full approved baseline and 29 current
 | `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit0 |
 | `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0; current real GLB/calibrated-profile measurements |
 | `gh auth status` | Exit1; no logged-in GitHub hosts; compare fallback applies |
+
+Final design consistency review corrected the research proposal's scheduling arithmetic:24-unit ownership cells are grouped into48–144-unit planning transactions, not one cell per one-second job. A144-tick deadline fits the minimum1.4118s transaction cadence at speed34. The proposed horizon/work limits are15s, two beams/518,400 state propagations plus up to7,200 replay steps within589,824 propagation-budget steps. Narrow-query cost and phone timing remain unmeasured gates. This follow-up changes documentation only; the B implementation remains unauthorized. The final review package is regenerated from the follow-up commit rather than rewriting the first published research commit.
