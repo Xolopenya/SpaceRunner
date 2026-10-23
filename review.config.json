@@ -1,86 +1,41 @@
 {
-  "taskId": "PHASE-3-004B",
-  "baseline": "80f292347109e64c1c20d3b12b447048a89fc7bd",
+  "taskId": "GAMEPLAY-001A",
+  "baseline": "f1a651e5d2a6079aadf51a31e6ca929e25bf0d31",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "IMPLEMENTATION.md": "docs/review/PHASE-3-004B/IMPLEMENTATION.md",
-    "ARCHITECTURE.md": "docs/review/PHASE-3-004B/ARCHITECTURE.md",
-    "UI-ACCESSIBILITY.md": "docs/review/PHASE-3-004B/UI-ACCESSIBILITY.md",
-    "PERFORMANCE.md": "docs/review/PHASE-3-004B/PERFORMANCE.md",
-    "UI_ART_DIRECTION.md": "docs/design/UI_ART_DIRECTION.md",
-    "ASSETS.md": "docs/ASSETS.md"
+    "CURRENT_GENERATOR_AUDIT.md": "docs/game-design/CURRENT_GENERATOR_AUDIT.md",
+    "ARCHITECTURE.md": "docs/game-design/CONTINUOUS_FIELD_ARCHITECTURE.md",
+    "PROCEDURAL_FAIRNESS.md": "docs/game-design/PROCEDURAL_FAIRNESS.md",
+    "ENCOUNTER_PATTERN_LIBRARY.md": "docs/game-design/ENCOUNTER_PATTERN_LIBRARY.md",
+    "DIFFICULTY_AND_PACING.md": "docs/game-design/DIFFICULTY_AND_PACING.md",
+    "GENERATOR_TEST_PLAN.md": "docs/game-design/GENERATOR_TEST_PLAN.md",
+    "IMPLEMENTATION.md": "docs/game-design/GAMEPLAY_001B_IMPLEMENTATION_PLAN.md",
+    "GAMEPLAY_DECISIONS.md": "docs/game-design/GAMEPLAY_DECISIONS.md"
   },
   "screenshots": [
-    "ui-live-menu-desktop.png",
-    "ui-live-playing-desktop.png",
-    "ui-live-paused-desktop.png",
-    "ui-live-over-desktop.png",
-    "ui-live-audio-desktop.png",
-    "ui-live-menu-portrait.png",
-    "ui-live-playing-portrait.png",
-    "ui-live-paused-portrait.png",
-    "ui-live-over-portrait.png",
-    "ui-live-audio-portrait.png",
-    "ui-live-menu-landscape.png",
-    "ui-live-playing-landscape.png",
-    "ui-live-paused-landscape.png",
-    "ui-live-over-landscape.png",
-    "ui-live-audio-landscape.png",
-    "ui-live-damage-desktop.png",
-    "ui-live-large-score-desktop.png",
-    "ui-live-large-score-portrait.png",
-    "ui-live-loading-desktop.png",
-    "ui-live-error-desktop.png",
-    "ui-live-safe-area-portrait.png",
-    "ui-live-production-preview.png",
-    "ui-approved-menu-desktop.png",
-    "ui-approved-playing-desktop.png",
-    "ui-approved-paused-desktop.png",
-    "ui-approved-over-desktop.png",
-    "ui-before-menu-desktop.png",
-    "ui-before-playing-desktop.png",
-    "ui-before-paused-desktop.png",
-    "ui-before-audio-desktop.png",
-    "ui-before-over-desktop.png",
-    "ui-before-menu-portrait.png",
-    "ui-before-playing-portrait.png",
-    "ui-before-paused-portrait.png",
-    "ui-before-audio-portrait.png",
-    "ui-before-over-portrait.png",
-    "ui-before-menu-landscape.png",
-    "ui-before-playing-landscape.png",
-    "ui-before-paused-landscape.png",
-    "ui-before-audio-landscape.png",
-    "ui-before-over-landscape.png",
-    "ui-production-comparison-desktop.png",
-    "ui-production-comparison-mobile.png"
+    "gameplay-current-depth.png",
+    "gameplay-continuous-concept.png",
+    "gameplay-reachability-concept.png",
+    "gameplay-pattern-concepts.png"
   ],
   "extraChecks": [
-    {
-      "name": "vfx-performance",
-      "script": "scripts/vfx-performance.mjs"
-    },
-    {
-      "name": "ui-production",
-      "script": "scripts/ui-production-review.mjs"
-    }
+    { "name": "collision-audit", "script": "scripts/collision-audit.mjs", "stripTypes": true },
+    { "name": "generator-research", "script": "scripts/generator-research.mjs", "stripTypes": true }
   ],
-  "performanceMeasurements": true,
-  "uiProductionMeasurements": true,
   "evidenceNotes": [
-    "All current UI screenshots show the actual game DOM and real model/audio state, not concept preview controls. The built production screenshot has no developer access.",
-    "Long-score fixtures assign the real model distance, freeze its loop, and call the actual HUD/render paths. Damage/death fixtures use the existing collision/update path. Baseline before-images retain their recorded state values and hashes.",
-    "Four approved Concept A images are copied unchanged from the reviewed 80f2923 design ZIP; 15 fresh baseline production images were captured before integration. They are explicitly labelled in comparisons.",
-    "Both production fonts and their notices exactly match approved source hashes. Only Oxanium 500 and Plex Mono 400 are shipped; no third-party runtime CDN, concept images or review controls enter the game build.",
-    "Original Game, InputManager, core, World/VFX, asset management, AudioManager/SoundPanel and pre-existing tests remain byte-equivalent to the approved baseline. The HUD alone adapts live presentation and caches unchanged values.",
-    "Native dialog focus/return, actual persisted audio controls, touch through HUD, loading progress/retry, long values and native safe-area environment overrides are checked in Chrome.",
-    "Matched rendering measurements retain the same browser/GPU/viewports/seed/hazard fixture. Cached HUD timing is separately labelled as a synchronous static-model microbenchmark.",
-    "The two missing-model tests intentionally create recoverable HTTP 404 errors; all other browser flows require clean console/network logs."
+    "Research and design milestone only. No proposed generator, validator, scoring mechanic or new asset is implemented.",
+    "The research script compares 82 original production/test/design inputs to the actual stable main baseline, including all gameplay and presentation sources, assets and dependency manifests.",
+    "Baseline observations call the real ObstacleField at 120Hz for 16 fixed seeds and 600 simulated seconds each, with an exact seed-42 replay. These collision-independent streams are not natural player run lengths.",
+    "Stationary contact probes use actual calibrated HazardCollision queries; radius, phase and rotation remain real. A metadata corridor change is not a mandatory player maneuver.",
+    "One diagram plots actual existing generator output. Three conceptual figures are hand-positioned illustrations, explicitly labelled as unimplemented and uncertified; none is a fake game screenshot.",
+    "Research JSON includes methods, full seed-42 events, per-seed distributions, protected-source hashes, conclusions and limitations. Timing describes the existing-generator diagnostic, not future validator or phone performance.",
+    "The four required checks retain every existing assertion. Deliberate recoverable asset-404 cases are expected test fixtures; other browser flows require clean errors."
   ],
   "limitations": [
-    "Physical phones, Safari/Firefox, sustained thermal/heap behavior, localization and screen-reader user testing remain unverified.",
-    "Emulated native safe-area insets verify CSS behavior, not physical notch/OS chrome. Static comparisons do not prove subjective player preference.",
-    "No gameplay, audio synthesis, monetization or Yandex SDK features were added. Subjective audio listening acceptance remains separate.",
-    "The existing Vite chunk-size advisory remains; no threshold change or framework dependency."
+    "External architecture approval is required before GAMEPLAY-001B. Proposed parameter values, budgets and acceptance targets are not measured results or approved tuning.",
+    "Finite witness search proves only a checked trajectory from its exact publication state under the documented dynamics/collision contract; no all-input, continuous-state or human-reaction guarantee is claimed.",
+    "State-aware acceptance is proposed to depend on input history as well as seed. Replay semantics and exploitability need review.",
+    "No future generator rejection rate, validator benchmark, clearance distribution or human-playtest outcome exists yet.",
+    "Physical phones, Safari/Firefox, sustained sessions and assistive-technology acceptance remain unverified. Existing Vite chunk advisory remains."
   ]
 }

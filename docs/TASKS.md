@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. PHASE-3-004B: verify approved main/design and preserve fresh production/screenshots/build/rendering baselines.
-2. Integrate approved Concept A into the existing DOM/HUD and real sound dialog, preserving game/input/audio/rendering behavior.
-3. Verify original regressions plus live UI, long values, mobile/safe areas, focus and reference comparisons; document necessary adaptations.
-4. Commit/push only `feature/phase-3-ui-implementation`; produce/verify the architecture ZIP and PR/compare URL. No main merge or push.
+1. GAMEPLAY-001A: verify stable main includes the approved UI milestone; audit actual generator, dynamics, collision and pool contracts.
+2. Measure fixed-seed current behavior using non-invasive research tooling; distinguish source facts, measured proxies and player hypotheses.
+3. Produce eight reviewable design documents covering continuous flow, stateful fairness, pacing, patterns, decisions, tests and the B roadmap. Keep production unchanged.
+4. Verify existing regressions/scope, commit/push only `feature/gameplay-001a-field-design`, and validate the local review ZIP. Do not start B before external approval.
 
 ## Acceptance
 
@@ -174,3 +174,31 @@ Review configuration now targets this task/full approved baseline and 29 current
 | `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit 0; whitespace/safety/build attribution passed |
 | `node scripts/ui-production-review.mjs` | Exit 0; 73 protected files, 43 PNGs, matching font/license hashes, stable HUD and measured build delta |
 | `gh auth status` | Exit 1; no authenticated GitHub host; compare-link fallback applies |
+
+## GAMEPLAY-001A — continuous-field architecture and fairness research, 2026-10-23
+
+- The owner explicitly limits this task to research/design; GAMEPLAY-001B is not authorized. Read the complete brief/guidance/master, current project/tasks/collision architecture, actual field/RNG/Ship/GameModel/collision profiles/World/Game/input/loop and original simulation/collision/browser/review contracts. Verified clean main and fetched origin/main at approved `f1a651e5d2a6079aadf51a31e6ca929e25bf0d31` (0 ahead/behind) and created `feature/gameplay-001a-field-design` from it.
+- Added all eight required records under `game-design/`: current audit, alternative/continuous architecture with Mermaid, precise conditional fairness/pseudocode, four encounter intents, capped endless pacing, real-fixture/stress/playtest plan, ordered B roadmap and the ten approved gameplay decisions. Explicitly separate measured facts, source-derived invariants, hypotheses, proposed budgets and deferred features. Primary planning references are attributed; no planning library or new dependency is installed.
+- Added one non-invasive research script importing the unchanged real field/difficulty/Ship/collider. It checks 82 protected production/test/design inputs against baseline, runs 16 fixed seeds×600s at120Hz, replays seed42 exactly, verifies restart pool identity/ranges/old corridors/capacity and probes actual collider contacts. It implements no replacement generator or validator. JSON includes per-seed data, source hashes, methods/limitations, conclusions, real movement traces and seed42 events.
+- Measured 5,168 waves (two empty), 29,146 hazards, 9.3130 generated hazards/100 units overall (9.7128 after120s), 82.3206% adjacent centers at identical depth, peak12 hazards/two waves and 70.4951% time without a center in the defined nearby Z±10 slab. The median no-nearby stretch was1.2333s. Coarse consecutive layouts repeated27.5039%; selected corridor changes are metadata, not required steering. Objective data does not establish player boredom or fun.
+- Proved the existing X±2 permanent clear stripes from band placement and the maximum logical outer envelope: 1.65−1.52=0.13 minimum clearance. Actual probes at X−2/0/+2 recorded0/2,753/0 hazard contacts. This finding motivates full-XY placement rather than cosmetic Z jitter. The proposed actual-state validator retains velocities, real rotating sphere/box CCD, delayed input, full committed context, exact replay at publication and a reserved braking tail; finite-search/conditional guarantees and seed+input replay tradeoffs are explicit.
+- Rendered/inspected four PNG diagrams: one real seed42 depth distribution, three labelled hand-positioned concepts for continuous layout, pattern intents and trajectory validation. No fake production screenshot, generated new field, new model or gameplay mechanic is supplied. Pacing/validator caps are proposals awaiting external review; no future performance/fallback rate is invented.
+- Existing full verification passed all nine commands: typecheck, 53 unit tests, build, 32 browser tests (2.1 minutes), whitespace/static checks, build attribution, real-model collision audit and research diagnostics. Final research/diagram rerun plus whitespace/static checks also passed after document completion. Build is931,609 bytes/15 files with unchanged JS663,045/Node gzip169,576 and CSS14,479. The58-byte difference from the prior milestone is solely checkout CRLF in HTML, documented in the audit; no production source changes.
+- README/project now point to current research/reproduction. Review configuration targets actual initial main and includes all eight reports, complete tracked source/assets/tests, Git patch/metadata, actual logs, research JSON and diagrams. Existing packer/integrity/safety code is unchanged. Packaging repeats checks from clean committed HEAD; exact delivery SHA/ZIP inventory/hash are generated by tooling.
+- No source/config/asset/test file controlling gameplay or presentation is changed, including movement, speed/spawn tuning, health, collisions, camera, scoring, UI, audio and VFX. No dependency or asset download, near-miss score, progression, monetization or SDK work occurred. GitHub CLI remains unauthenticated, so feature-only delivery uses a compare URL. Main is not pushed/merged. Next step is independent architecture review before any B implementation.
+
+### Executed commands and results
+
+| Command | Actual result before research milestone commit |
+| --- | --- |
+| `git status --short --branch`; `git fetch origin`; `git merge-base --is-ancestor f1a651e5d2a6079aadf51a31e6ca929e25bf0d31 main` and `origin/main` | Clean main; all exit0 |
+| `git rev-list --left-right --count main...origin/main`; `git switch -c feature/gameplay-001a-field-design main` | `0 0`; requested branch created |
+| `node --experimental-strip-types scripts/generator-research.mjs` | Exit0; all real-stream/replay/range/pool/collider/source assertions passed; four diagrams and JSON generated |
+| `npm run review:verify` | Exit0; all nine commands passed |
+| `npm run typecheck` | Exit0 |
+| `npm run test` | Exit0;53 passed/0 failed |
+| `npm run build` | Exit0;931,609 bytes/15 files; existing Three.js advisory |
+| `npm run test:browser` | Exit0;32 passed (2.1 minutes), Chrome155.0.8059.85 |
+| `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit0 |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0; current real GLB/calibrated-profile measurements |
+| `gh auth status` | Exit1; no logged-in GitHub hosts; compare fallback applies |
