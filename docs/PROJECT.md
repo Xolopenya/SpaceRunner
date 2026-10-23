@@ -43,6 +43,10 @@ Boot preloads six local GLBs before Game creation, with progress/error/retry. As
 
 Platform methods remain standalone no-ops except safe local storage; no Yandex SDK API signatures are guessed. Physical mobile performance and broader browser support still require verification. Review tooling packages committed blobs and actual verification evidence without shipping development files to the game.
 
+## PHASE-3-004A design exploration
+
+The subsequent PHASE-3-004A exploration is isolated in `design/ui-concepts/`: three browser-rendered UI alternatives, real approved-game backgrounds and a proposed A direction in `docs/design/`. Its review state/sliders are independent of Game/AudioManager and do not save settings or play audio. The original DOM/style/runtime remain unchanged; no design has owner approval or production integration yet. Repository UI guidance is in `.agents/skills/space-runner-ui-design/SKILL.md`.
+
 ## PHASE-3-003 audio lifecycle
 
 `Game` submits existing model values and gestures to one `AudioManager`. The core model and renderer know nothing about Web Audio. After a permitted gesture, four native continuous sources feed SFX/music buses and a headroom-controlled master. Original generated buffers are cached once; temporary voices are capped at six and cleaned on completion. `hitSerial` selects one normal or final hit event; silent/locked states consume it without later replay. Pause fades continuous sound, backgrounding suspends the context even in menus, final damage finishes its one-shots, and restart preserves the graph. HMR/disposal closes it and invalidates late initialization.

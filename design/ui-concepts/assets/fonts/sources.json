@@ -1,0 +1,52 @@
+{
+  "retrieved": "2026-10-23",
+  "distribution": "Design exploration only; no runtime production inclusion",
+  "stylesheet": "https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=IBM+Plex+Mono:wght@400&display=swap",
+  "files": [
+    {
+      "Name": "oxanium-medium.ttf",
+      "Url": "https://fonts.gstatic.com/s/oxanium/v21/RrQPboN_4yJ0JmiMUW7sIGjd1IA9G817fniM.ttf",
+      "bytes": 28420,
+      "sha256": "109f93e40ad9112766699347a94955300c5944b9b087f878ed8581e6ae33644d",
+      "author": "The Oxanium Project Authors",
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "Name": "oxanium-bold.ttf",
+      "Url": "https://fonts.gstatic.com/s/oxanium/v21/RrQPboN_4yJ0JmiMUW7sIGjd1IA9G82ueXiM.ttf",
+      "bytes": 28332,
+      "sha256": "ac6e97ef18247a69a70454c7a1032239b75a2d39a6f6a901583cc83bf5855cb9",
+      "author": "The Oxanium Project Authors",
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "Name": "ibm-plex-mono-regular.ttf",
+      "Url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n5ig.ttf",
+      "bytes": 128812,
+      "sha256": "a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2",
+      "author": "IBM Corp.",
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "Name": "OFL-Oxanium.txt",
+      "Url": "https://raw.githubusercontent.com/google/fonts/main/ofl/oxanium/OFL.txt",
+      "bytes": 4384,
+      "sha256": "fe17c0f2581d71b4e1ea7e636e7f4877c29223e11bb1dd1a871e8c3f2a86336b",
+      "author": "The Oxanium Project Authors",
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "Name": "OFL-IBM-Plex-Mono.txt",
+      "Url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexmono/OFL.txt",
+      "bytes": 4456,
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "author": "IBM Corp.",
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    }
+  ]
+}

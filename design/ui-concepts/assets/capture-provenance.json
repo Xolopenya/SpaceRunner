@@ -1,0 +1,80 @@
+{
+  "baseline": "5efda476f725df038bfb46ebbf9d65aaec2b646f",
+  "generatedAt": "2026-10-23T00:45:30.580Z",
+  "browser": "155.0.8059.85",
+  "method": "Real canvas-only screenshots of the approved game. UI siblings temporarily hidden in the capture browser and immediately restored; no production file edits. Route 42, no steering or injected hazards, frozen after reaching 150 m. Menu has no prior best; results use this recorded score as the sample personal best.",
+  "captures": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "score": 150,
+      "hull": 3,
+      "speed": 20.85847222222224,
+      "seed": 42,
+      "hazards": 7,
+      "files": [
+        {
+          "file": "desktop-menu.png",
+          "bytes": 167329,
+          "sha256": "27c78358410e986d610ed9bed9fb8dba0c289a84aed424528181dde71d10c682"
+        },
+        {
+          "file": "desktop-flight.png",
+          "bytes": 172805,
+          "sha256": "fe6bab091f277f4af7c816457f0e126d76ba336e0190cfb84a5bc4b809270c32"
+        }
+      ]
+    },
+    {
+      "name": "portrait",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "score": 150,
+      "hull": 3,
+      "speed": 20.85847222222224,
+      "seed": 42,
+      "hazards": 7,
+      "files": [
+        {
+          "file": "portrait-menu.png",
+          "bytes": 44265,
+          "sha256": "b9d4f393c804d1643f24d86a88edf247517c0ed1e48017dd2d4036bd777265c6"
+        },
+        {
+          "file": "portrait-flight.png",
+          "bytes": 45828,
+          "sha256": "076b2b8d7f7c646aa04404b3959874882e65518857bdac30f37f4d0412a5540c"
+        }
+      ]
+    },
+    {
+      "name": "landscape",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "score": 150,
+      "hull": 3,
+      "speed": 20.85847222222224,
+      "seed": 42,
+      "hazards": 7,
+      "files": [
+        {
+          "file": "landscape-menu.png",
+          "bytes": 61845,
+          "sha256": "634ece7cfce4b1b52677b51c5cfa98995dca3d6bc5edaff46f25d0e7cc101072"
+        },
+        {
+          "file": "landscape-flight.png",
+          "bytes": 63679,
+          "sha256": "54fd25159a69fc436d4e4f0793999b7d5eeed0cd27a664710ae61a9ef01448ca"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Space Runner — Three UI directions</title><link rel="icon" href="data:," />
+  <style>
+    @font-face { font-family: Oxanium; src: url('./assets/fonts/oxanium-medium.ttf'); font-weight: 500; }
+    * { box-sizing: border-box; } body { margin: 0; background: #090f1a; color: #eaf2f5; font: 14px/1.6 Arial,sans-serif; padding: 40px; }
+    header { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 36px; }
+    h1 { font: 500 38px Oxanium,sans-serif; margin: 8px 0; } header p { color: #b2bfce; max-width: 760px; margin: 8px 0; }
+    .tag { font: 11px monospace; color: #8cdeeb; letter-spacing: 1px; } nav { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+    a { color: #c6e7ee; } nav a { padding: 8px 0; margin-right: 16px; } .grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 30px 24px; }
+    article { min-width: 0; } h2 { font: 500 21px Oxanium,sans-serif; margin: 0 0 6px; } .caption { color: #b2bfce; font-size: 12px; margin: 0 0 12px; }
+    .frame { position: relative; width: 100%; overflow: hidden; background: #030813; aspect-ratio: var(--width) / var(--height); }
+    iframe { border: 0; display: block; position: absolute; width: calc(var(--width) * 1px); height: calc(var(--height) * 1px); transform-origin: left top; }
+    footer { color: #b2bfce; font-size: 12px; margin-top: 36px; max-width: 1050px; } .mobile { grid-template-columns: 390px minmax(0,844px); align-items: start; }
+    @media(max-width:800px) { body { padding: 20px; } .grid, .mobile { grid-template-columns: 1fr; } header { display: block; } }
+  </style>
+</head>
+<body>
+  <header><div><span class="tag">SPACE RUNNER / PHASE-3-004A</span><h1>Three ways to read the flight.</h1><p>One existing game. Three interface directions. Every scene uses the real approved ship and space art. These are interactive screen studies over frozen captures.</p></div><span class="tag">DESIGN REVIEW · APPROVAL PENDING</span></header>
+  <nav aria-label="Comparison views"><a href="./">All desktop states</a><a href="?view=hud">HUD comparison</a><a href="?view=mobile">Recommended / mobile</a><a href="./prototype.html?concept=a&state=menu">Open A at full size ↗</a><a href="/">Playable approved game ↗</a></nav>
+  <main class="grid" id="comparison"></main>
+  <footer>Recommendation: A — Flight Instrumentation. Keep the center clear, use cyan for interaction and hull, reserve warm amber for damage, and let the ship carry the atmosphere. B offers stronger arcade energy; C offers the quietest presentation. This recommendation is a proposal; production UI remains at the approved baseline.<br />Values are recorded sample data, not live telemetry. Preview sliders do not play sound or change game preferences. Bottom navigation and UI STUDY captions are review tools.</footer>
+  <script type="module">
+    const grid = document.querySelector('#comparison');
+    const view = new URLSearchParams(location.search).get('view');
+    const concepts = [['a','Flight Instrumentation','Precision / restrained cyan / compact HUD'], ['b','Arcade Racing','Forward slant / bold distance / replay energy'], ['c','Isolation Minimalism','Open type / quiet edges / deep space']];
+    function frame(concept, title, state, width=1440, height=900, audio=false) {
+      const card = document.createElement('article');
+      card.innerHTML = `<h2>${title}</h2><p class="caption">${state === 'over' ? 'Game over' : state === 'playing' ? 'Gameplay HUD' : state === 'paused' ? 'Pause' : 'Main menu'}${audio ? ' / audio' : ''} · ${width} × ${height} <a href="./prototype.html?concept=${concept}&state=${state}${audio?'&audio':''}">Inspect ↗</a></p><div class="frame" style="--width:${width};--height:${height}"><iframe loading="eager" title="${title} ${state}" src="./prototype.html?concept=${concept}&state=${state}${audio?'&audio':''}"></iframe></div>`;
+      grid.append(card);
+      const box = card.querySelector('.frame'), iframe = card.querySelector('iframe');
+      new ResizeObserver(() => iframe.style.transform = `scale(${box.clientWidth/width})`).observe(box);
+    }
+    if (view === 'mobile') {
+      grid.classList.add('mobile');
+      for (const state of ['menu','playing','paused','over']) { frame('a','A / Portrait',state,390,844); frame('a','A / Landscape',state,844,390); }
+      frame('a','A / Portrait audio','paused',390,844,true); frame('a','A / Landscape audio','paused',844,390,true);
+    } else {
+      for (const state of view === 'hud' ? ['playing'] : ['menu','playing','paused','over']) for (const [id,title,caption] of concepts) frame(id,`${id.toUpperCase()} / ${title}`,state);
+    }
+  </script>
+</body>
+</html>

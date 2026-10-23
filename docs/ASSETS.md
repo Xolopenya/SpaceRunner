@@ -38,3 +38,21 @@ Review-only `audio-flight-preview.wav` and `audio-music-preview.wav` are native 
 ## Runtime library notice
 
 Three.js 0.186.1 is the production runtime dependency, obtained through the npm registry on 2026-10-22. Author: three.js authors. Source: https://github.com/mrdoob/three.js. License: MIT, read from the installed package's `LICENSE`. The complete notice is preserved in `public/THIRD_PARTY_NOTICES.txt` and copied into the static build. Dependencies are version-pinned in `package-lock.json`; `node_modules` is excluded from Git. Development tooling is not shipped in the production bundle.
+
+## Design-only fonts and captures — PHASE-3-004A, 2026-10-23
+
+Three unchanged font files were downloaded with approval from the official Google Fonts distribution, after checking the complete SIL Open Font License 1.1 notices. They live only in `design/ui-concepts/assets/fonts/`, outside `public/` and the production entry graph. No font is added to the playable application or its output.
+
+| File | Author / weight | Bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `oxanium-medium.ttf` | The Oxanium Project Authors / 500 | 28,420 | `109f93e40ad9112766699347a94955300c5944b9b087f878ed8581e6ae33644d` |
+| `oxanium-bold.ttf` | The Oxanium Project Authors / 700 | 28,332 | `ac6e97ef18247a69a70454c7a1032239b75a2d39a6f6a901583cc83bf5855cb9` |
+| `ibm-plex-mono-regular.ttf` | IBM Corp. / 400 | 128,812 | `a7fdc993f9f0387caedba4e42521136fa97e4c0837ae6239bf0413ccf8af00c2` |
+
+Sources: [Oxanium official distribution](https://github.com/google/fonts/tree/main/ofl/oxanium), [IBM Plex authors](https://github.com/IBM/plex), [Plex Google Fonts distribution](https://github.com/google/fonts/tree/main/ofl/ibmplexmono). Complete copyright/license notices are `OFL-Oxanium.txt` and `OFL-IBM-Plex-Mono.txt` beside the fonts; `sources.json` records the exact official stylesheet/download URLs, date, hashes, bytes and no-modification status. Oxanium's notice credits its project authors; Plex retains IBM's reserved font name. No font conversion, renaming inside the font, subsetting or third-party script execution occurred. Local filenames describe the existing styles.
+
+The two original notices are retained byte-for-byte by a narrowly scoped `.gitattributes` rule (`-text -whitespace`). This preserves upstream line endings and the Plex notice's trailing space without weakening whitespace checks for authored code/docs. License hashes in `sources.json` therefore match both the downloaded files and committed blobs.
+
+Six design reference backgrounds are canvas-only PNGs captured from this repository's approved baseline `5efda476f725df038bfb46ebbf9d65aaec2b646f`, using the existing Kenney models and original procedural scene. Their viewport/model values/browser/method and hashes are in `design/ui-concepts/assets/capture-provenance.json`. Production DOM siblings were hidden only while the test browser captured the canvas and then restored. No new world artwork was generated or downloaded.
+
+Race the Sun, Hyperburner and WipEout images remain reference links in `docs/design/UI_REFERENCE_RESEARCH.md`. No proprietary reference screenshot, logo or game asset is bundled in the repository or review package.

@@ -1,3 +1,5 @@
 # Preserve original model binaries and the upstream license notice byte-for-byte.
 public/assets/kenney-space/*.glb binary
 public/assets/kenney-space/LICENSE.txt -text -whitespace
+# Preserve official font-license bytes, including upstream trailing whitespace.
+design/ui-concepts/assets/fonts/OFL-*.txt -text -whitespace

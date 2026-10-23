@@ -133,10 +133,19 @@ const audioMeasurements = config.audioMeasurements ? {
   restarts: JSON.parse(await readFile(join(directory, 'audio-restarts.json'), 'utf8')),
 } : undefined;
 if (audioMeasurements) add('reports/AUDIO-DIAGNOSTICS.json', JSON.stringify(audioMeasurements, null, 2) + '\n');
+const designMeasurements = config.designMeasurements ? JSON.parse(await readFile(join(directory, 'ui-concepts.json'), 'utf8')) : undefined;
+if (designMeasurements) {
+  if (designMeasurements.baseline !== baseline || designMeasurements.screenshots.length !== config.screenshots.length) throw new Error('Design baseline/screenshot count mismatch');
+  for (const shot of designMeasurements.screenshots) {
+    const entry = entries.find(entry => entry.name === `screenshots/${shot.name}`);
+    if (!entry || createHash('sha256').update(entry.data).digest('hex') !== shot.sha256) throw new Error(`Design screenshot integrity mismatch: ${shot.name}`);
+  }
+  add('reports/UI-CONCEPT-DIAGNOSTICS.json', JSON.stringify(designMeasurements, null, 2) + '\n');
+}
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews,
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, designMeasurements,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

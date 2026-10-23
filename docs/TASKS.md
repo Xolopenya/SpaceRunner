@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. PHASE-3-003: verify approved main and record fresh verification/render baselines.
-2. Add gesture-safe native audio, original music/SFX and persistent accessible settings; preserve gameplay/VFX.
-3. Verify real audio output, lifecycle, performance and screenshots; commit and push only `feature/phase-3-audio`.
-4. Produce current audio review ZIP and PR/compare URL; retain manual listening acceptance and await review before merge.
+1. PHASE-3-004A: inspect approved baseline and UI states; research three reference games and font licenses.
+2. Build three isolated browser concepts; explore A in portrait, landscape and audio settings with real game captures.
+3. Render/inspect comparisons, verify unchanged production and existing regressions, and add the repository design skill.
+4. Commit/push only `feature/phase-3-ui-concepts`; produce/verify the current review ZIP. Await owner concept approval before production implementation.
 
 ## Acceptance
 
@@ -112,3 +112,34 @@ The initial desktop Chrome sample showed 16.7 ms median frame interval, 25 draw 
 - Review metadata now uses PHASE-3-003/full approved baseline, current audio architecture/design/lifecycle/performance reports, actual settings/production screenshots, native generated PCM previews with provenance, live/offline/restart JSON, Git remote metadata and matched measurements. Existing committed-blob snapshot/binary patch/path/credential/integrity protections remain. Delivery is limited to the feature branch; final package identifiers/check results are reported by delivery tooling.
 - Manual listening checklist is in `review/PHASE-3-003/AUDIO-DESIGN.md`; no subjective listening or microphone recording is claimed. Physical phones, speaker/headphone balance, Safari/Firefox and sustained heap/DSP behavior remain unverified. Overall Phase 3 stays open for manual presentation/game-feel acceptance; Yandex SDK/release work remains out of scope. Main is not pushed or merged.
 - Final pre-commit `npm run review:verify` passed all nine checks: strict typecheck, **53 unit tests**, build, **23 browser tests** (1.9 minutes), diff/static safety, build attribution, collision audit and matched audio-enabled performance. Runtime AudioNode failures are now contained at the manager boundary; mocked and actual browser fixtures verify playable fallback, cleanup and valid-gesture retry. Build: **758,188 bytes / 11 files**, JS **662,310 bytes**, Node gzip **169,374 bytes**; total increase **15,727 bytes / 2.12%**. Final native maximum-volume stress peak **0.6672304**, mute tail RMS **0**. Seven current UI/fallback/production images were inspected; two actual native PCM previews are included for owner listening.
+
+## PHASE-3-004A — UI art direction and concept exploration, 2026-10-23
+
+- Read complete AGENTS/master and current project/tasks/assets/release/collision docs; inspected production HTML, HUD/styles, SoundPanel, browser tests, screenshots and review pipeline. Clean main was approved `5efda476f725df038bfb46ebbf9d65aaec2b646f`; `git fetch origin` confirmed main/origin-main 0 ahead / 0 behind. Created the explicitly requested `feature/phase-3-ui-concepts` branch.
+- Studied actual reference screenshots in the browser: Flippfly's clean Race the Sun gallery and early developer HUD image, Bad Potion's Hyperburner Flight Basics, Sony's WipEout gallery and the separately attributed HUD reference. Original URLs/observations are in `design/UI_REFERENCE_RESEARCH.md`; transitions are proposals, not claimed measurements. No proprietary reference images were bundled.
+- Approved official download of Oxanium 500/700 and IBM Plex Mono 400, three unchanged TTF files / 185,564 bytes. Complete OFL notices, authors/source/date/hashes are recorded. No dependencies were installed or changed; production has no added font requests/assets.
+- Added isolated HTML/CSS/JS studies in `design/ui-concepts/`: A Flight Instrumentation, B Arcade Racing and C Isolation Minimalism, with all four required desktop states. A adds four portrait/four landscape states, three audio layouts and loading/error/damage studies. They use six actual canvas captures of the approved game at menu/route-42 150m; provenance includes model values, browser, viewport and SHA256. State transitions/settings are explicitly preview-only, silent and nonpersistent.
+- Recommend A for its restrained cyan, angular title, clear action and open active center. Wrote art direction, tokens, comparison/visual findings, research and implementation guide. Proposal is not owner approval. Added the requested concise repository skill with the built-in skill-creator workflow and validated it.
+- Rendered/inspected 29 concept/comparison PNGs. Fixed initial background capture overlap, landscape hint encroachment, unnecessarily scrolling landscape audio, full-page comparison cropping, responsive heading spacing and the pause glyph. First concept diagnostic correctly failed the flight-area check; subsequent runs pass. Actual attempt logs are retained under the ignored review cache.
+- The staged whitespace check found a trailing space in the official Plex notice. Kept both font notices verbatim with a font-notice-only `-text -whitespace` attribute; authored code/docs retain normal checks. Downloaded and committed font/license bytes are hash-checked before delivery.
+- `src/`, `public/`, production `index.html`, package manifests and build config are unchanged. Diagnostics compare all **45 production inputs** with the approved Git baseline, verify source capture hashes, reject prototype/font production inclusion, and check native dialog focus/return, keyboard/touch preview navigation, slider/mute, control sizes/fit, local requests and central HUD reservation. Five solid-color contrast samples range from 9.49:1 to 17.79:1; translucent moving scenes still require player review.
+
+### Executed commands and results
+
+| Command | Actual result before milestone commit |
+| --- | --- |
+| `git status --short`; `git fetch origin`; `git rev-list --left-right --count main...origin/main` | Clean baseline; fetch exit 0; `0 0` |
+| `git switch -c feature/phase-3-ui-concepts` | Exit 0; requested branch created |
+| `node scripts/ui-capture-backgrounds.mjs` | Exit 0 after capture-method correction; six approved-game PNGs and provenance |
+| `python C:/Users/artem/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/space-runner-ui-design` | Exit 0; `Skill is valid!` (Python 3.14.0) |
+| `node scripts/ui-concepts-verify.mjs` | Initial flight-area assertion failed; corrected runs exit 0; 29 PNGs, 12 diagnostic groups and five contrast measurements |
+| `npm run review:verify` | Exit 0; all eight commands below passed |
+| `npm run typecheck` | Exit 0 |
+| `npm run test` | Exit 0; 53 passed / 0 failed |
+| `npm run build` | Exit 0; 11 files / 758,188 bytes; unchanged JS 662,310 / Node gzip 169,374 bytes |
+| `npm run test:browser` | Exit 0; 23 passed (1.9 minutes), installed Chrome 155.0.8059.85 |
+| `git diff --check` | Exit 0 |
+| `node scripts/review-static.mjs` | Exit 0; no detected known credential signatures |
+| `node scripts/build-analysis.mjs` | Exit 0; unchanged Three.js chunk advisory |
+
+Review configuration now targets this task/full approved baseline and 29 current design screenshots. The existing packer retains committed source/binary patch/metadata/logs/inventory protections and additionally checks each design screenshot against its diagnostics hash. Delivery uses a clean tested feature commit, feature-only push and a reopened integrity-checked ZIP; generated manifest identifies exact HEAD/branch/checks/hash. No merge/main push or production UI integration is authorized. Physical devices, moving-hazard design acceptance, localization, subjective listening and owner concept approval remain pending; overall Phase 3 stays open.
