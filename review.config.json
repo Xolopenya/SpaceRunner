@@ -1,34 +1,39 @@
 {
-  "taskId": "GAMEPLAY-001B-3",
-  "baseline": "4c82ad2dc30f4d309f085cbf3a16a41ffde1c30f",
+  "taskId": "GAMEPLAY-001B-4",
+  "baseline": "60ca6fcd64885e7fb8d10fda3a4410b3da39dbf9",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-3/ARCHITECTURE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-3/IMPLEMENTATION.md",
-    "PATTERN_LIBRARY.md": "docs/review/GAMEPLAY-001B-3/PATTERN_LIBRARY.md",
-    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-3/FAIRNESS_EVIDENCE.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-3/PERFORMANCE.md",
-    "INTEGRATION_NOTES.md": "docs/review/GAMEPLAY-001B-3/INTEGRATION_NOTES.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-4/ARCHITECTURE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-4/DIFFICULTY_DIRECTOR.md",
+    "DIFFICULTY_DIRECTOR.md": "docs/review/GAMEPLAY-001B-4/DIFFICULTY_DIRECTOR.md",
+    "PACING_AND_DENSITY.md": "docs/review/GAMEPLAY-001B-4/PACING_AND_DENSITY.md",
+    "OWNERSHIP_AND_SCHEDULING.md": "docs/review/GAMEPLAY-001B-4/OWNERSHIP_AND_SCHEDULING.md",
+    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-4/FAIRNESS_EVIDENCE.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-4/PERFORMANCE.md",
+    "B5_INTEGRATION_PLAN.md": "docs/review/GAMEPLAY-001B-4/B5_INTEGRATION_PLAN.md"
   },
-  "screenshots": ["pattern-scattered.png", "pattern-narrowing.png", "pattern-alternating.png", "pattern-vertical-weave.png"],
+  "screenshots": ["director-pacing.png", "director-density.png", "director-passive.png", "director-scheduling.png", "director-coverage.png"],
   "extraChecks": [
     { "name": "collision-audit", "script": "scripts/collision-audit.mjs", "stripTypes": true },
-    { "name": "pattern-benchmark", "script": "scripts/pattern-benchmark.mjs", "stripTypes": true }
+    { "name": "pattern-benchmark", "script": "scripts/pattern-benchmark.mjs", "stripTypes": true },
+    { "name": "director-benchmark", "script": "scripts/director-benchmark.mjs", "stripTypes": true }
   ],
   "evidenceNotes": [
-    "Four isolated encounter-v1 families, full source identity and transaction-global ordinals; ambient-v1 proposal bytes and old tests remain unchanged.",
-    "All proposals pass actual FieldGenerator.inspect and default normal B-2 policy. No synthetic-fixture admission, live publisher, worker, director or planner-limit changes.",
-    "1096 accounted attempts:768 family/root combinations,128 global-neutral roots,64 engineered late roots,128 joint transitions,8 invalid requests. Every acceptance is independently replayed.64 further Chrome jobs compare exact decisions and hashes.",
-    "Two supplemental authored steering traces demonstrate horizontal and vertical reversals through real generated geometry using normal independent replay. They are separate from beam-search statistics; all beam witnesses remain available. Four figures are actual coordinate projections, not captured gameplay.",
-    "Raw samples retain roots, complete candidate/committed geometry, rejection causes, work counters and real swept-proxy padding clearance. Removing Y assesses that trace only, not all horizontal alternatives.",
-    "Both source-pinned historical benchmarks run in approved B-2/B-1 snapshots. Two explicit path-only bootstrap substitutions use real Git metadata and installed Vite; source guards, algorithms, settings, seeds and assertions stay intact. Fresh production files are byte/hash identical to approved B-2.",
-    "Current logs are from verification at HEAD. baseline/precommit-* evidence preserves the separately documented timing profile. Initial diagnostic findings and fixes are disclosed in IMPLEMENTATION.md."
+    "All approved B-1/B-2/B-3 source and tests are unchanged. New pure director, ledger and coordinator remain outside the production graph. Every fresh production byte is compared with approved builds.",
+    "Director-v1 uses distance-indexed seeded pacing, explicit bounded cursor history, capped progression and12-decimal policy values. Initial one-ULP Node/Chrome expm1 differences and the failed assertion are retained; ship/geometry/collision arithmetic is never rounded.",
+    "Normal FieldGenerator.inspect, B-2 validation, independent replay and fixed-tick publication recheck are used without synthetic admission or weaker budgets. One pending job shares144 ticks, two searches and four replays. Actual commit state/field must match the verified forecast.",
+    "Default research corpus:1588 scheduled decisions across16 approved seeds, additional stress seeds, early/middle/late roots, reference and passive policies, repeat, forecast-miss and lower-budget cohorts. All rejections/empty outcomes stay accounted.48 Chrome sections compare exact Node hashes.",
+    "Separate structure-only fields measure density and240 passive-policy runs up to19200 units; counterfactual accepted-field policies are labeled separately. Four24h-equivalent director/ownership schedules have no trajectory/rendering claim.",
+    "Current exact-HEAD logs coexist with the preserved precommit profile quoted in authored reports. Node chunks, idle advances, final publication gates, preparation, p99, outliers, budget tradeoffs and fresh-GC memory are measured separately.",
+    "Original pattern, trajectory and foundation diagnostics preserve source-pinned baselines, including documented path-only nested Git/Vite bootstrap adaptations. Five current figures derive from actual recorded data, not captured new gameplay.",
+    "The initial free-offset profile/source are preserved. Corner-pressure-v1 uses bounded player-independent B-3 mirror/translation requests in seeded four-corner bags, without altering depths, counts, radii, poses or safety conditions. All post-change omissions remain reported."
   ],
   "limitations": [
-    "Finite beam search is incomplete. Acceptance certifies its supplied root, known field, controls and reserved braking tail; it does not guarantee arbitrary inputs, infinite survival or human discoverability.",
-    "Planner witnesses often bypass pressure early. Intended maneuvers are possible, not forced. Human readability, enjoyment, recovery cadence and physical phones require later playtesting.",
-    "One ambient-to-pattern corpus root is uncertifiable in the existing field: all nine first actions collide after the clear54-step held prefix. It stays rejected; no acceptance override or fallback is implemented.",
-    "Caller must retain transaction ownership, provide all nearby geometry, validate the full union and revalidate later publication state. No B-4/runtime integration is authorized.",
-    "Timing is local isolated CPU work, not rendered/concurrent/mobile frame certification. Clearance is numerical proxy padding capped at2; memory samples are finite GC-sensitive estimates, not an indefinite-leak or512KiB proof."
+    "Human future input is unknown. Offline policy forecasts are not a runtime solution; held-forecast mismatch rejects. No B-5 integration, worker or production selector exists.",
+    "Finite beam search is incomplete; acceptance certifies its supplied root/known field/controls/empty tail, not arbitrary inputs, human readability, enjoyment or infinite survival.",
+    "No long passive policy survives the finite19200-unit corpus, but short accepted-field corner policies survive11/48 windows. Proposal density differs from admitted density; all omissions and fallback causes remain explicit. Simulated movement is not player enjoyment.",
+    "Four24h-equivalent runs are director/ownership distance workloads only. Full24h120Hz trajectory, renderer, physical phone and sustained thermal performance are untested.",
+    "Local wall-time outliers and lower-budget deadline failures prevent a general main-thread frame-budget guarantee. Fresh-GC memory estimates are finite and noisy, not an indefinite-leak or exact512KiB proof.",
+    "B-5 requires external architecture approval, a measured actual-state publication strategy and real visual/input/device playtesting."
   ]
 }

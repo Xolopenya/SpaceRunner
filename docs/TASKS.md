@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. GAMEPLAY-001B-3: verify approved B-2 on local/remote main and create the requested encounter feature branch; inspect actual ownership, dynamics, validator and research.
-2. Add explicit encounter-v1 multi-object ownership and four isolated deterministic families; preserve ambient goldens, normal inspection, physics and budgets.
-3. Measure family/root and joint-transition corpus, real replay/clearance, intended maneuvers and Node/Chrome work/memory. Distinguish bypasses and human playtest limits.
-4. Run regressions and approved historical diagnostics, review, commit and push feature only; generate and independently validate the exact-HEAD review ZIP. B-4 requires external approval.
+1. GAMEPLAY-001B-4: verify approved B-3 on clean local/remote main and create the requested director branch; inspect actual source, ownership, validation and research.
+2. Implement pure distance-indexed bounded pacing, full-span ownership and an isolated coordinator with shared work/deadline limits and actual-state publication gating.
+3. Measure complete fields, consecutive reference/policy schedules, passive bypasses, retirement, fallback causes, timing outliers and finite memory; separate technical results from gameplay hypotheses.
+4. Run all regressions/historical benchmarks, review, commit and push feature only; generate and independently validate the exact-HEAD ZIP. B-5 requires external approval.
 
 ## Acceptance
 
@@ -295,3 +295,34 @@ Final design consistency review corrected the research proposal's scheduling ari
 | `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in nested approved B-1 cwd; original guards/assertions unchanged |
 | `npm run review:verify` | Initial exit0; subsequent precommit run stopped at corrected whitespace issue; all9 constituent commands then passed with explicit continuation |
 | `gh auth status` | Exit1; compare fallback |
+
+## GAMEPLAY-001B-4 — difficulty director and encounter pacing, 2026-10-24
+
+- [x] Read the full task and mandatory source/design/review context. Verified clean main/origin/main at approved `60ca6fcd64885e7fb8d10fda3a4410b3da39dbf9`, zero divergence, then created `feature/gameplay-001b-difficulty-director`. No dependency or asset installation/download was needed.
+- [x] Implemented five focused isolated modules: bounded distance-indexed director/settings, full-span ownership ledger, real B-1/B-3 section builder and incremental planning/publication coordinator. Pacing varies among regular/rising/high/recovery, with family cooldowns and bounded asymptotic progression. Speed and every approved production input remain unchanged. No live selector, GameModel/World integration or worker.
+- [x] Source ownership outlives individual hazards; one writer/frontier, one pending job, atomic complete transactions, explicit cancellation/retirement/reset epochs. Normal structural inspection, joint B-2 search, independent replay and forecast-root publication replay share the original144-tick/default3072/6144 limits. Actual root and complete known field must match at the fixed publication tick; stale or incomplete work fails closed. Old geometry/certificate survives rejected extensions.
+- [x] Original111 tests/goldens unchanged;23 focused tests bring total to134. Coverage includes seeded pacing/progression/placement, seams, residual velocity across eight sections, full-span ownership, reset/cancel, exact geometry/provenance, capacity, rejected/empty fallback, terminal-tail replacement and late/stale publication.
+- [x] Recorded1588 consecutive scheduled spans/1615 candidate attempts:1437 committed,151 uncertified omissions,27 separately identified empty-fallback attempts. No naturally certified empty fallback; engineered tests exercise it. Attempt reasons, rejected spans and all advances remain in raw results.71 witness-controlled windows traverse77013.27 units/2594.13 simulated seconds with zero margin/actual contacts and complete ownership retirement. This is a sum of independent early/middle/late windows, not one uninterrupted run.
+- [x] Approved16-seed corpus plus16 additional trajectory stress seeds;48 additional Chrome sections match Node decisions/geometry/witness hashes.256 structural seeds cover262509 cells/69763 sections with zero structural rejections. Four director-only24h-equivalent schedules each cover2936760 units; no full-day120Hz trajectory/rendering claim. Expanded128-section workloads are reproducible but were not executed.
+- [x] Complete proposed field:15717 hazards/307200 units,5.1162 per100. Reference realized rates early/middle/late4.4290/4.7900/5.2817, including omitted spans. All240 long fixed-field passive runs hit by19200 units. Short accepted-field corner survival11/48 and sparse physical reversals0.1784/1000 remain gameplay risks; human readability/fun are untested.
+- [x] Initial Node/Chrome hash mismatch exposed one-ULP expm1 metadata differences. Director-v1 now explicitly normalizes policy scalars to12 decimals; no ship state, hazard coordinate or collision is rounded. Initial failed log/raw differences are retained. A later corner-pressure revision uses only B-3 mirrors/translations in seeded corner bags. It reduced short corner survival44→11/48 and long survivors13→0/240, while omissions increased135→151/1588. Before/after source/raw evidence is preserved, with no historical golden changes.
+- [x] Preserved final precommit profile: CPU/session median/p95/max131.7734/224.5665/418.8992ms; Node work2.1554/3.4795/4.5303/85.9476ms median/p95/p99/max; Chrome1.5/2.8/3.4/9.8ms. Full publication gate is measured separately. Peak4 ownership records/17 actual hazards/one pending job. Fresh-GC retained delta−251056 bytes is a finite noisy experiment. Smaller2048/4096 budget commits21/24 versus23/24 default, with three early deadline failures. Standard-budget cohorts have zero deadlines. No reliable concurrent-rendering/phone/frame-budget guarantee.
+- [x] Seven review reports, README/PROJECT and five figures describe implemented behavior, measured limitations and gated B-5 proposals. No new gameplay screenshots are fabricated. Current production remains15 files/931609 bytes with byte-identical approved output and the existing Three.js advisory.
+- Full pre-coverage `review:verify` passed all10 checks with131 units/32 browser tests, including original B-3/B-2/B-1 diagnostics. After coverage/tail changes,134 units/typecheck/build and the full new director benchmark passed again. The final exact-HEAD package reruns all10 checks and retains current logs separately from the quoted precommit profile. Initial failures remain evidence, not passing results.
+- GitHub CLI is unauthenticated (exit1); compare URL is the fallback. Feature commit/push, exact-HEAD ZIP and independent inventory/reverse-patch validation are the final delivery operations; actual SHA, archive bytes, remote identity and results are reported at handoff. Main is not merged/pushed. External architecture approval is required before B-5 integration.
+
+| Exact command | Actual precommit result |
+| --- | --- |
+| `git fetch origin`; `git merge-base --is-ancestor 60ca6fcd64885e7fb8d10fda3a4410b3da39dbf9 main` and `origin/main` | Exit0 |
+| `git rev-list --left-right --count main...origin/main`; `git switch -c feature/gameplay-001b-difficulty-director main` | `0 0`; branch created |
+| `npm run typecheck` | Exit0 after final gameplay-research changes |
+| `npm run test` | Exit0;134 passed/0 failed |
+| `npm run build` | Exit0; unchanged production bytes; original chunk advisory |
+| `npm run test:browser` | Exit0;32 passed in full pre-coverage suite; exact-HEAD repeat recorded by packaging |
+| `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit0 in full pre-coverage suite; repeated for final source |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0 in full pre-coverage suite |
+| `node --experimental-strip-types scripts/pattern-benchmark.mjs` | Exit0; original1096 pattern cases/64 Chrome/2 authored traces, original nested B-2/B-1 diagnostics |
+| `node --experimental-strip-types scripts/trajectory-benchmark.mjs` | Exit0 in reconstructed approved B-2 cwd;336 Node/80 Chrome, established path-only bootstrap recorded |
+| `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in nested approved B-1 cwd; original guards/assertions unchanged |
+| `node --experimental-strip-types scripts/director-benchmark.mjs` | Exit0 after final coverage change;1588 schedules/48 Chrome/240 long policies/288 short counterfactuals/256 structural seeds/four director-only day schedules |
+| `npm run review:verify` | Exit0; full10 checks before coverage revision; exact-HEAD full repeat is part of `npm run review:pack` |
