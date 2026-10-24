@@ -12,7 +12,7 @@ import { AudioManager } from './audio/audio-manager.ts';
 import { SoundPanel } from './audio/sound-panel.ts';
 
 export class Game {
-  readonly model = new GameModel();
+  readonly model: GameModel;
   readonly world: World;
   readonly audio = new AudioManager();
   private readonly soundPanel: SoundPanel;
@@ -27,7 +27,8 @@ export class Game {
   private contextLost = false;
   private readonly assets: AssetManager;
 
-  constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory) {
+  constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory, model: GameModel = new GameModel()) {
+    this.model = model;
     this.assets = assets;
     this.platform = platform;
     const canvas = element<HTMLCanvasElement>('flight');
@@ -138,6 +139,7 @@ export class Game {
 
   dispose(): void {
     this.loop.stop();
+    (this.model as GameModel & { dispose?: () => void }).dispose?.();
     this.input.dispose();
     this.events.abort();
     this.soundPanel.dispose();

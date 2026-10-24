@@ -1,6 +1,6 @@
 # Space Runner
 
-Third-person endless avoidance flight for desktop and mobile. The approved Concept A interface now presents real flight, hull, distance, pause/results and native audio settings. Gameplay, camera, calibrated collisions, VFX, procedural generation and audio ownership remain unchanged.
+Third-person endless avoidance flight for desktop and mobile. The approved Concept A interface presents real flight, hull, distance, pause/results and native audio settings. Default/production waves, camera, steering, calibrated collisions, VFX and audio remain unchanged. B-5A adds a separately gated playable developer continuous field, described below.
 
 ## Controls and rules
 
@@ -22,7 +22,7 @@ X is horizontal, Y is vertical, forward is −Z. The ship stays at Z=0 while haz
 | `src/visuals/` | Separately owned starfield/nebula/planet, engine ribbons, impact pool and rendering-only quality/timing |
 | `src/audio/` | Native context/graph ownership, original synthesis/music, bounded SFX, safe preferences and accessible sound dialog |
 | `src/assets/` | Model catalog, asynchronous GLTF loading/cache, normalization/cloning, shared resource ownership |
-| `src/debug/` | Optional development-only wire bounds, diagnostics and private resource ownership |
+| `src/debug/` | Optional development-only wire bounds and actual-state continuous-field adapter |
 | `src/input.ts` | Once-per-game keyboard/pointer listeners, pointer capture, input clearing |
 | `src/game.ts`, `ui.ts` | Lifecycle wiring, resize/focus/context handling, DOM screens/HUD |
 | `src/services/` | Safe score persistence and standalone/future platform seam |
@@ -88,3 +88,13 @@ The separately authorized B-4 task adds pure distance-indexed pacing, a complete
 One pending session shares144 fixed ticks, two searches/four replays and the approved default work budget across all phases. Publication requires normal joint validation and replay, then exact actual-root/field equality at its verified fixed tick. Offline policy forecasts are labeled research assumptions; unknown human input remains an integration problem. Source ownership persists after individual hazards retire, with bounded records, explicit cancellation/retirement and reset epochs. No live field selection, GameModel, movement, speed, camera, collision response, health, score, assets, audio, UI or VFX changes occur.
 
 The research harness separates structural long fields, consecutive verified-controller runs, collision-independent passive scheduling and fixed-field first-contact experiments. It records rejected/empty spans, corner bypasses, CPU outliers, lower-budget deadline tradeoffs and finite GC memory evidence. See [architecture](review/GAMEPLAY-001B-4/ARCHITECTURE.md), [pacing/density](review/GAMEPLAY-001B-4/PACING_AND_DENSITY.md), [fairness](review/GAMEPLAY-001B-4/FAIRNESS_EVIDENCE.md), [performance](review/GAMEPLAY-001B-4/PERFORMANCE.md) and [proposed B-5 gates](review/GAMEPLAY-001B-4/B5_INTEGRATION_PLAN.md). External review is required before B-5 integration; simulated movement is not human enjoyment.
+
+## GAMEPLAY-001B-5A playable developer field
+
+`import.meta.env.DEV` plus exact `debug=field` dynamically selects `RuntimeGameModel`; no flag/default/production selects it. `Game` accepts an optional model and cancels its optional lifecycle on disposal. Production strips the experimental graph/global; the small bridge changes compiled bytes, so historical byte identity is not claimed. Original GameModel/Ship/ObstacleField/config/World/collision/UI/audio/assets are unchanged.
+
+`field-runtime-session.ts` replaces forecast equality with a bounded late **actual-state** replay. Preparation retains the B-4 shared144 ticks, two searches/four replays and ordinary B-2 joint validation. At the final tick, the already prepared control proposal is replayed from the actual Ship/input/time/distance against the complete current field. Strictly disjoint axial slabs are conservatively culled with outward numerical padding; every remaining margin/gameplay query uses original calibrated CCD. An incomplete or failed final replay omits the complete source span. It never yields proof to another state. There is no worker or future-input API.
+
+`RuntimeObstacleField` inherits the same72 records and maps complete accepted PlannedHazards with full provenance. Ledger-known colliders remain after visual hit removal until geometric retirement; complete-span ownership retires separately. Exact pool/ledger identity checks fail closed on mutation. One pending session plus reserved geometry obeys32 known/pending; allocation cannot partially commit. Pause/focus stop simulation/planning; reset/dispose cancel the old epoch. Event64/sample2048 rings are bounded. The startup source begins at96 units and receives normal proof, with no forced acceptance.
+
+The measured actual-input corpus admits2052/2440 sections and9653 hazards, with2147 independent unpruned audits including comparators and zero violations. Separate actual-GameModel capture-phase checks audit505 publications. Actual keyboard/touch flight, four encounter families, natural hull loss, pause and replay work with existing rendering/audio. These are finite measurements, not proof of arbitrary future inputs or gameplay quality. Boundary bypasses, omission bias, cold Launch stalls, portrait clipping, input-domain limits and physical-device playtests remain in [remaining gates](review/GAMEPLAY-001B-5A/REMAINING_GATES.md). See [publication strategy](review/GAMEPLAY-001B-5A/RUNTIME_PUBLICATION.md), [implementation](review/GAMEPLAY-001B-5A/IMPLEMENTATION.md) and [performance](review/GAMEPLAY-001B-5A/PERFORMANCE.md). B-5B requires external architecture review.

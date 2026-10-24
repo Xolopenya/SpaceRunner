@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'runtime', testMatch: 'runtime.spec.ts', timeout: 90_000 },
     { name: 'desktop', testMatch: 'desktop.spec.ts' },
     { name: 'readability', testMatch: 'readability.spec.ts' },
     { name: 'vfx', testMatch: 'vfx.spec.ts' },

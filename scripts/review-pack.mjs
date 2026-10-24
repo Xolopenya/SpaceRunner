@@ -84,6 +84,14 @@ for (const name of config.screenshots) {
   if (posix.basename(name) !== name || !name.endsWith('.png')) throw new Error('Unsafe screenshot name');
   add(`screenshots/${name}`, await readFile(join(root, 'test-results', name)));
 }
+const videoPreviews = [];
+for (const name of config.videoPreviews ?? []) {
+  if (posix.basename(name) !== name || !name.endsWith('.webm')) throw new Error('Unsafe video preview name');
+  const bytes = await readFile(join(root, 'test-results', name));
+  if (bytes.length < 4 || bytes.readUInt32BE(0) !== 0x1a45dfa3) throw new Error('Invalid WebM/EBML video preview');
+  add(`videos/${name}`, bytes);
+  videoPreviews.push({ file: `videos/${name}`, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), provenance: 'Actual browser canvas capture; see task performance report for capture/audio/HUD limitations.' });
+}
 const audioPreviews = [];
 for (const name of config.audioPreviews ?? []) {
   if (posix.basename(name) !== name || !name.endsWith('.wav')) throw new Error('Unsafe audio preview name');
@@ -154,7 +162,7 @@ if (uiProductionMeasurements) {
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, designMeasurements, uiProductionMeasurements,
+  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, videoPreviews, designMeasurements, uiProductionMeasurements,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

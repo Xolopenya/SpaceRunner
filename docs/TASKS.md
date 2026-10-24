@@ -1,11 +1,51 @@
 # Delivery checklist
 
+## GAMEPLAY-001B-5A — actual-input publication and playable developer prototype
+
+- [x] Started on clean `main` at approved `d523cc4286d825594affbf9151cdae395b3ae721`, fetched origin and verified inclusion in both local/remote main (0/0 divergence). Created requested `feature/gameplay-001b-runtime-prototype`; main is not modified.
+- [x] Compared late replay, rolling replanning, robust coverage and worker options. Implemented bounded late actual-state replay with conservative outward-padded axial query culling. Original Ship120Hz/CCD, held54 ticks,0.15 margin,39-tick braking/empty tail and shared144-tick/2-search/4-replay limits remain. No runtime forecast or future-input API.
+- [x] Technical gate:2632 total decisions /377 runs, including2440 actual-input decisions.2052 commits,388 explicit omissions,9653 admitted hazards over239376 scheduled units.2147 independent unpruned certificate audits /32806952 full queries /0 violations. Matched runtime43/48, B-4 oracle43/48, B-4 held0/48. No safety/density threshold was relaxed.
+- [x] Separate384 real GameModel cases verify the live post-movement capture phase and actual hull/death pipeline:505 publication audits,0 violations. Six additional32-section passive runs account for192 decisions separately; boundary survives2/3 long windows and42/48 shorter primary windows. This remains a gameplay gate.
+- [x] Added opt-in development `?debug=field&seed=42`, same72 render records and complete32-known/pending cap, complete source-span ownership, immutable provenance, exact ledger/pool checks, atomic admission, separate visual/geometric/source retirement, pending cancellation/reset/disposal and bounded diagnostics. Default/production keep original waves; production strips experimental graph/global. The small model/lifecycle bridge changes compiled bytes; no false byte-identity claim.
+- [x] Real Chrome keyboard/touch flight, four encounter families, different depths, natural three-hit death, pause/focus, restart and production gating pass. Visually inspected desktop/portrait, pause, game-over and depth screenshots. Existing HUD, VFX, audio, assets and physics remain unchanged; no new dependencies/downloads.
+- [x] Eight real-render/audio profiles include cold Launch and established distance4200 workloads. Cited frozen-source precommit: frames p5016.7ms, p9516.8–16.9ms; established maxima17.1–17.6ms. Cold maxima350–666.6ms remain visible, with no measured scheduler overlap for long tasks. Launch CPU samples identify existing synchronous synthesis/context work among costs. Node max44.60ms and historical85.95ms outliers are retained. Physical phones/thermal behavior are untested.
+- [x] Matched192 spatial windows: old7512/new5927 centers over171936 units (4.3691/3.4472 per100). Identical-clock axial empty time old76.88%/new45.43%; new maximum depth gap273.65 units. Counts/proximity/reversal proxies do not establish fun or forced human maneuvers. Seed42 first actual neutral hit24.4417s is from a later source; first chosen reference steering1.6583s is not a proved required maneuver.
+- [x] Seven reports under `review/GAMEPLAY-001B-5A/`, README, current PROJECT architecture and review configuration updated. Actual input traces, rejected/fallback spans, comparison windows, restart memory, raw CPU profiles and silent native canvas recording/decode evidence are preserved for packaging. Historical reports remain intact.
+
+### Executed verification before milestone commit
+
+| Command | Actual result |
+| --- | --- |
+| `npm run typecheck` | Exit0, strict TypeScript passes |
+| `npm run test` | Exit0,153/153 pass,0 failures,28.07s; original134 tests/goldens retained |
+| `npm run build` | Exit0; production JS663.08kB rounded; expected Three.js chunk advisory |
+| `npm run test:browser` | Exit0,37/37 pass in3.4min (old32 plus5 runtime cases) |
+| `git diff --check` | Exit0; no whitespace errors (checkout CRLF notice only) |
+| `node scripts/review-static.mjs` | Exit0;215 files,0 known credential signatures; not an exhaustive audit |
+| `node scripts/build-analysis.mjs` | Exit0; experimental module graph absent from production attribution |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0; original calibrated assets/proxies retained |
+| `node --experimental-strip-types scripts/runtime-history.mjs` | Exit0; original approved B-4 build, pattern and director commands; nested original trajectory/foundation commands pass with source guards enabled |
+| `node --experimental-strip-types scripts/runtime-benchmark.mjs --logical-only` | Exit0 corrected logical gate; full-query audits pass; an earlier interrupted attempt is retained |
+| `node --experimental-strip-types scripts/runtime-benchmark.mjs` (precommit attempt) | Exit1 **after** completed2632-decision/2147-audit logical stage, during rendered profiling following source-edit Vite/HMR reset. Not reported as a passed whole command |
+| `node scripts/runtime-browser.mjs` (frozen-source continuation) | Exit0;8 actual-render cases, no browser errors, native canvas video produced and two differing frames decode-verified |
+| `node --experimental-strip-types scripts/runtime-model-benchmark.mjs` | Original standalone actual-model gate exit0,384 cases/505 audits. Extended bootstrap/long-passive output preserved; exact-HEAD pipeline reruns all stages |
+
+Raw successes, exploratory failures and corrections stay in `.cache/review/GAMEPLAY-001B-5A/`; packaging includes curated JSON/logs rather than generated caches as directories. The final `npm run review:pack` reruns all ten configured checks on a clean committed HEAD, records command exit codes/counts in generated VERIFICATION/manifest, reopens every ZIP entry and rejects any source drift. Independent validation checks SHA256 inventory, evidence identity, safe paths and reverse patch applicability without applying it. Review ZIPs are ignored and never pushed.
+
+### Explicit remaining gates
+
+- [ ] External architecture review before B-5B/production rollout; no B-5B work is included.
+- [ ] Human ordinary-input comparison: meaningful avoidance, perceived warning, depth/fog/overlap, consistency and enjoyment.
+- [ ] Corner-pressure veto bias, long gaps and11/192 initial-source vetoes; no guaranteed no-bypass claim.
+- [ ] Physical phones/thermal/long sessions, broader browsers, portrait extreme-X wing clipping and manual audio acceptance.
+- [ ] Cold Launch bottleneck and combined keyboard+touch raw input outside validator domain (admission fails closed while steering stays original).
+
 ## Current implementation plan
 
-1. GAMEPLAY-001B-4: verify approved B-3 on clean local/remote main and create the requested director branch; inspect actual source, ownership, validation and research.
-2. Implement pure distance-indexed bounded pacing, full-span ownership and an isolated coordinator with shared work/deadline limits and actual-state publication gating.
-3. Measure complete fields, consecutive reference/policy schedules, passive bypasses, retirement, fallback causes, timing outliers and finite memory; separate technical results from gameplay hypotheses.
-4. Run all regressions/historical benchmarks, review, commit and push feature only; generate and independently validate the exact-HEAD ZIP. B-5 requires external approval.
+1. GAMEPLAY-001B-5A: verify approved B-4 on clean local/remote main, inspect runtime contracts and create the requested runtime-prototype branch.
+2. Compare actual-state publication approaches. Test bounded final replay without future-input access, unchanged movement/collision/reaction/tail semantics and measured admission across changing histories.
+3. Enable a development-only adapter only after the feasibility gate passes; measure actual Three.js gameplay, lifecycle, warning, density and frame costs. Preserve the default wave generator and production stripping.
+4. Run regressions and historical diagnostics at their approved snapshots; report actual limits, commit/push the feature and independently verify the exact-HEAD ZIP. B-5B requires external review.
 
 ## Acceptance
 

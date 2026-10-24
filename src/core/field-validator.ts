@@ -11,6 +11,14 @@ import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationFailure,
 type Rejection = Extract<TrajectoryResult, { decision: 'reject' }>;
 type Operation = 'propagation' | 'query';
 type Work<T> = Generator<Operation, T, void>;
+/** Outward numerical guard only: never shrink either collision envelope.
+ * Static-center enclosing spheres and monotonic forward travel are required.
+ */
+export function runtimeAxialDisjoint(h: Pick<PlannedHazard, 'passDistance' | 'radius'>, from: number, to: number, margin: number): boolean {
+  const guard = 1e-9 + 8 * Number.EPSILON * Math.max(1, Math.abs(h.passDistance), Math.abs(from), Math.abs(to));
+  const extent = h.radius + CONFIG.ship.radius + margin + guard;
+  return h.passDistance + extent < from || h.passDistance - extent > to;
+}
 interface Prepared {
   context: FieldValidationContext; hazards: readonly PlannedHazard[]; margin: number;
   policy: 'generator' | 'synthetic-fixture'; targetTick: number; controlEndTick: number; reserved: number;
@@ -97,7 +105,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
 
 /** Each yield is a pre-operation request; advance never exceeds either budget. */
 function* simulate(state: FlightState, input: ControlRun['input'], ticks: number, p: Prepared,
-  metrics: ValidationMetrics, broadPhase: boolean, prediction: FlightPrediction, startTick = 0): Work<{ id: string; step: number } | undefined> {
+  metrics: ValidationMetrics, broadPhase: boolean, prediction: FlightPrediction, startTick = 0, replayAxialCull = false): Work<{ id: string; step: number } | undefined> {
   const previous = { ...state };
   for (let tick = 0; tick < ticks; tick++) {
     yield 'propagation';
@@ -108,7 +116,8 @@ function* simulate(state: FlightState, input: ControlRun['input'], ticks: number
     if (broadPhase) metrics.searchPropagations++; else metrics.replayPropagations++;
     for (const h of p.hazards) {
       const extent = h.radius + CONFIG.ship.radius + p.margin;
-      if (broadPhase && (h.passDistance + extent < previous.distance || h.passDistance - extent > state.distance)) {
+      if (replayAxialCull ? runtimeAxialDisjoint(h, previous.distance, state.distance, p.margin)
+        : broadPhase && (h.passDistance + extent < previous.distance || h.passDistance - extent > state.distance)) {
         metrics.broadPhaseSkips++; continue;
       }
       yield 'query';
@@ -213,7 +222,7 @@ export function witnessHash(value: unknown): string {
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
-function* replay(p: Prepared, controls: readonly ControlRun[], metrics: ValidationMetrics): Work<TrajectoryResult> {
+function* replay(p: Prepared, controls: readonly ControlRun[], metrics: ValidationMetrics, axialCull = false): Work<TrajectoryResult> {
   if (++metrics.replays > L.maxReplays) return reject('COMPUTATION_BUDGET_EXCEEDED', 'replay limit');
   if (controls.length > L.horizonTicks || controls.some(run => !Number.isInteger(run.ticks) || run.ticks <= 0 || !validInput(run.input))
     || controls.reduce((sum, run) => sum + run.ticks, 0) !== p.targetTick) return reject('INVALID_TERMINAL_STATE', 'control duration');
@@ -223,8 +232,9 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
     if ((tick < L.reactionTicks && !sameInput(run.input, p.context.input)) || (tick + run.ticks > p.controlEndTick && !neutral(run.input))) {
       return reject('INVALID_TERMINAL_STATE', 'reaction or braking controls');
     }
-    // Fresh integration from root, EVERY hazard every substep, no search broad phase.
-    const hit = yield* simulate(state, run.input, run.ticks, p, metrics, false, prediction);
+    // Fresh integration, independent of search states/clock/safe flags. The runtime
+    // gate may skip only strict axial disjointness of the enclosing swept sphere.
+    const hit = yield* simulate(state, run.input, run.ticks, p, metrics, false, prediction, 0, axialCull);
     if (hit) return reject('COLLISION_FOUND', `${hit.id}@${tick + hit.step}`);
     tick += run.ticks;
   }
@@ -318,6 +328,21 @@ export function beginTrajectoryReplay(context: FieldValidationContext, controls:
 }
 
 export function beginPublicationCheck(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions = {}): ValidationJob {
+  return publicationCheck(witness, current, options, false);
+}
+
+/** Actual-state runtime gate. Caller must finish this job and atomically commit
+ * in the SAME synchronous tick; unfinished work never carries publication proof.
+ * Historical full-query replay remains unchanged and is the differential oracle.
+ */
+export function beginRuntimePublicationCheck(witness: ValidationWitness, current: FieldValidationContext): ValidationJob {
+  if (witness.margin !== L.margin || witness.structuralPolicy !== 'generator') {
+    return new ValidationJob(function* () { return reject('STALE_PUBLICATION_STATE', 'runtime requires normal policy and approved margin'); });
+  }
+  return publicationCheck(witness, current, {}, true);
+}
+
+function publicationCheck(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions, axialCull: boolean): ValidationJob {
   if (witness.controls.length > L.horizonTicks || witness.controls.some(run => !Number.isInteger(run.ticks) || run.ticks <= 0 || run.ticks > L.horizonTicks || !validInput(run.input))) {
     return new ValidationJob(function* () { return reject('STALE_PUBLICATION_STATE', 'invalid witness controls'); });
   }
@@ -340,7 +365,7 @@ export function beginPublicationCheck(witness: ValidationWitness, current: Field
       const input = tick < L.reactionTicks ? p.context.input : tick >= p.controlEndTick ? ACTIONS[0]! : oldInput;
       runs.push({ ticks: 1, input }); if (remaining) remaining--;
     }
-    const result = yield* replay(p, compact(runs), metrics);
+    const result = yield* replay(p, compact(runs), metrics, axialCull);
     return result.decision === 'accept' ? result : reject('STALE_PUBLICATION_STATE', result.reason + ':' + (result.detail ?? ''));
   }, metrics);
 }

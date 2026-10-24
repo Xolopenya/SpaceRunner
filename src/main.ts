@@ -2,6 +2,7 @@ import './styles.css';
 import { Game } from './game.ts';
 import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
+import type { GameModel } from './core/game-model.ts';
 
 declare global {
   interface Window { spaceRunner?: Game }
@@ -31,7 +32,13 @@ async function boot(): Promise<void> {
       if (disposed) return;
       debugFactory = scene => new ColliderDebugger(scene);
     }
-    game = new Game(assets, undefined, debugFactory);
+    let developerModel: GameModel | undefined;
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
+      const { RuntimeGameModel } = await import('./debug/runtime-game-model.ts');
+      if (disposed) return;
+      developerModel = new RuntimeGameModel();
+    }
+    game = new Game(assets, undefined, debugFactory, developerModel);
     // Opt-in test inspection only; omitted from the production build by Vite.
     if (import.meta.env.DEV && new URLSearchParams(location.search).has('debug')) window.spaceRunner = game;
   } catch (error) {
