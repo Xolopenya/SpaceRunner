@@ -40,7 +40,7 @@ export type StructuralResult =
   | { readonly status: 'valid'; readonly candidateCount: number; readonly totalCount: number; readonly aboveSoftLimit: boolean }
   | { readonly status: 'invalid'; readonly reason: StructuralReason };
 
-/** B-2 contract only. No implementation, scheduling or invocation in B-1. */
+/** Isolated planning input. Caller supplies all relevant known hazards. */
 export interface FieldValidationContext {
   readonly player: { readonly x: number; readonly y: number; readonly vx: number; readonly vy: number };
   readonly input: { readonly x: number; readonly y: number };
@@ -48,6 +48,8 @@ export interface FieldValidationContext {
   readonly distance: number;
   readonly committed: readonly PlannedHazard[];
   readonly candidate: FieldTransaction;
+  /** Exclusive future-content reservation; omitted means the minimum inferred tail. */
+  readonly reservedUntilDistance?: number;
 }
 
 export type FieldValidationDecision =

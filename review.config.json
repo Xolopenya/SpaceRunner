@@ -1,30 +1,32 @@
 {
-  "taskId": "GAMEPLAY-001B-1",
-  "baseline": "c447ee52d3fcc891c6c9e633eb604905c5a99443",
+  "taskId": "GAMEPLAY-001B-2",
+  "baseline": "90b2b103ff4fa8f64953894679142b6def938f82",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-1/ARCHITECTURE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-1/IMPLEMENTATION.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-1/PERFORMANCE.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-2/ARCHITECTURE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-2/IMPLEMENTATION.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-2/PERFORMANCE.md",
+    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-2/FAIRNESS_EVIDENCE.md"
   },
-  "screenshots": ["field-actual-depth.png", "field-actual-xy.png", "field-actual-gaps.png"],
+  "screenshots": [],
   "extraChecks": [
     { "name": "collision-audit", "script": "scripts/collision-audit.mjs", "stripTypes": true },
-    { "name": "field-foundation", "script": "scripts/field-foundation-benchmark.mjs", "stripTypes": true }
+    { "name": "trajectory-benchmark", "script": "scripts/trajectory-benchmark.mjs", "stripTypes": true }
   ],
   "evidenceNotes": [
-    "Real isolated B-1 candidate builder, not imported by any production entry. All baseline production inputs and tests are compared to approved research; fresh build hashes and optional historical name/size comparison are recorded.",
-    "Existing tests remain unchanged. New tests pin full-precision goldens and sweep256 seeds x1024 ownership cells, including adjacent context. Structure does not imply reachability.",
-    "Benchmarks compare16 seeds over center-pass-distance[0,19200). Old output is collected at120Hz for600s. New output is a distance-only ambient stream with no bootstrap, acceptance, director or runtime. Also report[4200,19200) separately.",
-    "Three plots contain actual old/new data only; they are not game screenshots or witness diagrams.",
-    "Timing is local Node generation/inspection. Memory uses an --expose-gc child with bounded last-snapshot retention. No browser FPS, phone, validator or human-fun claim follows.",
-    "Unchanged browser tests cover resource/network ownership. No dependency, asset, scene object or feature flag was added. Deliberate asset404 recovery remains an expected fixture."
+    "Isolated exact-state beam with independent full-step replay, both margin and unchanged actual gameplay queries, and later-root revalidation. No live generator or player flag.",
+    "Every original unit/browser assertion remains. R01-R20, known positive traces, frozen10000-sweep zero-margin comparisons, exact10000-step dynamics and disagreement fault injection are executable tests.",
+    "336 Node validation jobs:240 approved-corpus combinations,64 broader neutral roots,16 zero-margin and16 long-horizon cases.80 additional normal jobs in installed Chrome. Late roots are engineered probes, not natural player histories.",
+    "Raw examples contain full accepted/rejected geometry, exact roots, controls, reservation and witness hashes. Every accepted job is replayed again in diagnostics; hashes never substitute for collision verification.",
+    "Historical B-1 generator diagnostics run unchanged against a reconstructed approved snapshot. Every fresh production output file is byte/hash compared with that approved build. Original source-pinning assertions are preserved.",
+    "Performance reports distinguish whole-job CPU, planning chunks, logical ticks, replay, setup and whole-process retained heap. An isolated harness loads no Game/World/GLB and is never included in production.",
+    "No fake live screenshots are packaged. Original browser resource/error tests still apply, including deliberate asset404 recovery fixtures. Existing Three.js chunk advisory remains."
   ],
   "limitations": [
-    "Not safe for production gameplay: no trajectory validator, witness replay, stale-root check, runtime publication, bootstrap or scheduling. B-2 requires external review approval.",
-    "Experimental ambient-v1 retains a24-unit anchor cadence and averages about4.17 objects/100 units. Encounters and pacing remain deferred.",
-    "Structural validity checks bounded logical context only; future publisher must reserve every slot and validate current player state before any atomic publication.",
-    "Finite probes do not prove every stationary trajectory eventually collides. Full XY support removes the old lane-stripe argument, not every possible exploit.",
-    "Physical phones, Safari/Firefox and human playtesting remain unverified. Existing Vite chunk advisory remains."
+    "Finite sampled/pruned search is incomplete. Acceptance proves its replayed controls from its supplied root, not all-input safety, human discoverability, arbitrary delay or infinite survival.",
+    "Caller must provide complete known geometry and honor the empty reservation. No runtime coordinator, pool publication, bootstrap, director, encounter library, scoring or gameplay integration exists.",
+    "4096/8192 hard ceilings,3072/6144 default chunks,144-tick job deadline; future coordinator must enforce transaction-wide timing including publication checks.",
+    "0.45s held input and0.15 clearance are experimental assumptions. CPU and memory measurements are finite local evidence, not physical-phone or concurrent-rendering certification.",
+    "Full256x1024 planning-policy stress and four24h runs are not claimed. B-3 requires independent architecture approval."
   ]
 }

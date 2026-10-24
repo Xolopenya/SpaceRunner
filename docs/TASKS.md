@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. GAMEPLAY-001B-1: verify main contains approved research `c447ee5`; read all eight design records and actual source, then create the requested feature branch.
-2. Implement isolated planned-hazard contracts, keyed full-XY proposals, half-open ownership, bounded transactions and structural checks. Keep all live gameplay inputs unchanged.
-3. Test golden seeds, seams/counts/reset, measure real old/new output, and render actual distribution plots; record limitations and B-2 interface only.
-4. Run existing regressions/static/diagnostics, review changes, commit/push the feature branch and validate its review ZIP. B-2 still requires external review.
+1. GAMEPLAY-001B-2: verify approved B-1 on local/remote main and create the requested feature branch; inspect actual dynamics, collision, data contracts and research.
+2. Implement isolated exact prediction, margin queries, bounded incremental beam, replayable witnesses and current-state revalidation. Preserve every original gameplay module and test.
+3. Exercise R01–R20, real generated contexts and measured Node/Chrome stress; document actual work, CPU, memory and conditional guarantees.
+4. Run all regressions/diagnostics, review, commit and push feature only; generate and validate the exact-HEAD review ZIP. B-3 requires external approval.
 
 ## Acceptance
 
@@ -233,3 +233,32 @@ Final design consistency review corrected the research proposal's scheduling ari
 | `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0; real sampling/replay/ranges/context/boundary/memory assertions and three plots |
 | `npm run review:verify` | Exit0; all nine checks above, raw logs and JSON saved |
 | `gh auth status` | Exit1; no authenticated host, compare fallback |
+
+## GAMEPLAY-001B-2 — trajectory validation and procedural fairness, 2026-10-24
+
+- Read the full B-2 brief, repository guidance, approved fairness/architecture/test/roadmap records, B-1 architecture/performance, TASKS and authoritative source/tests. Verified clean main and origin/main contain approved `90b2b103ff4fa8f64953894679142b6def938f82`, zero divergence, and created `feature/gameplay-001b-trajectory-validator`.
+- Implemented four isolated pure modules: exact private Ship prediction and reusable clock tables; margin-aware calibrated query adapter; bounded validator contracts/settings; incremental beam, full witness replay and actual later-state checks. B-1 context adds only an optional reservation bound. No original gameplay source, asset/config/dependency, old test or historical report changed. No live flag, field spawning, coordinator, patterns, director, score/rewards or worker.
+- Search holds current input for54 steps, uses9 actions/24-step macros, width16, exact states with pruning-only bins and stable predecessors. It validates committed field before the union. Accepted controls are replayed from a fresh root against every hazard at every substep, with both margin and unchanged actual gameplay collision queries. No immunity/hull credit. Finish after39 real neutral steps inside the16-unit reservation, leaving future-object clearance. Horizon≤1800 substeps. Publication replays later position/velocity/input, absolute rotation times and current committed field; invalid stale traces reject without moving geometry.
+- Original source-pinning test caught an initial shared collision edit, so it was removed; the isolated adapter passes10000 frozen approved sweeps/default comparisons and positive-margin monotonic checks. R05 initially exposed a local-potential search failure despite its known trace; bounded coarse-goal ranking corrected it without changing fixture geometry, width or physics. Terminal review tightened the end position to stay within its reservation. Initial development failures and profiles are retained as evidence, not reported as passing results.
+- All R01–R20 fixtures pass, including independent known positive traces, negative witnesses versus whole layouts, opposite velocities, rotating thin proxies, full-plane/incompatible barriers, stale roots, unknown metadata, horizon/deadline failures, exact10000-step GameModel differential, replay-disagreement injection and immutable reset/replay data.31 new tests plus original65 =96 passed. No original test was weakened. The pinned full-witness SHA256 is `7fe8998edb094d9d71b7ede9b94aa9c044ca80c094e85617c3665a7fc32c6f8c`.
+- The final default uses3072 propagations/6144 narrow queries per advance under unchanged hard4096/8192 caps; strictly increasing logical ticks stop at144. Default total capacity is below two full15s beams in the loose worst case, so such extreme jobs can explicitly reject. No unchecked deadline acceptance or unconditional throughput claim. Near-horizon actual6-cell transactions were added to measure the intended shape.
+- Completed336 Node jobs:80 normal16-seed×5-policy cases,80 late-existing,80 late-candidate,64 broader neutral seeds,16 zero-margin and16 long-horizon cases. All176 normal/zero/long cases accepted and replayed independently;80 late-existing returned EXISTING_FIELD_UNCERTIFIED and80 late-candidate INSUFFICIENT_REACTION_DISTANCE. Zero deadline failures; max339273 propagations/67314 narrow queries/115 ticks, peak frontier16.80 additional isolated Chrome155.0.8059.85 normal cases accepted/replayed with matching hashes. Late cases are engineered5-unit probes preserving policy velocity, not human run histories.
+- First complete final-default profile: Node mixed-job median/p95/max53.6713/104.1065/187.2602ms; Node chunk1.2782/2.1972/8.2559ms. Chrome normal-job54.0/63.6/67.5ms, chunk1.1/1.6/3.3ms, external replay1.3/1.8/3.3ms. Browser chunk p95 meets the proposed2ms desktop target in this finite harness. Timing is variable and excludes concurrent game rendering; physical phones and sustained sessions remain unverified. Raw logs preserve earlier misses and exact rerun samples.
+- Fresh-GC memory experiment: five active jobs add70432 heap+259344 ArrayBuffer bytes (~65955 bytes/job estimate); after60 completed jobs total delta−56288 bytes. Heap/ArrayBuffers/external/RSS samples are retained. This noisy estimate and8MiB finite guard do not prove a512KiB bound or indefinite leak absence. Full256×1024 planning-policy stress/four24h runs are explicitly not claimed; no director exists.
+- All nine full precommit verification commands passed (96 unit/32 browser tests, browser2.5m). After final budget/metadata changes, typecheck and all96 units passed again and the336+80 diagnostic was repeated. Historical B-1 generator diagnostic runs unchanged in an approved ignored snapshot; its full build matches every current production byte/hash (15 files/931609 bytes).87 original source/test/design/config inputs are guarded, with only the explicit B-1 type extension allowed. Original production screenshot was visually inspected. Asset404 recovery is intentional; original Vite chunk advisory remains.
+- README/project and four current reports describe actual APIs, failures, measurements and conditional guarantees. Review tooling/ZIP implementation is unchanged. GitHub CLI remains unauthenticated (exit1); compare fallback applies. Tested feature commit/push and exact-HEAD packaging are the final delivery operations; their generated SHA, remote check and ZIP integrity are reported at handoff. No main push/merge, force or history rewrite. B-3 requires external approval.
+
+| Exact command | Actual result before feature commit |
+| --- | --- |
+| `git fetch origin`; `git merge-base --is-ancestor 90b2b103ff4fa8f64953894679142b6def938f82 main` and `origin/main` | Exit0 |
+| `git rev-list --left-right --count main...origin/main`; `git switch -c feature/gameplay-001b-trajectory-validator main` | `0 0`; branch created |
+| `npm run typecheck` | Exit0 |
+| `npm run test` | Exit0;96 passed/0 failed |
+| `npm run build` | Exit0;15 files/931609 bytes, same output hashes as approved build |
+| `npm run test:browser` | Exit0;32 passed (2.5m) |
+| `git diff --check`; `node scripts/review-static.mjs`; `node scripts/build-analysis.mjs` | Exit0 |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0 |
+| `node --experimental-strip-types scripts/trajectory-benchmark.mjs` | Exit0;336 Node+80 browser cases, complete raw results/witnesses/failures |
+| `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in reconstructed approved B-1 cwd; original guards unchanged; logs under current-task baseline |
+| `npm run review:verify` | Exit0;all nine checks/logs captured |
+| `gh auth status` | Exit1;no logged-in host, compare fallback |
