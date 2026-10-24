@@ -1,32 +1,34 @@
 {
-  "taskId": "GAMEPLAY-001B-2",
-  "baseline": "90b2b103ff4fa8f64953894679142b6def938f82",
+  "taskId": "GAMEPLAY-001B-3",
+  "baseline": "4c82ad2dc30f4d309f085cbf3a16a41ffde1c30f",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-2/ARCHITECTURE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-2/IMPLEMENTATION.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-2/PERFORMANCE.md",
-    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-2/FAIRNESS_EVIDENCE.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-001B-3/ARCHITECTURE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-3/IMPLEMENTATION.md",
+    "PATTERN_LIBRARY.md": "docs/review/GAMEPLAY-001B-3/PATTERN_LIBRARY.md",
+    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-3/FAIRNESS_EVIDENCE.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-3/PERFORMANCE.md",
+    "INTEGRATION_NOTES.md": "docs/review/GAMEPLAY-001B-3/INTEGRATION_NOTES.md"
   },
-  "screenshots": [],
+  "screenshots": ["pattern-scattered.png", "pattern-narrowing.png", "pattern-alternating.png", "pattern-vertical-weave.png"],
   "extraChecks": [
     { "name": "collision-audit", "script": "scripts/collision-audit.mjs", "stripTypes": true },
-    { "name": "trajectory-benchmark", "script": "scripts/trajectory-benchmark.mjs", "stripTypes": true }
+    { "name": "pattern-benchmark", "script": "scripts/pattern-benchmark.mjs", "stripTypes": true }
   ],
   "evidenceNotes": [
-    "Isolated exact-state beam with independent full-step replay, both margin and unchanged actual gameplay queries, and later-root revalidation. No live generator or player flag.",
-    "Every original unit/browser assertion remains. R01-R20, known positive traces, frozen10000-sweep zero-margin comparisons, exact10000-step dynamics and disagreement fault injection are executable tests.",
-    "336 Node validation jobs:240 approved-corpus combinations,64 broader neutral roots,16 zero-margin and16 long-horizon cases.80 additional normal jobs in installed Chrome. Late roots are engineered probes, not natural player histories.",
-    "Raw examples contain full accepted/rejected geometry, exact roots, controls, reservation and witness hashes. Every accepted job is replayed again in diagnostics; hashes never substitute for collision verification.",
-    "Historical B-1 generator diagnostics run unchanged against a reconstructed approved snapshot. Every fresh production output file is byte/hash compared with that approved build. Original source-pinning assertions are preserved.",
-    "Performance reports distinguish whole-job CPU, planning chunks, logical ticks, replay, setup and whole-process retained heap. An isolated harness loads no Game/World/GLB and is never included in production.",
-    "No fake live screenshots are packaged. Original browser resource/error tests still apply, including deliberate asset404 recovery fixtures. Existing Three.js chunk advisory remains."
+    "Four isolated encounter-v1 families, full source identity and transaction-global ordinals; ambient-v1 proposal bytes and old tests remain unchanged.",
+    "All proposals pass actual FieldGenerator.inspect and default normal B-2 policy. No synthetic-fixture admission, live publisher, worker, director or planner-limit changes.",
+    "1096 accounted attempts:768 family/root combinations,128 global-neutral roots,64 engineered late roots,128 joint transitions,8 invalid requests. Every acceptance is independently replayed.64 further Chrome jobs compare exact decisions and hashes.",
+    "Two supplemental authored steering traces demonstrate horizontal and vertical reversals through real generated geometry using normal independent replay. They are separate from beam-search statistics; all beam witnesses remain available. Four figures are actual coordinate projections, not captured gameplay.",
+    "Raw samples retain roots, complete candidate/committed geometry, rejection causes, work counters and real swept-proxy padding clearance. Removing Y assesses that trace only, not all horizontal alternatives.",
+    "Both source-pinned historical benchmarks run in approved B-2/B-1 snapshots. Two explicit path-only bootstrap substitutions use real Git metadata and installed Vite; source guards, algorithms, settings, seeds and assertions stay intact. Fresh production files are byte/hash identical to approved B-2.",
+    "Current logs are from verification at HEAD. baseline/precommit-* evidence preserves the separately documented timing profile. Initial diagnostic findings and fixes are disclosed in IMPLEMENTATION.md."
   ],
   "limitations": [
-    "Finite sampled/pruned search is incomplete. Acceptance proves its replayed controls from its supplied root, not all-input safety, human discoverability, arbitrary delay or infinite survival.",
-    "Caller must provide complete known geometry and honor the empty reservation. No runtime coordinator, pool publication, bootstrap, director, encounter library, scoring or gameplay integration exists.",
-    "4096/8192 hard ceilings,3072/6144 default chunks,144-tick job deadline; future coordinator must enforce transaction-wide timing including publication checks.",
-    "0.45s held input and0.15 clearance are experimental assumptions. CPU and memory measurements are finite local evidence, not physical-phone or concurrent-rendering certification.",
-    "Full256x1024 planning-policy stress and four24h runs are not claimed. B-3 requires independent architecture approval."
+    "Finite beam search is incomplete. Acceptance certifies its supplied root, known field, controls and reserved braking tail; it does not guarantee arbitrary inputs, infinite survival or human discoverability.",
+    "Planner witnesses often bypass pressure early. Intended maneuvers are possible, not forced. Human readability, enjoyment, recovery cadence and physical phones require later playtesting.",
+    "One ambient-to-pattern corpus root is uncertifiable in the existing field: all nine first actions collide after the clear54-step held prefix. It stays rejected; no acceptance override or fallback is implemented.",
+    "Caller must retain transaction ownership, provide all nearby geometry, validate the full union and revalidate later publication state. No B-4/runtime integration is authorized.",
+    "Timing is local isolated CPU work, not rendered/concurrent/mobile frame certification. Clearance is numerical proxy padding capped at2; memory samples are finite GC-sensitive estimates, not an indefinite-leak or512KiB proof."
   ]
 }

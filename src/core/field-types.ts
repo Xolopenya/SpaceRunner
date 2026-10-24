@@ -1,9 +1,24 @@
 export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1';
 
+export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';
+export interface PatternSource {
+  readonly family: PatternFamily;
+  readonly firstCell: number;
+  readonly cellCount: number;
+  readonly variation: number;
+  readonly intensity: number;
+  readonly mirrorX: boolean;
+  readonly mirrorY: boolean;
+  readonly offsetX: number;
+  readonly offsetY: number;
+}
+
 export interface FieldProvenance {
   readonly version: string;
   readonly seed: number;
   readonly settingsKey: string;
+  /** Present only for the explicit encounter-v1 schema; ambient-v1 stays byte-identical. */
+  readonly pattern?: Readonly<PatternSource>;
 }
 
 /** Logical data only. z at time t is currentDistance - passDistance. */
@@ -35,7 +50,7 @@ export interface FieldTransaction {
   readonly hazards: readonly PlannedHazard[];
 }
 
-export type StructuralReason = 'transaction' | 'capacity' | 'provenance' | 'metadata' | 'bounds' | 'ownership' | 'duplicate' | 'separation';
+export type StructuralReason = 'transaction' | 'capacity' | 'provenance' | 'metadata' | 'bounds' | 'ownership' | 'duplicate' | 'separation' | 'incomplete';
 export type StructuralResult =
   | { readonly status: 'valid'; readonly candidateCount: number; readonly totalCount: number; readonly aboveSoftLimit: boolean }
   | { readonly status: 'invalid'; readonly reason: StructuralReason };

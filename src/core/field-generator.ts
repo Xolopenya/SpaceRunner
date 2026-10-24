@@ -3,6 +3,7 @@ import { hazardVariant } from './hazard-profile.ts';
 import { DEFAULT_FIELD_SETTINGS, FIELD_LIMITS, fieldSettings, fieldSettingsKey } from './field-settings.ts';
 import type { FieldSettings } from './field-settings.ts';
 import type { FieldProfile, FieldProvenance, FieldTransaction, PlannedHazard, StructuralReason, StructuralResult } from './field-types.ts';
+import { PATTERN_VERSION, patternCount, patternHazardId, patternKey, validPatternSource } from './field-pattern-source.ts';
 
 const PROFILES: readonly FieldProfile[] = ['sphere-v1', 'sphere-v1', 'half-meteor-v1', 'barrel-v1', 'generator-v1'];
 
@@ -27,7 +28,8 @@ function validSpan(first: number, count: number): boolean {
 }
 
 function sameProvenance(a: FieldProvenance, b: FieldProvenance): boolean {
-  return a.version === b.version && a.seed === b.seed && a.settingsKey === b.settingsKey;
+  return a.version === b.version && a.seed === b.seed && a.settingsKey === b.settingsKey
+    && (a.pattern ? !!b.pattern && patternKey(a.pattern) === patternKey(b.pattern) : !b.pattern);
 }
 
 function identifier(provenance: FieldProvenance, owner: number, local: number): string {
@@ -85,13 +87,21 @@ export class FieldGenerator {
     if (!validSpan(firstCell, cellCount) || startDistance !== firstCell * FIELD_LIMITS.cellSize
       || endDistance !== (firstCell + cellCount) * FIELD_LIMITS.cellSize) return invalid('transaction');
     if (hazards.length > this.settings.maxCandidates || committed.length + hazards.length > FIELD_LIMITS.hardActive) return invalid('capacity');
-    if (!sameProvenance(transaction.provenance, this.provenance)) return invalid('provenance');
+    const compatible = (p: FieldProvenance): boolean => p.seed === this.provenance.seed && p.settingsKey === this.provenance.settingsKey
+      && (p.version === FIELD_LIMITS.version ? p.pattern === undefined : p.version === PATTERN_VERSION && validPatternSource(p.pattern));
+    if (!compatible(transaction.provenance)) return invalid('provenance');
+    const source = transaction.provenance.pattern;
+    if (source && (source.firstCell !== firstCell || source.cellCount !== cellCount)) return invalid('ownership');
+    if (source && hazards.length !== patternCount(source.family, source.intensity)) return invalid('incomplete');
     const all = [...committed, ...hazards]; // length checked before allocation, at most32
     const ids = new Set<string>();
     const anchors = new Set<number>();
+    const patternOrdinals = new Set<string>();
+    const owners = new Map<number, string>();
+    for (let cell = firstCell; cell < firstCell + cellCount; cell++) owners.set(cell, 'candidate');
     for (let i = 0; i < all.length; i++) {
       const hazard = all[i]!;
-      if (!sameProvenance(hazard.provenance, this.provenance)) return invalid('provenance');
+      if (!compatible(hazard.provenance) || (i >= committed.length && !sameProvenance(hazard.provenance, transaction.provenance))) return invalid('provenance');
       if (![hazard.x, hazard.y, hazard.passDistance, hazard.radius, hazard.spin, hazard.phase].every(Number.isFinite)
         || !Number.isInteger(hazard.kind) || hazard.kind < 0 || hazard.kind > 2
         || hazard.visualVariant !== hazardVariant(hazard.kind, hazard.phase)
@@ -99,14 +109,33 @@ export class FieldGenerator {
         || hazard.phase < 0 || hazard.phase >= Math.PI * 2 || Math.abs(hazard.spin) > FIELD_LIMITS.maxSpin) return invalid('metadata');
       if (Math.abs(hazard.x) > this.settings.halfX || Math.abs(hazard.y) > this.settings.halfY
         || hazard.radius < FIELD_LIMITS.minRadius || hazard.radius > FIELD_LIMITS.maxRadius) return invalid('bounds');
-      if (!validCell(hazard.ownerCell) || Math.floor(hazard.passDistance / FIELD_LIMITS.cellSize) !== hazard.ownerCell
-        || (hazard.localIndex !== 0 && hazard.localIndex !== 1) || hazard.anchorCell !== hazard.ownerCell + hazard.localIndex) return invalid('ownership');
-      if (hazard.id !== identifier(hazard.provenance, hazard.ownerCell, hazard.localIndex)) return invalid('metadata');
-      if (ids.has(hazard.id) || anchors.has(hazard.anchorCell)) return invalid('duplicate');
+      if (!validCell(hazard.ownerCell) || Math.floor(hazard.passDistance / FIELD_LIMITS.cellSize) !== hazard.ownerCell) return invalid('ownership');
+      const pattern = hazard.provenance.pattern;
+      if (pattern) {
+        if (!Number.isInteger(hazard.localIndex) || hazard.localIndex < 0 || hazard.localIndex >= patternCount(pattern.family, pattern.intensity)
+          || hazard.anchorCell !== hazard.ownerCell || hazard.ownerCell < pattern.firstCell || hazard.ownerCell >= pattern.firstCell + pattern.cellCount) return invalid('ownership');
+        if (hazard.id !== patternHazardId(hazard.provenance, hazard.ownerCell, hazard.localIndex)) return invalid('metadata');
+        const ordinal = `${patternKey(pattern)}/${hazard.localIndex}`;
+        if (patternOrdinals.has(ordinal)) return invalid('duplicate');
+        patternOrdinals.add(ordinal);
+      } else {
+        if ((hazard.localIndex !== 0 && hazard.localIndex !== 1) || hazard.anchorCell !== hazard.ownerCell + hazard.localIndex) return invalid('ownership');
+        if (hazard.id !== identifier(hazard.provenance, hazard.ownerCell, hazard.localIndex)) return invalid('metadata');
+        if (anchors.has(hazard.anchorCell)) return invalid('duplicate');
+        anchors.add(hazard.anchorCell);
+      }
+      if (ids.has(hazard.id)) return invalid('duplicate');
       ids.add(hazard.id);
-      anchors.add(hazard.anchorCell);
       const inside = hazard.ownerCell >= firstCell && hazard.ownerCell < firstCell + cellCount;
       if (inside !== (i >= committed.length)) return invalid('ownership');
+      if (i < committed.length) {
+        const writer = pattern ? patternKey(pattern) : 'ambient';
+        const from = pattern?.firstCell ?? hazard.ownerCell, count = pattern?.cellCount ?? 1;
+        for (let cell = from; cell < from + count; cell++) {
+          if (owners.has(cell) && owners.get(cell) !== writer) return invalid('ownership');
+          owners.set(cell, writer);
+        }
+      }
       for (let j = 0; j < i; j++) {
         const other = all[j]!;
         if (Math.hypot(hazard.x - other.x, hazard.y - other.y, hazard.passDistance - other.passDistance)

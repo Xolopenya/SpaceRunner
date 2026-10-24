@@ -2,10 +2,10 @@
 
 ## Current implementation plan
 
-1. GAMEPLAY-001B-2: verify approved B-1 on local/remote main and create the requested feature branch; inspect actual dynamics, collision, data contracts and research.
-2. Implement isolated exact prediction, margin queries, bounded incremental beam, replayable witnesses and current-state revalidation. Preserve every original gameplay module and test.
-3. Exercise R01–R20, real generated contexts and measured Node/Chrome stress; document actual work, CPU, memory and conditional guarantees.
-4. Run all regressions/diagnostics, review, commit and push feature only; generate and validate the exact-HEAD review ZIP. B-3 requires external approval.
+1. GAMEPLAY-001B-3: verify approved B-2 on local/remote main and create the requested encounter feature branch; inspect actual ownership, dynamics, validator and research.
+2. Add explicit encounter-v1 multi-object ownership and four isolated deterministic families; preserve ambient goldens, normal inspection, physics and budgets.
+3. Measure family/root and joint-transition corpus, real replay/clearance, intended maneuvers and Node/Chrome work/memory. Distinguish bypasses and human playtest limits.
+4. Run regressions and approved historical diagnostics, review, commit and push feature only; generate and independently validate the exact-HEAD review ZIP. B-4 requires external approval.
 
 ## Acceptance
 
@@ -262,3 +262,36 @@ Final design consistency review corrected the research proposal's scheduling ari
 | `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in reconstructed approved B-1 cwd; original guards unchanged; logs under current-task baseline |
 | `npm run review:verify` | Exit0;all nine checks/logs captured |
 | `gh auth status` | Exit1;no logged-in host, compare fallback |
+
+## GAMEPLAY-001B-3 — spatial encounter pattern library, 2026-10-24
+
+- [x] Verified clean main/origin/main at approved `4c82ad2dc30f4d309f085cbf3a16a41ffde1c30f`, zero divergence; created `feature/gameplay-001b-encounter-patterns`. Read the full task, guidance/master, required game-design/review records and authoritative source/tests. No dependencies or assets needed installation/download.
+- [x] Added exactly four isolated families: scattered, narrowing passage, alternating avoidance and vertical weave. Explicit encounter-v1 source metadata and transaction-global ordinals permit3+ objects per cell; full source-span ownership, complete ordinal count, stable lossless IDs, half-open24-unit ownership, genuine separation and12/32 capacity remain strict. Ambient-v1 generation/anchors/golden bytes remain unchanged.
+- [x] PatternGenerator produces immutable complete transactions or explicit request/span/transform/structure rejections. Seed/location/family/variation/purpose streams preserve request-order/reset/JSON identity. Intensity affects bounded spacing/spread/pressure as well as count; radius draws and movement/speed stay fixed. All accepted candidates use actual FieldGenerator.inspect and normal B-2 policy. No synthetic fixture admission or dropped hazards.
+- [x] All original96 tests plus15 focused pattern tests pass(111 total). New coverage includes1024 actual structurally admitted proposals, profiles, separation, ownership/seam/capacity negatives, opposite velocities, invalid intensities/spans, mirrors/translations, independent replay, deadlines, stale roots and useful Y steering. Original ambient/B-2 witness goldens and R01–R20 remain intact. Scattered's final depth-spread adjustment has an explicit same-count intensity assertion and a new B-3 golden; historical goldens stay fixed.
+- [x] Accounted1096 attempts:768 family cases and128 global-neutral roots all accept;64 engineered late roots reject reaction distance;8 invalid requests reject before search; joint transitions127/128 accept. Overall1023 accept,65 trajectory rejections,8 request rejections. The one ambient→weave incoming root(seed11/I=.2) cannot certify its existing ambient field: prefix54 is clear, all nine first actions hit at tick57. It remains rejected. No deadline/horizon/replay disagreement or detected known-safe trace miss occurs.64 isolated Chrome jobs match Node decisions/hashes and replay independently.
+- [x] Two supplemental authored seed42 normal replay routes demonstrate two horizontal/vertical reversals with measured proxy padding1.1594203941855121/1.1767254328598429. They are separate from beam-search rates. Removing Y causes collision for the weave trace;41/224 accepted weave beam traces also benefit from their selected Y inputs. This does not prove every X route impossible. Four inspected numerical plots contain real generated geometry and real simulated traces, clearly labeled; no fake live pattern screenshots.
+- [x] Preserved precommit profile: Node whole-job median/p95/max30.0012/97.9502/146.8186ms; chunk1.1147/1.8598/6.2647ms. Chrome whole-job32.9/38.4/49.6ms; chunk1.2/2.2/5.4ms. Peak252448 propagations,76712 narrow queries,87 planning ticks, frontier16/expansion144; approved budgets unchanged. Fresh-GC retained delta261480 bytes; estimated active cost107880 bytes/job. These finite local CPU/GC samples do not certify concurrent rendering, physical phones, indefinite retention or a512KiB bound.
+- [x] Source guards preserve original gameplay/assets/dependencies/config/tests and pinned algorithm sections. Fresh current/approved B-2 builds match all15 files byte/hash(931609 bytes; JS663045, Node gzip169576). Historical336 Node+80 Chrome B-2 and B-1 foundation commands reproduce in approved ignored snapshots; two explicit path-only Git/Vite bootstrap substitutions are recorded without changing source guards, algorithms, seeds, limits or assertions. No live graph import, publisher, director, worker, scoring, controls, camera, UI, VFX, audio, assets or SDK change.
+- [x] Six current reports and README/PROJECT/review configuration describe actual architecture, library, fairness, performance and integration contracts. Planner routes often take early bypasses; intended maneuvers are possible rather than forced. Human readability/fun, camera visibility, cadence and physical phones remain playtest work. Whole source ownership after last-record despawn remains an obligation for a future coordinator.
+- Initial complete review:verify passed all9 checks. After the final intensity adjustment, typecheck/111 units/build/32 browser tests passed again(2.5m browser); diff-check then found one PROJECT.md EOF blank line. Corrected that formatting error and completed all remaining commands individually, retaining the failed run and explicit continuation. Precommit raw metrics/samples/examples/verification are preserved separately; exact-HEAD review:pack reruns all9 normally. Initial test-helper and nested Vite path failures were fixed without relaxing assertions.
+- GitHub CLI auth status exits1(no authenticated host); feature compare URL is the fallback. Tested feature commit/push and independent exact-HEAD ZIP/inventory/reverse-patch checks are final delivery operations, whose actual SHA/remote/archive results are reported at handoff. Main remains unchanged. No B-4 implementation; external review approval is required.
+
+| Exact command | Actual precommit result |
+| --- | --- |
+| `git fetch origin` | Exit0; local/remote main4c82ad2, divergence0/0 |
+| `git merge-base --is-ancestor 4c82ad2dc30f4d309f085cbf3a16a41ffde1c30f main` and `origin/main` | Exit0 |
+| `git switch -c feature/gameplay-001b-encounter-patterns main` | Exit0 |
+| `npm run typecheck` | Exit0 |
+| `npm run test` | Exit0;111 passed/0 failed |
+| `npm run build` | Exit0;15 files/931609 bytes, original Three.js advisory |
+| `npm run test:browser` | Exit0;32 passed(2.5m) |
+| `git diff --check` | Initially exit2 on PROJECT EOF; corrected, rerun exit0 |
+| `node scripts/review-static.mjs` | Exit0; known-signature check |
+| `node scripts/build-analysis.mjs` | Exit0; unchanged live graph |
+| `node --experimental-strip-types scripts/collision-audit.mjs` | Exit0 |
+| `node --experimental-strip-types scripts/pattern-benchmark.mjs` | Exit0;1096 accounted attempts,64 Chrome and2 supplemental authored replays; four actual plots |
+| `node --experimental-strip-types scripts/trajectory-benchmark.mjs` | Exit0 in reconstructed approved B-2 cwd,336 Node+80 Chrome; path-only bootstrap recorded |
+| `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in nested approved B-1 cwd; original guards/assertions unchanged |
+| `npm run review:verify` | Initial exit0; subsequent precommit run stopped at corrected whitespace issue; all9 constituent commands then passed with explicit continuation |
+| `gh auth status` | Exit1; compare fallback |

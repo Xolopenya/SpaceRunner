@@ -3,6 +3,7 @@ import { FieldGenerator } from './field-generator.ts';
 import { FlightPrediction } from './field-prediction.ts';
 import { hazardVariant } from './hazard-profile.ts';
 import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
+import { FIELD_LIMITS } from './field-settings.ts';
 import type { FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { FlightState } from './field-prediction.ts';
 import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationFailure, ValidationMetrics, ValidationOptions, ValidationWitness } from './field-validator-types.ts';
@@ -30,10 +31,12 @@ const counters = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, 
 
 /** Bounded deep copy: inputs have already passed finite/count/string checks. */
 function snapshot(context: FieldValidationContext): FieldValidationContext {
-  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, provenance: Object.freeze({ ...h.provenance }) });
+  const provenance = (p: FieldValidationContext['candidate']['provenance']) => Object.freeze({ ...p,
+    ...(p.pattern ? { pattern: Object.freeze({ ...p.pattern }) } : {}) });
+  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, provenance: provenance(h.provenance) });
   return Object.freeze({ ...context, player: Object.freeze({ ...context.player }), input: Object.freeze({ ...context.input }),
     committed: Object.freeze(context.committed.map(copyHazard)), candidate: Object.freeze({ ...context.candidate,
-      provenance: Object.freeze({ ...context.candidate.provenance }), hazards: Object.freeze(context.candidate.hazards.map(copyHazard)) }) });
+      provenance: provenance(context.candidate.provenance), hazards: Object.freeze(context.candidate.hazards.map(copyHazard)) }) });
 }
 
 function prepare(raw: FieldValidationContext, options: ValidationOptions, metrics: ValidationMetrics): Prepared | Rejection {
@@ -233,7 +236,11 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
 }
 
 function* validation(union: Prepared, options: ValidationOptions, metrics: ValidationMetrics): Work<TrajectoryResult> {
-  const base = prepare({ ...union.context, candidate: { ...union.context.candidate, hazards: [] } }, options, metrics);
+  // A complete encounter was checked above. The committed-only analysis uses a
+  // normal empty ambient header; partial encounters remain structurally invalid.
+  const baseProvenance = union.context.candidate.provenance.pattern ? { version: FIELD_LIMITS.version,
+    seed: union.context.candidate.provenance.seed, settingsKey: union.context.candidate.provenance.settingsKey } : union.context.candidate.provenance;
+  const base = prepare({ ...union.context, candidate: { ...union.context.candidate, provenance: baseProvenance, hazards: [] } }, options, metrics);
   if ('decision' in base) return reject('EXISTING_FIELD_UNCERTIFIED', base.reason);
   const basePath = yield* search(base, metrics);
   if ('decision' in basePath) return reject('EXISTING_FIELD_UNCERTIFIED', basePath.reason);
