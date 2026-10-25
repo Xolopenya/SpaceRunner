@@ -1,5 +1,17 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003A — Pressure First A/B,2026-10-25
+
+- [x] Fetched origin, verified approved `928b88a2cc266f5086711da5b4e9f3424b01620d` in local/remote main with0/0 divergence, created `feature/gameplay-003a-pressure-experiment`. Preserved pre-existing untracked installed skill, skills-lock and research documents; none are staged or modified by this task.
+- [x] Added DEV-only explicit `policy=baseline|pressure`, versioned diagnostics and pressure branch within the existing director. A/default retains original goldens; B uses existing four families, compact spans and two-cell recovery. No new mechanics, assets, director framework or production generator.
+- [x] Preserved original physics/CCD/reaction/margin/budgets/ownership/publication code. Baseline12-case actual-model differential agrees with approved B-5A; fresh production builds are byte-identical (15files/931651bytes),23 protected sources checked.
+- [x] Added matched prerecorded-input research with actual proposals/commits/clocks, omissions, independent full replay, neutral/edges/four corners/horizontal/vertical/irregular policies, early real-model prefixes and explicit late warm starts. Full raw results and decision on B follow in the current reports.
+- [x] Current precommit unit157/157 and browser40/40 pass, including new selector, reproducible geometry, live hull/score, pause, restart/resources and production-isolation checks. Original tests/goldens retained.
+- [x] Full456-run comparison:accepted3.8935→5.8719/100,depth-gap p9557.2126→35.6075,nearby-free50.58→45.84%;omissions10.31→13.55%.7534 independent certificates/127158574 queries/0 violations. Left/right survival remains19/19;corner contact-free59→61/76. B is retained for owner testing and rejected for promotion; no new mechanics/system is added to rescue it.
+- [x] All required precommit commands pass, including original historical/runtime pipelines. Four isolated actual-render profiles:frame p95~17ms;desktop work p953.3→4.8ms;cold stalls remain. Actual A/B screenshots,geometry projection,two native decoded videos and finite GPU/restart evidence captured.
+- [x] Prepared all five reports and the13-check exact-HEAD package pipeline with SHA256 inventory, full binary patch, user-work fingerprints and independent reverse-patch verification. Implementation milestone `5352074` is committed; final feature SHA/push/archive results are recorded by the delivery manifest and handoff. No merge/main push/force.
+- [ ] Human A/B evaluation:0 new participants; pending owner runs with the six-run guide. Physical phones and long sessions remain untested.
+
 ## GAMEPLAY-001B-5A — actual-input publication and playable developer prototype
 
 - [x] Started on clean `main` at approved `d523cc4286d825594affbf9151cdae395b3ae721`, fetched origin and verified inclusion in both local/remote main (0/0 divergence). Created requested `feature/gameplay-001b-runtime-prototype`; main is not modified.
@@ -42,10 +54,10 @@ Raw successes, exploratory failures and corrections stay in `.cache/review/GAMEP
 
 ## Current implementation plan
 
-1. GAMEPLAY-001B-5A: verify approved B-4 on clean local/remote main, inspect runtime contracts and create the requested runtime-prototype branch.
-2. Compare actual-state publication approaches. Test bounded final replay without future-input access, unchanged movement/collision/reaction/tail semantics and measured admission across changing histories.
-3. Enable a development-only adapter only after the feasibility gate passes; measure actual Three.js gameplay, lifecycle, warning, density and frame costs. Preserve the default wave generator and production stripping.
-4. Run regressions and historical diagnostics at their approved snapshots; report actual limits, commit/push the feature and independently verify the exact-HEAD ZIP. B-5B requires external review.
+1. GAMEPLAY-EXPERIMENT-003A:retain approved B-5A as A and provide explicit DEV pressure-v1 as B within the existing director; preserve production and safety.
+2. Complete matched input/geometry/omission/bypass and real-render comparisons; preserve adverse outcomes and distinguish technical completion from human acceptance.
+3. Commit/push only intended changes and independently verify the exact-HEAD review ZIP. Preserve unrelated user research/installed skills through fingerprints.
+4. Owner A/B evaluation remains pending. Current evidence rejects B promotion; the next proposed content experiment is one coherent large static obstacle after separate authorization/review. No B-5B or new mechanic is authorized by this checklist.
 
 ## Acceptance
 

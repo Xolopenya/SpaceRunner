@@ -4,6 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { chromium } from '@playwright/test';
 import { stats } from './director-fields.mjs';
+import { pressurePlot } from './pressure-plot.mjs';
 
 const root = process.cwd(), output = resolve(process.env.REVIEW_RESULT_DIR ?? '.cache/review/GAMEPLAY-EXPERIMENT-003A/final');
 await mkdir(output, { recursive: true }); await mkdir('test-results', { recursive: true });
@@ -60,6 +61,7 @@ try {
       const file = `${name}-canvas.webm`, bytes = Buffer.from(data); assert.ok(bytes.length > 1024); await writeFile(`test-results/${file}`, bytes);
       const videoPage = await context.newPage(); await videoPage.goto('http://127.0.0.1:5197/tests/browser/trajectory-harness.html');
       await videoPage.setContent(`<video id="v" muted src="/test-results/${file}"></video>`);
+      await videoPage.waitForFunction(() => document.querySelector('video').readyState >= 2);
       const frames = [];
       for (const time of [2, 6]) frames.push(await videoPage.evaluate(time => new Promise(done => {
         const v = document.querySelector('video'); v.onseeked = () => { const c = document.createElement('canvas'); c.width = 160; c.height = 100; const ctx = c.getContext('2d'); ctx.drawImage(v, 0, 0, 160, 100); let hash = 2166136261; for (const b of ctx.getImageData(0, 0, 160, 100).data) hash = Math.imul(hash ^ b, 16777619); done({ time: v.currentTime, width: v.videoWidth, height: v.videoHeight, hash: hash >>> 0 }); }; v.currentTime = time;
@@ -77,4 +79,5 @@ try {
   const result = { generatedAt: new Date().toISOString(), browser: browser.version(), cases, humanParticipants: 0,
     method: 'Four14s real RAF/120Hz/Three.js/GLB/VFX/audio cases with identical time-indexed prerecorded horizontal inputs; cold Launch frames retained. No stopped loop or accelerated steps during performance. Independent finite same-phase restart stress follows measurement. Native desktop recordings add capture cost, silent canvas only; portrait is desktop touch emulation. Different wall-clock lengths cause slightly different terminal simulation clocks; exact fixed-clock screenshots are separately captured at12s with neutral input. No physical phone or human preference claim.' };
   await writeFile(join(output, 'pressure-browser.json'), JSON.stringify(result, null, 2) + '\n');
+  await pressurePlot(browser, output);
 } finally { await browser?.close(); server.kill(); }

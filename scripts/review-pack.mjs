@@ -6,6 +6,7 @@ import { excludedPath, containsSecret } from './review-safety.mjs';
 import { root, git, verify } from './review-verify.mjs';
 import { MODEL_ASSETS } from '../src/assets/catalog.ts';
 import { verificationReport } from './review-reports.mjs';
+import { reviewWorktree } from './review-worktree.mjs';
 
 const config = JSON.parse(await readFile(join(root, 'review.config.json'), 'utf8'));
 const options = process.argv.slice(2);
@@ -19,8 +20,8 @@ const baseline = git('rev-parse', '--verify', `${config.baseline}^{commit}`).toS
 const head = git('rev-parse', 'HEAD').toString().trim();
 git('merge-base', '--is-ancestor', baseline, head);
 const branch = git('branch', '--show-current').toString().trim();
-const status = git('status', '--porcelain=v1', '--untracked-files=all').toString();
-if (status.trim()) throw new Error('Commit all intended source changes before packaging. Working tree must be clean.');
+const preservedUntracked = await reviewWorktree(config, root, git);
+const preservedIdentity = JSON.stringify(preservedUntracked);
 
 const entries = [], exclusions = [];
 function add(name, data) {
@@ -45,7 +46,7 @@ for (const required of ['AGENTS.md', 'package.json', 'package-lock.json', 'src/m
 }
 
 const { directory, result } = await verify(config.taskId, config.extraChecks);
-if (git('rev-parse', 'HEAD').toString().trim() !== head || git('status', '--porcelain=v1', '--untracked-files=all').toString().trim()) throw new Error('Repository changed during verification; package not written.');
+if (git('rev-parse', 'HEAD').toString().trim() !== head || JSON.stringify(await reviewWorktree(config, root, git)) !== preservedIdentity) throw new Error('Repository changed during verification; package not written.');
 const generatedAt = new Date().toISOString();
 const changedRaw = git('diff', '--name-status', '--find-renames', baseline, head).toString();
 const changedFiles = changedRaw.trim().split('\n').filter(Boolean).map(line => {
@@ -61,6 +62,7 @@ add('changes/head.txt', head + '\n');
 add('changes/branch.txt', branch + '\n');
 add('changes/remotes.txt', git('remote', '-v'));
 add('changes/working-tree-status.txt', git('status', '--porcelain=v1', '--untracked-files=all'));
+add('changes/preserved-untracked-inventory.json', JSON.stringify(preservedUntracked, null, 2) + '\n');
 add('changes/SUMMARY.md', `# ${config.taskId}\n\nBaseline: ${baseline}\nFinal HEAD: ${head}\nBranch: ${branch}\n\nSee reports/IMPLEMENTATION.md for significant changes. Snapshot blobs are read from HEAD; no working-directory source files are copied.\n\nExclusions: ${JSON.stringify(exclusions)}\n`);
 
 for (const [name, source] of Object.entries(config.reports)) {
@@ -68,6 +70,9 @@ for (const [name, source] of Object.entries(config.reports)) {
   add(`reports/${name}`, git('show', `${head}:${source}`));
 }
 for (const file of await readdir(directory)) {
+  if ((config.intermediateEvidence ?? []).includes(file)) {
+    exclusions.push({ path: `logs/${file}`, reason: 'Duplicate worker aggregation cache; complete per-run evidence retained' }); continue;
+  }
   if (/\.(?:log|json)$/.test(file)) add(`logs/${file}`, await readFile(join(directory, file)));
 }
 const baselineDirectory = join(root, '.cache/review', config.taskId, 'baseline');
@@ -162,7 +167,7 @@ if (uiProductionMeasurements) {
 const manifest = {
   project: 'Space Runner', taskId: config.taskId, repository: config.repository, baselineCommit: baseline, finalCommit: head, branch, generatedAt,
   changedFiles, checks: result.checks, tests: [...unitTests, ...browserTests], productionBuild: result.productionBuild,
-  integratedAssets: assets, knownBlockers: [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, videoPreviews, designMeasurements, uiProductionMeasurements,
+  integratedAssets: assets, knownBlockers: config.knownBlockers ?? [], exclusions, collisionMeasurements: measurements, performanceMeasurements, audioMeasurements, audioPreviews, videoPreviews, designMeasurements, uiProductionMeasurements,
   limitations: config.limitations ?? [], evidenceNotes: config.evidenceNotes ?? [],
 };
 add('reports/manifest.json', JSON.stringify(manifest, null, 2) + '\n');
@@ -180,5 +185,5 @@ const reopened = readZip(await readFile(output));
 if (reopened.size !== entries.length) throw new Error('ZIP inventory count mismatch');
 for (const entry of entries) if (!reopened.get(entry.name)?.equals(entry.data)) throw new Error(`ZIP content mismatch: ${entry.name}`);
 for (const entry of entries) console.log(`${entry.name}\t${entry.data.length} bytes`);
-if (git('status', '--porcelain=v1', '--untracked-files=all').toString().trim()) throw new Error('Packaging introduced unexpected project changes');
+if (JSON.stringify(await reviewWorktree(config, root, git)) !== preservedIdentity) throw new Error('Packaging introduced unexpected project changes');
 console.log(`\nVerified readable ZIP: ${resolve(output)}\nArchive size: ${archive.length} bytes\nEntries: ${entries.length}\nSHA256: ${createHash('sha256').update(archive).digest('hex')}`);

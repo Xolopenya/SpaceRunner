@@ -1,34 +1,26 @@
 {
-  "taskId": "GAMEPLAY-001B-5A",
-  "baseline": "d523cc4286d825594affbf9151cdae395b3ae721",
+  "taskId": "GAMEPLAY-EXPERIMENT-003A",
+  "baseline": "928b88a2cc266f5086711da5b4e9f3424b01620d",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "RUNTIME_PUBLICATION.md": "docs/review/GAMEPLAY-001B-5A/RUNTIME_PUBLICATION.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-001B-5A/IMPLEMENTATION.md",
-    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-001B-5A/FAIRNESS_EVIDENCE.md",
-    "DENSITY_AND_GAMEPLAY.md": "docs/review/GAMEPLAY-001B-5A/DENSITY_AND_GAMEPLAY.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-001B-5A/PERFORMANCE.md",
-    "PLAYTEST_CHECKLIST.md": "docs/review/GAMEPLAY-001B-5A/PLAYTEST_CHECKLIST.md",
-    "REMAINING_GATES.md": "docs/review/GAMEPLAY-001B-5A/REMAINING_GATES.md"
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/IMPLEMENTATION.md",
+    "AB_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/AB_COMPARISON.md",
+    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/FAIRNESS.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/PLAYTEST_GUIDE.md"
   },
   "screenshots": [
-    "runtime-old-desktop.png",
-    "runtime-new-desktop.png",
-    "runtime-old-portrait.png",
-    "runtime-new-portrait.png",
-    "runtime-old-desktop-established.png",
-    "runtime-new-desktop-established.png",
-    "runtime-old-portrait-established.png",
-    "runtime-new-portrait-established.png",
-    "runtime-desktop.png",
-    "runtime-portrait.png",
-    "runtime-paused.png",
-    "runtime-game-over.png",
-    "runtime-depths.png",
-    "runtime-video-frame.png"
+    "pressure-baseline-desktop-12s.png",
+    "pressure-pressure-desktop-12s.png",
+    "pressure-baseline-desktop-live.png",
+    "pressure-baseline-portrait-live.png",
+    "pressure-pressure-desktop-live.png",
+    "pressure-pressure-portrait-live.png",
+    "pressure-geometry-comparison.png"
   ],
   "videoPreviews": [
-    "runtime-flight-canvas.webm"
+    "pressure-baseline-desktop-canvas.webm",
+    "pressure-pressure-desktop-canvas.webm"
   ],
   "extraChecks": [
     {
@@ -45,27 +37,50 @@
       "name": "runtime-benchmark",
       "script": "scripts/runtime-benchmark.mjs",
       "stripTypes": true
+    },
+    {
+      "name": "pressure-preservation",
+      "script": "scripts/pressure-preservation.mjs",
+      "stripTypes": true
+    },
+    {
+      "name": "pressure-benchmark",
+      "script": "scripts/pressure-benchmark.mjs",
+      "stripTypes": true
+    },
+    {
+      "name": "pressure-browser",
+      "script": "scripts/pressure-browser.mjs",
+      "stripTypes": false
     }
   ],
+  "preservedUntracked": [
+    ".agents/skills/pragmatic-orchestration/",
+    "skills-lock.json",
+    "docs/game-design/GAMEPLAY_CONSILIUM.md",
+    "docs/game-design/consilium/"
+  ],
+  "intermediateEvidence": [
+    "pressure-shard-0.json",
+    "pressure-shard-1.json",
+    "pressure-shard-2.json",
+    "pressure-shard-3.json"
+  ],
   "evidenceNotes": [
-    "Approach A: one bounded final replay from the actual publication root, after ordinary joint validation and independent preparation replay. No runtime forecast/future tape/controller. An incomplete gate omits; shared144ticks,2searches,4replays and original budgets remain.",
-    "Outward-padded strict axial disjointness culls queries only in runtime final replay. Remaining queries call original calibrated margin and gameplay CCD. Differential tests and unpruned independent audits retain the original120Hz Ship,54-tick held prefix,0.15 margin and39-tick braking/empty tail.",
-    "Development-only dynamic import injects a derived model; default and production waves remain. Production graph/global stripping is verified. Small model/dispose bridge changes bundle bytes; no current-build byte identity with B-4 is claimed.",
-    "Same72 render slots map complete stable PlannedHazard identities. One pending source,32 known-plus-reserved bound, complete ledger/slot identity checks, separate collider/source retirement, atomic transactions and cancellation/reset epochs are tested.",
-    "Primary2632-decision377-run corpus includes2440 actual-input decisions and explicit comparator/budget probes. Separate384 actual GameModel cases audit the live post-movement capture phase. Supplemental six32-section passive schedules are not folded into the primary denominator.",
-    "Matched early spatial windows compare actual admitted centers/depths and identical-clock proximity. Collision-independent feasibility actors, real hull events, prescribed motion proxies and human readability/forced-avoidance questions are distinguished.",
-    "Eight actual Three.js/audio/input cases include early cold Launch and established distance4200 runs. Established actors are causal source-specific research policies, not matched human inputs. Desktop touch viewport emulation is not physical-phone evidence.",
-    "Native silent canvas WebM is decoded at two times and differing frames checked. Screenshots retain the DOM HUD. Finite restart GC/listener/GPU samples do not prove indefinite stability.",
-    "Original B-1 through B-4 diagnostics execute in approved reconstructed snapshots with original source guards and nested path-only bootstraps. Historical byte comparisons remain within those snapshots.",
-    "Precommit primary stage completed but an enclosing browser attempt failed after source-edit HMR; failure and frozen-source continuation are preserved. Exact-HEAD checks rerun the full pipeline. No dependencies/assets downloaded or original goldens weakened."
+    "A is unchanged director-v1; B is selectable pressure-v1 using existing four families, compact spans and unchanged safety gates. No production selector.",
+    "Identical fixed input tapes and initial clocks; 16 early seeds and 3 late warm-start seeds; accepted geometry, actual publication roots, controls, input timestamps and omissions retained per run. Post-death continuation is research only; survival ends at real three-hit death.",
+    "Independent full unpruned witness replay for all accepted pressure-comparison transactions. Baseline model differential and production byte identity against approved 928b88a are checked separately.",
+    "Exact12s screenshots use seed42/neutral input. Four14s actual-render/audio samples use identical time-indexed horizontal input. Native recordings are silent canvas-only and decode-checked.",
+    "Only explicitly named pre-existing untracked user files are allowed during packaging. Their SHA256 inventory must remain identical; contents are excluded from snapshot and patch."
   ],
   "limitations": [
-    "Snapshot-route certificates do not guarantee safety for arbitrary later steering, complete search, infinite survival or human fairness. Only the complete owned static field is certified.",
-    "Boundary input survives42/48 short windows and2/3 supplemental32-section runs; omission bias/corner-pressure remains a production gate. No enjoyment or permanent-no-bypass claim.",
-    "388/2440 omissions,11/192 startup vetoes and273.65-unit max matched gap require human continuity/readability assessment. Chosen beam steering is not a measured required human maneuver.",
-    "Cold Launch frame stalls350–666.6ms appear in the cited precommit profiles; synchronous synthesis/context work is measured separately. Node44.60ms and historical85.95ms outliers remain, without an invented causal explanation or universal budget guarantee.",
-    "At extreme X in portrait a wing/exhaust can clip under the unchanged camera. Physical phones, thermal/long-session behavior, manual listening and broader browsers are untested.",
-    "Combined keyboard+touch can exceed the approved validator input domain; steering remains original and planning omits safely. A future input-contract decision is needed.",
-    "No worker, production selector, default generator replacement, new scoring/assets/progression or B-5B implementation. External architecture review is required before B-5B/rollout."
+    "Pressure is an experiment, not an accepted improvement. Boundary bypasses, veto bias and low meaningful trajectory pressure must be judged from the measured comparison. No human preferences are fabricated.",
+    "Finite policies do not prove absence of bypasses or universal fairness. Snapshot witnesses certify one conditional route, not arbitrary steering or human legibility.",
+    "Logical benchmarks use four contending processes. Isolated browser samples are separate; desktop touch emulation is not physical-phone evidence. Cold launch stalls and portrait edge clipping remain.",
+    "No additional mechanics/assets, changed ship/damage/scoring, production generator replacement, merge, force-push or main push. Human participants in this task:0."
+  ],
+  "knownBlockers": [
+    "Pressure-v1 fails the boundary-pressure goal and is not recommended for promotion.",
+    "Human comparative preference/readability and physical-phone testing remain pending."
   ]
 }

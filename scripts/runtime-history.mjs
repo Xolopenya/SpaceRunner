@@ -40,4 +40,9 @@ for(const taskId of ['GAMEPLAY-001B-3','GAMEPLAY-001B-4']){
 const result={baseline,snapshot,commands:results,inventory,adaptation:'Dependency junction inside ignored snapshot; inherited read-only Git metadata; index.html matches checkout newline convention. Original B-4/B-3/B-2/B-1 source/guards/goldens/corpora/work limits are unchanged. Earlier path-only nested bootstrap adaptations are retained by original pattern-baselines.mjs.',
  productionScope:'Historical output comparisons occur wholly inside the approved snapshot. Current production default is checked separately; no false current byte-identity claim.'};
 await writeFile(join(evidence,'historical-reproduction.json'),JSON.stringify(result,null,2)+'\n');
+if(process.env.REVIEW_RESULT_DIR){
+ await mkdir(process.env.REVIEW_RESULT_DIR,{recursive:true});
+ await writeFile(join(process.env.REVIEW_RESULT_DIR,'runtime-history.json'),JSON.stringify(result,null,2)+'\n');
+ for(const name of ['build','pattern','director'])await writeFile(join(process.env.REVIEW_RESULT_DIR,`runtime-history-${name}.log`),await readFile(join(evidence,`approved-b4-${name}.log`)));
+}
 console.log(JSON.stringify({baseline,commands:results},null,2));

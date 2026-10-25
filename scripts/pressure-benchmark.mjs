@@ -92,4 +92,14 @@ const result = { baseline: '928b88a2cc266f5086711da5b4e9f3424b01620d', generated
   repeat: { seed: 42, history: 'irregular', policy: 'pressure-v1', geometryHash: hash(repeat.geometry), identical: true },
   humanParticipants: 0, summaries };
 await writeFile(join(output, 'pressure-metrics.json'), JSON.stringify(result, null, 2) + '\n');
+const cornerInvestigation = [];
+for (const policy of ['baseline', 'pressure']) {
+  const r = JSON.parse(await readFile(join(output, `pressure-early-42-top-right-${policy}.json`), 'utf8'));
+  const targeted = r.decisions.filter(d => d.section.corner === 3);
+  cornerInvestigation.push({ policy, decisions: r.decisions.length, targetedTopRight: targeted.length,
+    acceptedTargeted: targeted.filter(d => d.status === 'committed').length,
+    targeted: targeted.map(d => ({ index: d.section.index, family: d.section.family, status: d.status, reason: d.reason?.split(':').slice(0, 3).join(':') })),
+    firstContact: r.firstContact, firstThreat: r.firstThreat, geometry: r.geometry.length });
+}
+await writeFile(join(output, 'pressure-corner-investigation.json'), JSON.stringify(cornerInvestigation, null, 2) + '\n');
 console.log(JSON.stringify({ aggregates, audits: result.audits, violations: 0 }, null, 2));
