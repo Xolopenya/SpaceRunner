@@ -1,5 +1,5 @@
-import type { FieldValidationContext } from './field-types.ts';
-import type { FlightState } from './field-prediction.ts';
+import type { FieldValidationContext, FieldTransaction, PlannedHazard, StructuralResult } from './field-types.ts';
+import type { FlightPrediction, FlightState } from './field-prediction.ts';
 
 export const VALIDATION_LIMITS = Object.freeze({
   version: 'trajectory-v1', step: 1 / 120, macroTicks: 24, reactionTicks: 54,
@@ -15,10 +15,23 @@ export interface ValidationOptions {
   readonly margin?: number;
   /** Deliberately overlapping R fixtures ONLY. Normal API always uses B-1 inspection. */
   readonly structuralPolicy?: 'generator' | 'synthetic-fixture';
+  /** Explicit, versioned DEV geometry; omitted preserves trajectory-v1 byte identities. */
+  readonly geometry?: ValidationGeometry;
+}
+export interface ValidationGeometry {
+  readonly version: string;
+  validHazard(hazard: PlannedHazard): boolean;
+  inspect(candidate: FieldTransaction, committed: readonly PlannedHazard[]): StructuralResult;
+  queryCost(hazard: PlannedHazard): number;
+  /** Conservative axial half-extent of the actual static profile. */
+  axialExtent(hazard: PlannedHazard): number;
+  prediction(): FlightPrediction;
+  goals(hazard: PlannedHazard): readonly { x: number; y: number }[];
 }
 export interface ControlRun { readonly ticks: number; readonly input: { readonly x: number; readonly y: number } }
 export interface ValidationWitness {
   readonly version: string;
+  readonly geometryVersion?: string;
   readonly context: FieldValidationContext;
   readonly margin: number;
   readonly structuralPolicy: 'generator' | 'synthetic-fixture';

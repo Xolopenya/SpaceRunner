@@ -3,6 +3,7 @@ import { Game } from './game.ts';
 import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
 import type { GameModel } from './core/game-model.ts';
+import type { LargeStructureView } from './experiments/large-structure/view.ts';
 
 declare global {
   interface Window { spaceRunner?: Game }
@@ -33,13 +34,27 @@ async function boot(): Promise<void> {
       debugFactory = scene => new ColliderDebugger(scene);
     }
     let developerModel: GameModel | undefined;
+    let structureView: LargeStructureView | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
-      const { RuntimeGameModel } = await import('./debug/runtime-game-model.ts');
-      const { fieldPolicy } = await import('./core/field-policy.ts');
-      if (disposed) return;
-      developerModel = new RuntimeGameModel(fieldPolicy(new URLSearchParams(location.search).get('policy')));
+      const params = new URLSearchParams(location.search), experiment = params.get('experiment');
+      if (experiment === 'large-structure') {
+        if (params.has('policy')) throw new RangeError('Select either a field policy or the large-structure experiment');
+        const { LargeStructureGameModel } = await import('./experiments/large-structure/model.ts');
+        const { LargeStructureView } = await import('./experiments/large-structure/view.ts');
+        const { apertureSelector } = await import('./experiments/large-structure/encounter.ts');
+        if (disposed) return;
+        developerModel = new LargeStructureGameModel(apertureSelector(params.get('aperture')));
+        debugFactory = scene => { structureView = new LargeStructureView(scene, params.get('colliders') === '1'); return structureView; };
+      } else {
+        if (experiment !== null) throw new RangeError(`Unknown development experiment: ${experiment}`);
+        const { RuntimeGameModel } = await import('./debug/runtime-game-model.ts');
+        const { fieldPolicy } = await import('./core/field-policy.ts');
+        if (disposed) return;
+        developerModel = new RuntimeGameModel(fieldPolicy(params.get('policy')));
+      }
     }
     game = new Game(assets, undefined, debugFactory, developerModel);
+    if (import.meta.env.DEV) structureView?.bind(game.world.hazards);
     // Opt-in test inspection only; omitted from the production build by Vite.
     if (import.meta.env.DEV && new URLSearchParams(location.search).has('debug')) window.spaceRunner = game;
   } catch (error) {

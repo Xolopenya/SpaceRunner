@@ -11,6 +11,14 @@ import type { PlanningOutcome, SchedulerRoot } from '../core/field-scheduler.ts'
 import type { ValidationWitness } from '../core/field-validator-types.ts';
 import { FIELD_POLICIES } from '../core/field-policy.ts';
 import type { FieldPolicy } from '../core/field-policy.ts';
+import type { RuntimeCandidate } from '../core/field-runtime-session.ts';
+import type { ScheduledSection } from '../core/field-director.ts';
+
+export interface RuntimeEncounterSource {
+  readonly version: string;
+  next(seed: number, cursor: DirectorCursor): ReturnType<DifficultyDirector['next']>;
+  candidate(section: ScheduledSection): RuntimeCandidate;
+}
 
 export const RUNTIME_SETTINGS = Object.freeze({ firstCell: 4, eventLimit: 64, sampleLimit: 2048 });
 interface RuntimeSlot extends Hazard { planned?: PlannedHazard }
@@ -47,12 +55,15 @@ export class RuntimeObstacleField extends ObstacleField {
   private cursor: DirectorCursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
   private age = 0;
   private readonly observe: () => SchedulerRoot;
+  private seed = 1;
+  readonly experiment?: RuntimeEncounterSource;
 
-  constructor(observe: () => SchedulerRoot, policy: FieldPolicy = 'baseline') {
-    super(); this.observe = observe; this.policy = FIELD_POLICIES[policy];
+  constructor(observe: () => SchedulerRoot, policy: FieldPolicy = 'baseline', experiment?: RuntimeEncounterSource) {
+    super(); this.observe = observe; this.policy = FIELD_POLICIES[policy]; this.experiment = experiment;
   }
 
   override reset(seed: number): void {
+    this.seed = seed;
     this.pending?.cancel(); this.pending = undefined; super.reset(seed);
     this.director = new DifficultyDirector(seed, this.policy.name); this.cursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
     this.ledger.reset(RUNTIME_SETTINGS.firstCell);
@@ -79,8 +90,8 @@ export class RuntimeObstacleField extends ObstacleField {
     if (this.fault) { this.pending?.cancel(); this.pending = undefined; return; }
     const root = this.observe();
     if (!this.pending && (!this.scheduled || this.cursor.firstCell * 24 - distance <= S.planningLead)) {
-      const decision = this.director.next(this.cursor); this.cursor = decision.next; this.scheduled++;
-      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger);
+      const decision = this.experiment?.next(this.seed, this.cursor) ?? this.director.next(this.cursor); this.cursor = decision.next; this.scheduled++;
+      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger, 'culled', this.experiment?.candidate(decision.section));
       const ms = performance.now() - started; this.preparationMs += ms; this.schedulerMs += ms; this.age = 0;
       if (this.pending.getResult()?.status === 'blocked') { this.fault = this.pending.getResult()!.reason; this.pending = undefined; return; }
     }
@@ -109,7 +120,7 @@ export class RuntimeObstacleField extends ObstacleField {
     const ids = outcome.status === 'committed' ? outcome.transaction!.hazards.map(h => h.id) : [];
     const warning = outcome.status === 'committed' && ids.length ? Math.min(...outcome.transaction!.hazards.map(h => h.passDistance-h.radius-CONFIG.ship.radius-.15))-distance : undefined;
     if (this.events.length === RUNTIME_SETTINGS.eventLimit) this.events.shift();
-    this.events.push({ policy: this.policy.name, version: this.policy.version, index: outcome.section.index, family: outcome.section.family, pacing: outcome.section.pacing, status: outcome.status,
+    this.events.push({ policy: this.policy.name, version: this.experiment?.version ?? this.policy.version, index: outcome.section.index, family: this.experiment ? 'large-structure' : outcome.section.family, pacing: outcome.section.pacing, status: outcome.status,
       reason: outcome.reason, count: ids.length, distance, elapsed, ...root.player, input: { ...root.input }, warning, witness: outcome.witness?.hash, ids });
     this.pending = undefined;
   }

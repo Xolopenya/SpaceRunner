@@ -1,5 +1,17 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003B — large structural obstacle, 2026-10-25
+
+- [x] Verified approved56824ad in local/fetched remote main (0/0 divergence); created `feature/gameplay-003b-large-structure`. Preserved unrelated untracked Skill/research files and skills-lock.
+- [x] Researched original Kenney/Quaternius CC0 pages. Used the permitted original-geometry fallback: one docking bulkhead,20×13×6, real5.6×4.4 aperture, five deterministic translations. Source/provenance/CC0 dedication included; no downloaded asset/library or new GLB.
+- [x] Added explicit DEV selector, shared four-box mesh/collider contract, canonical large-size admission, four-primitive capacity/query accounting, tight conservative axial bounds and ordinary exact-motion/replay/publication integration. Original generator, ship/camera/speed/hull/audio/VFX and work ceilings stay unchanged. No unchecked/partial publication.
+- [x] Added focused geometric/fairness/lifecycle tests,10000 optimized-versus-unpruned sweeps, atomic query-budget test, ordinary-keyboard browser passage, screenshot/video and finite resource benchmarks. Original generator/witness goldens remain.
+- [x] Approved-versus-current differential:24 actual-model histories across baseline/pressure agree; production15files/931651bytes is byte-identical. Original source-pinned pressure preservation audit runs in a reconstructed approved snapshot, with its original assertions intact.
+- [x] Initial direct corpus240/240 independently replayed; four engineered unreachable approaches reject.36 actual-model comparison runs retain state-dependent omissions and all accepted witnesses. All three structure certificate followers complete five encounters without damage. Human participants0; no enjoyment verdict.
+- [x] Full precommit12-command verification passed (170units/47browser tests, collision and full runtime audits). Corrected complete rendering of every published large slot; typecheck/all7structure browser cases then passed and five frozen-source14s profiles repeated.31real PNGs/three decoded native WebMs and six reports record limits, CPU/frame distributions and finite restart resources. Structure desktop work p952.4ms, frame p9917.3ms; cold stalls remain.
+- [x] Prepared feature-only commit/push and exact-HEAD review packaging with independent inventory/witness/reverse-patch verification. Final SHA, remote identity, archive bytes and integrity results are generated at delivery and recorded by the handoff/manifest. No merge/force/main push.
+- [ ] External geometry/performance review and owner playtests on desktop/physical phones before promotion or another gameplay experiment.
+
 ## GAMEPLAY-EXPERIMENT-003A — Pressure First A/B,2026-10-25
 
 - [x] Fetched origin, verified approved `928b88a2cc266f5086711da5b4e9f3424b01620d` in local/remote main with0/0 divergence, created `feature/gameplay-003a-pressure-experiment`. Preserved pre-existing untracked installed skill, skills-lock and research documents; none are staged or modified by this task.

@@ -1,56 +1,78 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003A",
-  "baseline": "928b88a2cc266f5086711da5b4e9f3424b01620d",
+  "taskId": "GAMEPLAY-EXPERIMENT-003B",
+  "baseline": "56824ad60b0f2583589d6b21de4dfce8db43c07d",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/IMPLEMENTATION.md",
-    "AB_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/AB_COMPARISON.md",
-    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/FAIRNESS.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003A/PLAYTEST_GUIDE.md"
+    "ASSET_RESEARCH.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/ASSET_RESEARCH.md",
+    "STRUCTURE_DESIGN.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/STRUCTURE_DESIGN.md",
+    "COLLISION_VALIDATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/COLLISION_VALIDATION.md",
+    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/FAIRNESS.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/STRUCTURE_DESIGN.md"
   },
   "screenshots": [
-    "pressure-baseline-desktop-12s.png",
-    "pressure-pressure-desktop-12s.png",
-    "pressure-baseline-desktop-live.png",
-    "pressure-baseline-portrait-live.png",
-    "pressure-pressure-desktop-live.png",
-    "pressure-pressure-portrait-live.png",
-    "pressure-geometry-comparison.png"
+    "structure-baseline-desktop-live.png",
+    "structure-pressure-desktop-live.png",
+    "structure-large-structure-desktop-live.png",
+    "structure-desktop-first-visible.png",
+    "structure-desktop-approach.png",
+    "structure-desktop-entry.png",
+    "structure-desktop-passed.png",
+    "structure-desktop-solid-impact.png",
+    "structure-desktop-colliders.png",
+    "structure-large-structure-portrait-live.png",
+    "structure-portrait-first-visible.png",
+    "structure-portrait-approach.png",
+    "structure-portrait-entry.png",
+    "structure-portrait-passed.png",
+    "structure-portrait-solid-impact.png",
+    "structure-large-structure-landscape-live.png",
+    "structure-landscape-first-visible.png",
+    "structure-landscape-approach.png",
+    "structure-landscape-entry.png",
+    "structure-landscape-passed.png",
+    "structure-landscape-solid-impact.png",
+    "structure-variant-center-entry.png",
+    "structure-variant-center-exit.png",
+    "structure-variant-left-entry.png",
+    "structure-variant-left-exit.png",
+    "structure-variant-right-entry.png",
+    "structure-variant-right-exit.png",
+    "structure-variant-upper-entry.png",
+    "structure-variant-upper-exit.png",
+    "structure-variant-lower-entry.png",
+    "structure-variant-lower-exit.png"
   ],
   "videoPreviews": [
-    "pressure-baseline-desktop-canvas.webm",
-    "pressure-pressure-desktop-canvas.webm"
+    "structure-baseline-canvas.webm",
+    "structure-pressure-canvas.webm",
+    "structure-passage-canvas.webm"
   ],
   "extraChecks": [
     {
-      "name": "collision-audit",
       "script": "scripts/collision-audit.mjs",
+      "name": "collision-audit",
       "stripTypes": true
     },
     {
-      "name": "runtime-history",
-      "script": "scripts/runtime-history.mjs",
-      "stripTypes": true
-    },
-    {
-      "name": "runtime-benchmark",
       "script": "scripts/runtime-benchmark.mjs",
+      "name": "runtime-benchmark",
       "stripTypes": true
     },
     {
-      "name": "pressure-preservation",
-      "script": "scripts/pressure-preservation.mjs",
+      "script": "scripts/structure-preservation.mjs",
+      "name": "structure-preservation",
       "stripTypes": true
     },
     {
-      "name": "pressure-benchmark",
-      "script": "scripts/pressure-benchmark.mjs",
+      "script": "scripts/structure-benchmark.mjs",
+      "name": "structure-benchmark",
       "stripTypes": true
     },
     {
-      "name": "pressure-browser",
-      "script": "scripts/pressure-browser.mjs",
+      "script": "scripts/structure-browser.mjs",
+      "name": "structure-browser",
       "stripTypes": false
     }
   ],
@@ -60,27 +82,21 @@
     "docs/game-design/GAMEPLAY_CONSILIUM.md",
     "docs/game-design/consilium/"
   ],
-  "intermediateEvidence": [
-    "pressure-shard-0.json",
-    "pressure-shard-1.json",
-    "pressure-shard-2.json",
-    "pressure-shard-3.json"
-  ],
+  "intermediateEvidence": [],
   "evidenceNotes": [
-    "A is unchanged director-v1; B is selectable pressure-v1 using existing four families, compact spans and unchanged safety gates. No production selector.",
-    "Identical fixed input tapes and initial clocks; 16 early seeds and 3 late warm-start seeds; accepted geometry, actual publication roots, controls, input timestamps and omissions retained per run. Post-death continuation is research only; survival ends at real three-hit death.",
-    "Independent full unpruned witness replay for all accepted pressure-comparison transactions. Baseline model differential and production byte identity against approved 928b88a are checked separately.",
-    "Exact12s screenshots use seed42/neutral input. Four14s actual-render/audio samples use identical time-indexed horizontal input. Native recordings are silent canvas-only and decode-checked.",
-    "Only explicitly named pre-existing untracked user files are allowed during packaging. Their SHA256 inventory must remain identical; contents are excluded from snapshot and patch."
+    "One original CC0 model source and four exact solid boxes, DEV only. Existing baseline and pressure policies retain approved identities and runtime behavior.",
+    "All primitive work is charged atomically in its executing tick. Original work ceilings, exact Ship, reaction prefix, margin, independent replay, actual-state publication and ledger remain.",
+    "Real browser stage screenshots and live RAF measurements distinguish accelerated snapshot steps from real-time performance. Video is native silent canvas capture; physical phones and human preference are untested.",
+    "Preoptimization timings and raw samples remain in logs/baseline. Current verification logs and inventory are authoritative for exact HEAD.",
+    "Only explicitly allowed pre-existing user work is preserved and excluded from snapshot/patch."
   ],
   "limitations": [
-    "Pressure is an experiment, not an accepted improvement. Boundary bypasses, veto bias and low meaningful trajectory pressure must be judged from the measured comparison. No human preferences are fabricated.",
-    "Finite policies do not prove absence of bypasses or universal fairness. Snapshot witnesses certify one conditional route, not arbitrary steering or human legibility.",
-    "Logical benchmarks use four contending processes. Isolated browser samples are separate; desktop touch emulation is not physical-phone evidence. Cold launch stalls and portrait edge clipping remain.",
-    "No additional mechanics/assets, changed ship/damage/scoring, production generator replacement, merge, force-push or main push. Human participants in this task:0."
+    "Technical experiment only; no human fun, preference or physical-phone acceptance claim.",
+    "The approved forgiving ship sphere is unchanged. Visible wings can overlap at grazing edges; centered witness passages and visual captures are separate evidence.",
+    "Finite benchmark corpus, conservative separation and state-dependent omissions do not prove universal reachability or absence of all bypasses.",
+    "Cold startup and frame outliers are reported explicitly. No production activation, merge, force-push or next gameplay experiment."
   ],
   "knownBlockers": [
-    "Pressure-v1 fails the boundary-pressure goal and is not recommended for promotion.",
-    "Human comparative preference/readability and physical-phone testing remain pending."
+    "External review and owner/physical-device playtests are required before promotion."
   ]
 }

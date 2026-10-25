@@ -16,7 +16,7 @@ export class GameModel {
   invulnerability = 0;
   hitSerial = 0;
   seed = 1;
-  private readonly collisions = new HazardCollision();
+  protected readonly collisions = new HazardCollision();
   private readonly relativeFrom = { x: 0, y: 0, z: 0 };
   private readonly relativeTo = { x: 0, y: 0, z: 0 };
 

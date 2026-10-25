@@ -1,5 +1,9 @@
 # Third-party asset provenance
 
+## Original DEV bulkhead — GAMEPLAY-EXPERIMENT-003B, 2026-10-25
+
+**Abandoned Docking Bulkhead v1**, original project model authored by Codex for Space Runner. Format: TypeScript / Three.js basic geometry, source in `src/experiments/large-structure/view.ts` and shared dimensions in `profile.ts`; no downloaded model, conversion, texture or new GLB. Four joined box solids, flush surface markings and a real5.6×4.4 passage. The model is dedicated under CC0-1.0 in `assets/experimental/bulkhead/LICENSE.txt`; no attribution/redistribution notice is required for the model. Three.js retains its existing MIT notice. [Model provenance and source URL](../assets/experimental/bulkhead/PROVENANCE.md), [official-source asset research](review/GAMEPLAY-EXPERIMENT-003B/ASSET_RESEARCH.md). This source is loaded only by the explicit DEV experiment and adds no production asset or network request. Existing Kenney assets remain unchanged.
+
 ## Kenney Space Kit — integrated 2026-10-22
 
 Author/distributor: **Kenney**. Official source: https://kenney.nl/assets/space-kit. Verified the official page's CC0 link and the archive's original `License.txt` (Space Kit **2.0**, creation date printed as 27-08-2020). License: **Creative Commons Zero / CC0 1.0**, https://creativecommons.org/publicdomain/zero/1.0/. The original notice is shipped at `public/assets/kenney-space/LICENSE.txt`.

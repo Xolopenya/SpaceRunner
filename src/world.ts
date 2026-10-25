@@ -25,7 +25,7 @@ export class World {
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.PerspectiveCamera(58, 1, 0.1, 260);
   private readonly ship = new THREE.Group();
-  private readonly hazards: THREE.Group[] = [];
+  readonly hazards: THREE.Group[] = [];
   private readonly frames: THREE.LineSegments[] = [];
   private readonly angles = { x: 0, y: 0, z: 0 };
   private readonly collisionDebug?: ColliderDebugView;

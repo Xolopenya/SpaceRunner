@@ -5,13 +5,16 @@ import { beginValidation, beginTrajectoryReplay, beginRuntimePublicationCheck, b
 import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { DIRECTOR_SETTINGS as S } from './field-director-settings.ts';
 import type { ValidationJob } from './field-validator.ts';
-import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
+import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationGeometry, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
 import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
 
 import type { SchedulerRoot, PlanningPhase, AttemptRecord, PlanningOutcome } from './field-scheduler.ts';
 import { visibleAt } from './field-scheduler.ts';
+
+/** One explicit DEV candidate, using the same coordinator and publication gate. */
+export interface RuntimeCandidate { readonly transaction: FieldTransaction; readonly geometry: ValidationGeometry }
 
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),
@@ -34,6 +37,7 @@ function neutralControls(c: FieldValidationContext): readonly ControlRun[] | und
  * completion from the ACTUAL root in one bounded synchronous publication call.
  */
 export class RuntimePlanningSession {
+  private readonly custom?: RuntimeCandidate;
   private readonly field: FieldGenerator;
   private readonly ledger: OwnershipLedger;
   private readonly section: ScheduledSection;
@@ -60,7 +64,8 @@ export class RuntimePlanningSession {
     return this.finish('blocked', 'CANCELLED');
   }
 
-  constructor(section: ScheduledSection, root: SchedulerRoot, committed: readonly PlannedHazard[], ledger: OwnershipLedger, replayMode: 'full' | 'culled' = 'culled') {
+  constructor(section: ScheduledSection, root: SchedulerRoot, committed: readonly PlannedHazard[], ledger: OwnershipLedger, replayMode: 'full' | 'culled' = 'culled', custom?: RuntimeCandidate) {
+    this.custom = custom;
     this.section = Object.freeze({ ...section }); this.ledger = ledger;
     this.replayMode = replayMode;
     this.field = new FieldGenerator(section.seed);
@@ -85,8 +90,10 @@ export class RuntimePlanningSession {
     if (tick === S.publicationTicks) {
       if (this.currentPhase !== 'ready' || !this.witness) return this.finish('omitted-uncertified', this.failure ?? 'PLANNING_DEADLINE');
       const transaction = this.attempts.at(-1)!.transaction!;
-      const context = { ...rootCopy(current), committed: visibleAt(committed, current.distance), candidate: transaction };
-      const job = this.replayMode === 'full' ? beginPublicationCheck(this.witness, context) : beginRuntimePublicationCheck(this.witness, context);
+      const context = { ...rootCopy(current), committed: visibleAt(committed, current.distance), candidate: transaction,
+        ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
+      const options = this.custom ? { geometry: this.custom.geometry } : {};
+      const job = this.replayMode === 'full' ? beginPublicationCheck(this.witness, context, options) : beginRuntimePublicationCheck(this.witness, context, options);
       this.setJob(job, 'publication');
       const checked = this.work(budget, 1);
       if (!checked) return this.finish('omitted-uncertified', 'ACTUAL_REPLAY_BUDGET');
@@ -127,7 +134,8 @@ export class RuntimePlanningSession {
   private startAttempt(kind: AttemptRecord['kind'], root: SchedulerRoot, committed: readonly PlannedHazard[]): void {
     const s = this.section;
     let transaction: FieldTransaction;
-    if (kind === 'primary' && s.family !== 'ambient') {
+    if (kind === 'primary' && this.custom) transaction = this.custom.transaction;
+    else if (kind === 'primary' && s.family !== 'ambient') {
       const p = buildSection(s, committed);
       if (!p.transaction) {
         const reason = 'GENERATION_REJECTED:' + p.rejection;
@@ -139,12 +147,14 @@ export class RuntimePlanningSession {
       const ambient = this.field.propose(s.firstCell, s.cellCount);
       transaction = kind === 'empty-fallback' ? Object.freeze({ ...ambient, hazards: Object.freeze([]) }) : ambient;
     }
-    const context: FieldValidationContext = { ...rootCopy(root), committed: Object.freeze([...committed]), candidate: transaction };
+    const context: FieldValidationContext = { ...rootCopy(root), committed: Object.freeze([...committed]), candidate: transaction,
+      ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
     const record: AttemptRecord = { kind, identity: `${s.id}/${kind}`, transaction, context };
     this.attempts.push(record);
-    const structure = this.field.inspect(transaction, committed);
+    const structure = this.custom ? this.custom.geometry.inspect(transaction, committed) : this.field.inspect(transaction, committed);
     if (structure.status === 'invalid') {
       record.reason = 'STRUCTURAL_INVALID:' + structure.reason;
+      if (this.custom) { this.fail(record.reason); return; }
       if (kind === 'primary') this.startAttempt(structure.reason === 'capacity' ? 'empty-fallback' : 'ambient-fallback', root, committed);
       else this.fail(record.reason);
       return;
@@ -157,8 +167,8 @@ export class RuntimePlanningSession {
     if (kind === 'empty-fallback') {
       const controls = neutralControls(context);
       if (!controls) this.fail('FALLBACK_HORIZON');
-      else this.setJob(beginTrajectoryReplay(context, controls), 'validation');
-    } else this.setJob(beginValidation(context), 'validation');
+      else this.setJob(beginTrajectoryReplay(context, controls, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
+    } else this.setJob(beginValidation(context, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
   }
   private handle(checked: TrajectoryResult, current: SchedulerRoot, committed: readonly PlannedHazard[]): void {
     const record = this.attempts.at(-1)!;
@@ -174,7 +184,7 @@ export class RuntimePlanningSession {
     if (this.currentPhase === 'validation') {
       this.witness = checked.witness;
       if (record.kind === 'empty-fallback') this.currentPhase = 'ready';
-      else this.setJob(beginTrajectoryReplay(checked.witness.context, checked.witness.controls), 'replay');
+      else this.setJob(beginTrajectoryReplay(checked.witness.context, checked.witness.controls, this.custom ? { geometry: this.custom.geometry } : {}), 'replay');
     } else if (this.currentPhase === 'replay') {
       if (checked.witness.hash !== this.witness?.hash) { this.fail('REPLAY_DISAGREEMENT'); return; }
       this.witness = checked.witness; this.currentPhase = 'ready';

@@ -3,15 +3,16 @@ import { GameModel } from '../core/game-model.ts';
 import { RuntimeObstacleField } from './runtime-field.ts';
 import type { Axis } from '../core/ship.ts';
 import type { FieldPolicy } from '../core/field-policy.ts';
+import type { RuntimeEncounterSource } from './runtime-field.ts';
 
 /** Super.step retains the authoritative motion/damage/score/state ordering. */
 export class RuntimeGameModel extends GameModel {
   override readonly field: RuntimeObstacleField;
   private observedInput: Axis = { x: 0, y: 0 };
   private disposed = false;
-  constructor(policy: FieldPolicy = 'baseline') {
+  constructor(policy: FieldPolicy = 'baseline', experiment?: RuntimeEncounterSource) {
     super();
-    this.field = new RuntimeObstacleField(() => ({ player: this.ship, input: this.observedInput, elapsed: this.elapsed, distance: this.distance }), policy);
+    this.field = new RuntimeObstacleField(() => ({ player: this.ship, input: this.observedInput, elapsed: this.elapsed, distance: this.distance }), policy, experiment);
   }
   override step(dt: number, axis: Axis): void {
     if (this.disposed) return;

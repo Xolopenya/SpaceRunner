@@ -1,0 +1,13 @@
+Abandoned Docking Bulkhead v1 - original Space Runner model geometry and markings
+Authored by Codex for Space Runner, 2026-10-25.
+
+To the extent possible under law, all copyright and related rights in this
+original model geometry and markings are waived under CC0 1.0 Universal.
+You may copy, modify and redistribute the model, including commercially,
+without attribution. No warranty is provided.
+
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+This dedication concerns the original model only. Third-party software and
+existing Kenney models retain their separate licenses and notices.

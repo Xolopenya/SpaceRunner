@@ -2,6 +2,8 @@
 
 Browser-based 3D space endless runner developed with Three.js, TypeScript, and Vite.
 
+Development-only **GAMEPLAY-EXPERIMENT-003B**: after `npm run dev`, open [large structure, seed42](http://127.0.0.1:5173/?debug=field&experiment=large-structure&seed=42). One original CC0 docking bulkhead has a real5.6×4.4 opening and four swept box colliders. Optional `&aperture=center|left|right|upper|lower` repeats a position; `&colliders=1` shows collision bounds. Existing baseline/pressure selectors remain available. [Design and contract](docs/review/GAMEPLAY-EXPERIMENT-003B/STRUCTURE_DESIGN.md), [owner playtest guide](docs/review/GAMEPLAY-EXPERIMENT-003B/PLAYTEST_GUIDE.md). Production strips the experiment and remains byte-identical to the approved base; no new production download or mechanic is enabled.
+
 ## Run locally
 
 Requires Node.js 22.12+ (verified with 24.11.1) and npm. Install dependencies with permission for registry access:

@@ -6,13 +6,13 @@ import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { FIELD_LIMITS } from './field-settings.ts';
 import type { FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { FlightState } from './field-prediction.ts';
-import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationFailure, ValidationMetrics, ValidationOptions, ValidationWitness } from './field-validator-types.ts';
+import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationFailure, ValidationGeometry, ValidationMetrics, ValidationOptions, ValidationWitness } from './field-validator-types.ts';
 
 type Rejection = Extract<TrajectoryResult, { decision: 'reject' }>;
-type Operation = 'propagation' | 'query';
+type Operation = 'propagation' | 'query' | { readonly queries: number };
 type Work<T> = Generator<Operation, T, void>;
 /** Outward numerical guard only: never shrink either collision envelope.
- * Static-center enclosing spheres and monotonic forward travel are required.
+ * Static-center conservative axial bounds and monotonic forward travel are required.
  */
 export function runtimeAxialDisjoint(h: Pick<PlannedHazard, 'passDistance' | 'radius'>, from: number, to: number, margin: number): boolean {
   const guard = 1e-9 + 8 * Number.EPSILON * Math.max(1, Math.abs(h.passDistance), Math.abs(from), Math.abs(to));
@@ -20,6 +20,7 @@ export function runtimeAxialDisjoint(h: Pick<PlannedHazard, 'passDistance' | 'ra
   return h.passDistance + extent < from || h.passDistance - extent > to;
 }
 interface Prepared {
+  geometry?: ValidationGeometry;
   context: FieldValidationContext; hazards: readonly PlannedHazard[]; margin: number;
   policy: 'generator' | 'synthetic-fixture'; targetTick: number; controlEndTick: number; reserved: number;
   times: Float64Array; distances: Float64Array;
@@ -59,13 +60,19 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
     || raw.committed.length + raw.candidate.hazards.length > L.maxHazards) return reject('STRUCTURAL_INVALID', 'root/settings/count');
   const all = [...raw.committed, ...raw.candidate.hazards], ids = new Set<string>();
   for (const h of all) {
-    if (!h || !h.provenance || ![h.x, h.y, h.passDistance, h.radius, h.phase, h.spin].every(Number.isFinite) || h.radius < .65 || h.radius > 1.1
-      || !Number.isInteger(h.kind) || h.kind < 0 || h.kind > 2 || h.phase < 0 || h.phase >= Math.PI * 2 || Math.abs(h.spin) > .7
+    const extended = !!h && !!options.geometry?.validHazard(h);
+    if (!h || !h.provenance || ![h.x, h.y, h.passDistance, h.radius, h.phase, h.spin].every(Number.isFinite)
+      || (!extended && (h.radius < .65 || h.radius > 1.1 || !Number.isInteger(h.kind) || h.kind < 0 || h.kind > 2))
+      || h.phase < 0 || h.phase >= Math.PI * 2 || Math.abs(h.spin) > .7
       || typeof h.id !== 'string' || !h.id.length || h.id.length > 256 || ids.has(h.id)
       || typeof h.provenance.version !== 'string' || h.provenance.version.length > 128
       || typeof h.provenance.settingsKey !== 'string' || h.provenance.settingsKey.length > 128) return reject('STRUCTURAL_INVALID', 'hazard metadata/duplicate');
-    if (h.orientation !== 'euler-xyz-v1' || h.visualVariant !== hazardVariant(h.kind, h.phase)
-      || h.collisionProfile !== PROFILES[h.visualVariant]) return reject('UNKNOWN_PROFILE', h.id);
+    if (!extended && (h.orientation !== 'euler-xyz-v1' || h.visualVariant !== hazardVariant(h.kind, h.phase)
+      || h.collisionProfile !== PROFILES[h.visualVariant])) return reject('UNKNOWN_PROFILE', h.id);
+    const cost = options.geometry?.queryCost(h) ?? 1;
+    if (!Number.isInteger(cost) || cost < 1 || cost > 4) return reject('UNKNOWN_PROFILE', 'primitive accounting');
+    const axial = options.geometry?.axialExtent(h) ?? h.radius;
+    if (!Number.isFinite(axial) || axial <= 0 || axial > h.radius) return reject('UNKNOWN_PROFILE', 'axial bound');
     ids.add(h.id);
   }
   if (policy === 'generator') {
@@ -74,13 +81,13 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
       if (values.length !== 5) return reject('STRUCTURAL_INVALID', 'settings identity');
       const generator = new FieldGenerator(raw.candidate.provenance.seed, { halfX: values[0]!, halfY: values[1]!,
         depthJitter: values[2]!, separation: values[3]!, maxCandidates: values[4]! });
-      const structure = generator.inspect(raw.candidate, raw.committed);
+      const structure = options.geometry ? options.geometry.inspect(raw.candidate, raw.committed) : generator.inspect(raw.candidate, raw.committed);
       if (structure.status === 'invalid') return reject('STRUCTURAL_INVALID', structure.reason);
     } catch { return reject('STRUCTURAL_INVALID', 'generator settings'); }
   }
   const context = snapshot(raw), hazards = [...context.committed, ...context.candidate.hazards];
   let time = context.elapsed, distance = context.distance, lastCenter = distance, lastExit = distance;
-  for (const h of hazards) { lastCenter = Math.max(lastCenter, h.passDistance); lastExit = Math.max(lastExit, h.passDistance + h.radius + CONFIG.ship.radius + margin); }
+  for (const h of hazards) { lastCenter = Math.max(lastCenter, h.passDistance); lastExit = Math.max(lastExit, h.passDistance + (options.geometry?.axialExtent(h) ?? h.radius) + CONFIG.ship.radius + margin); }
   let reserved = 0, targetTick = 0, controlEndTick = 0;
   const times = new Float64Array(L.horizonTicks + 1), distances = new Float64Array(L.horizonTicks + 1);
   times[0] = time; distances[0] = distance;
@@ -100,7 +107,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
   }
   if (!targetTick || !controlEndTick || controlEndTick > targetTick) return reject('HORIZON_EXCEEDED');
   if (distance + CONFIG.hazards.maxRadius + CONFIG.ship.radius + margin > reserved) return reject('INVALID_TERMINAL_STATE', 'tail boundary clearance');
-  return { context, hazards, margin, policy, targetTick, controlEndTick, reserved, times, distances };
+  return { context, hazards, margin, policy, targetTick, controlEndTick, reserved, times, distances, geometry: options.geometry };
 }
 
 /** Each yield is a pre-operation request; advance never exceeds either budget. */
@@ -115,16 +122,18 @@ function* simulate(state: FlightState, input: ControlRun['input'], ticks: number
     else prediction.step(state, input); // replay independently recomputes its own clock
     if (broadPhase) metrics.searchPropagations++; else metrics.replayPropagations++;
     for (const h of p.hazards) {
-      const extent = h.radius + CONFIG.ship.radius + p.margin;
-      if (replayAxialCull ? runtimeAxialDisjoint(h, previous.distance, state.distance, p.margin)
+      const radius = p.geometry?.axialExtent(h) ?? h.radius;
+      const extent = radius + CONFIG.ship.radius + p.margin;
+      if (replayAxialCull ? runtimeAxialDisjoint(p.geometry ? { passDistance: h.passDistance, radius } : h, previous.distance, state.distance, p.margin)
         : broadPhase && (h.passDistance + extent < previous.distance || h.passDistance - extent > state.distance)) {
         metrics.broadPhaseSkips++; continue;
       }
-      yield 'query';
-      if (!broadPhase) metrics.replayQueries++;
+      const cost = p.geometry?.queryCost(h) ?? 1;
+      yield cost === 1 ? 'query' : { queries: cost };
+      if (!broadPhase) metrics.replayQueries += cost;
       if (prediction.hit(previous, state, h, p.margin)) return { id: h.id, step: tick + 1 };
       if (!broadPhase) {
-        yield 'query'; metrics.replayQueries++;
+        yield cost === 1 ? 'query' : { queries: cost }; metrics.replayQueries += cost;
         if (prediction.hitGameplay(previous, state, h)) return { id: h.id, step: tick + 1 };
       }
     }
@@ -149,7 +158,7 @@ function goalsFor(p: Prepared, distance: number): readonly { x: number; y: numbe
   if (!future.length) return [{ x: 0, y: 0 }];
   const depth = Math.min(...future.map(h => h.passDistance));
   const near = future.filter(h => h.passDistance <= depth + L.goalDepthSpan);
-  const goals: { x: number; y: number }[] = [];
+  const goals: { x: number; y: number }[] = p.geometry ? near.flatMap(h => p.geometry!.goals(h)) : [];
   for (let column = 0; column < L.goalColumns; column++) for (let row = 0; row < L.goalRows; row++) {
     const x = -CONFIG.bounds.x + column * 2 * CONFIG.bounds.x / (L.goalColumns - 1);
     const y = -CONFIG.bounds.y + row * 2 * CONFIG.bounds.y / (L.goalRows - 1);
@@ -168,7 +177,7 @@ function ranking(state: FlightState, changes: number, goals: readonly { x: numbe
 
 function* search(p: Prepared, metrics: ValidationMetrics): Work<Path | Rejection> {
   if (++metrics.searches > L.maxSearches) return reject('COMPUTATION_BUDGET_EXCEEDED', 'search limit');
-  const prediction = new FlightPrediction(), root = initial(p.context);
+  const prediction = p.geometry?.prediction() ?? new FlightPrediction(), root = initial(p.context);
   const prefixHit = yield* simulate(root, p.context.input, L.reactionTicks, p, metrics, true, prediction);
   if (prefixHit) return reject('INSUFFICIENT_REACTION_DISTANCE', prefixHit.id);
   let serial = 0, tick = L.reactionTicks;
@@ -226,7 +235,7 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
   if (++metrics.replays > L.maxReplays) return reject('COMPUTATION_BUDGET_EXCEEDED', 'replay limit');
   if (controls.length > L.horizonTicks || controls.some(run => !Number.isInteger(run.ticks) || run.ticks <= 0 || !validInput(run.input))
     || controls.reduce((sum, run) => sum + run.ticks, 0) !== p.targetTick) return reject('INVALID_TERMINAL_STATE', 'control duration');
-  const state = initial(p.context), prediction = new FlightPrediction();
+  const state = initial(p.context), prediction = p.geometry?.prediction() ?? new FlightPrediction();
   let tick = 0;
   for (const run of controls) {
     if ((tick < L.reactionTicks && !sameInput(run.input, p.context.input)) || (tick + run.ticks > p.controlEndTick && !neutral(run.input))) {
@@ -241,6 +250,7 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
   if (state.vx !== 0 || state.vy !== 0 || Math.abs(state.x) > CONFIG.bounds.x || Math.abs(state.y) > CONFIG.bounds.y
     || state.distance + CONFIG.hazards.maxRadius + CONFIG.ship.radius + p.margin > p.reserved) return reject('INVALID_TERMINAL_STATE');
   const record = { version: L.version, context: p.context, margin: p.margin, structuralPolicy: p.policy,
+    ...(p.geometry ? { geometryVersion: p.geometry.version } : {}),
     reservedUntilDistance: p.reserved, controls: compact(controls), terminal: Object.freeze({ ...state }) };
   return { decision: 'accept', witness: Object.freeze({ ...record, hash: witnessHash(record) }) };
 }
@@ -248,7 +258,7 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
 function* validation(union: Prepared, options: ValidationOptions, metrics: ValidationMetrics): Work<TrajectoryResult> {
   // A complete encounter was checked above. The committed-only analysis uses a
   // normal empty ambient header; partial encounters remain structurally invalid.
-  const baseProvenance = union.context.candidate.provenance.pattern ? { version: FIELD_LIMITS.version,
+  const baseProvenance = union.context.candidate.provenance.pattern || union.geometry ? { version: FIELD_LIMITS.version,
     seed: union.context.candidate.provenance.seed, settingsKey: union.context.candidate.provenance.settingsKey } : union.context.candidate.provenance;
   const base = prepare({ ...union.context, candidate: { ...union.context.candidate, provenance: baseProvenance, hazards: [] } }, options, metrics);
   if ('decision' in base) return reject('EXISTING_FIELD_UNCERTIFIED', base.reason);
@@ -293,8 +303,11 @@ export class ValidationJob {
         if (propagations === budget.propagations) break;
         propagations++; this.counts.propagations++;
       } else {
-        if (queries === budget.narrowQueries) break;
-        queries++; this.counts.narrowQueries++;
+        const cost = this.pending.value === 'query' ? 1 : this.pending.value.queries;
+        // A compound query is atomic: reserve ALL its primitive work in this
+        // call, never charge some boxes to a previous tick and execute them now.
+        if (queries + cost > budget.narrowQueries) break;
+        queries += cost; this.counts.narrowQueries += cost;
       }
       this.pending = this.iterator.next();
     }
@@ -335,11 +348,11 @@ export function beginPublicationCheck(witness: ValidationWitness, current: Field
  * in the SAME synchronous tick; unfinished work never carries publication proof.
  * Historical full-query replay remains unchanged and is the differential oracle.
  */
-export function beginRuntimePublicationCheck(witness: ValidationWitness, current: FieldValidationContext): ValidationJob {
+export function beginRuntimePublicationCheck(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions = {}): ValidationJob {
   if (witness.margin !== L.margin || witness.structuralPolicy !== 'generator') {
     return new ValidationJob(function* () { return reject('STALE_PUBLICATION_STATE', 'runtime requires normal policy and approved margin'); });
   }
-  return publicationCheck(witness, current, {}, true);
+  return publicationCheck(witness, current, options, true);
 }
 
 function publicationCheck(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions, axialCull: boolean): ValidationJob {
@@ -350,7 +363,7 @@ function publicationCheck(witness: ValidationWitness, current: FieldValidationCo
   const metrics = counters(), p = prepare(current, { ...options, margin: witness.margin }, metrics);
   return new ValidationJob(function* (metrics) {
     if ('decision' in p) return reject('STALE_PUBLICATION_STATE', p.reason);
-    if (witness.version !== L.version || witness.structuralPolicy !== p.policy
+    if (witness.version !== L.version || witness.structuralPolicy !== p.policy || witness.geometryVersion !== p.geometry?.version
       || p.context.elapsed < witness.context.elapsed || p.context.elapsed - witness.context.elapsed > L.deadlineTicks * CONFIG.step + 1e-9
       || p.context.distance < witness.context.distance
       || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate)

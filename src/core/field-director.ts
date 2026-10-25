@@ -18,7 +18,7 @@ export interface DirectorCursor {
 }
 export interface ScheduledSection {
   readonly id: string;
-  readonly version: 'director-v1' | 'pressure-v1';
+  readonly version: 'director-v1' | 'pressure-v1' | 'large-structure-v1';
   readonly seed: number;
   readonly index: number;
   readonly firstCell: number;

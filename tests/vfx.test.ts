@@ -15,7 +15,9 @@ const quality = visualQuality(1280, 800, false, false);
 const approvedFiles: Record<string, string> = {
   'src/config.ts': '99cabcb06c1061bb720c90690ace3bb40a48398821f5aa8bf849b0cff7a4f136',
   'src/core/ship.ts': 'db8d5b870ca9c480b5bc3e619d2222587c6eb26b96b1fa6232492c331d0309b0',
-  'src/core/game-model.ts': '9c1b10a43bd24685b0096f8822152ad006182e6ca6b6071ce3106ca1f81d24d7',
+  // 003B: private -> protected collision injection seam only; the separate
+  // large-structure test also pins the exact source after reversing that modifier.
+  'src/core/game-model.ts': '014d5e704b23e3497ce7dc81a46ba6a634f3c9bcf82d5ca26f5da828e6e6d5d8',
   'src/core/obstacles.ts': '120040eb86e7b705d97c62c0f9807833fe1ab3d8a707f54e6019c9178c211de3',
   'src/core/random.ts': 'a6e88787c57b8d8b8fafe4306f0e34bda419e3f191fb0b61a4f757f2c14f5f07',
   'src/core/collision.ts': '5b3ed802c6e8382aca43a78061ba8e63b0153b087ea0159fc2339480ea7baa0b',
