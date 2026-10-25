@@ -9,10 +9,13 @@ import type { Hazard } from '../core/obstacles.ts';
 import type { PlannedHazard } from '../core/field-types.ts';
 import type { PlanningOutcome, SchedulerRoot } from '../core/field-scheduler.ts';
 import type { ValidationWitness } from '../core/field-validator-types.ts';
+import { FIELD_POLICIES } from '../core/field-policy.ts';
+import type { FieldPolicy } from '../core/field-policy.ts';
 
 export const RUNTIME_SETTINGS = Object.freeze({ firstCell: 4, eventLimit: 64, sampleLimit: 2048 });
 interface RuntimeSlot extends Hazard { planned?: PlannedHazard }
 export interface RuntimeEvent {
+  policy: FieldPolicy; version: string;
   index: number; family: string; pacing: string; status: string; reason?: string; count: number;
   distance: number; elapsed: number; x: number; y: number; vx: number; vy: number;
   input: { x: number; y: number }; warning?: number; witness?: string; ids: readonly string[];
@@ -22,6 +25,7 @@ export interface RuntimeEvent {
  * Logical geometry survives damage/render despawn until its independent expiry.
  */
 export class RuntimeObstacleField extends ObstacleField {
+  readonly policy: typeof FIELD_POLICIES[FieldPolicy];
   readonly ledger = new OwnershipLedger();
   readonly slots: RuntimeSlot[] = this.hazards;
   readonly events: RuntimeEvent[] = [];
@@ -44,11 +48,13 @@ export class RuntimeObstacleField extends ObstacleField {
   private age = 0;
   private readonly observe: () => SchedulerRoot;
 
-  constructor(observe: () => SchedulerRoot) { super(); this.observe = observe; }
+  constructor(observe: () => SchedulerRoot, policy: FieldPolicy = 'baseline') {
+    super(); this.observe = observe; this.policy = FIELD_POLICIES[policy];
+  }
 
   override reset(seed: number): void {
     this.pending?.cancel(); this.pending = undefined; super.reset(seed);
-    this.director = new DifficultyDirector(seed); this.cursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
+    this.director = new DifficultyDirector(seed, this.policy.name); this.cursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
     this.ledger.reset(RUNTIME_SETTINGS.firstCell);
     for (const slot of this.slots) slot.planned = undefined;
     this.events.length = this.samples.length = 0; this.lastOutcome = undefined; this.certificate = undefined; this.fault = undefined;
@@ -103,7 +109,7 @@ export class RuntimeObstacleField extends ObstacleField {
     const ids = outcome.status === 'committed' ? outcome.transaction!.hazards.map(h => h.id) : [];
     const warning = outcome.status === 'committed' && ids.length ? Math.min(...outcome.transaction!.hazards.map(h => h.passDistance-h.radius-CONFIG.ship.radius-.15))-distance : undefined;
     if (this.events.length === RUNTIME_SETTINGS.eventLimit) this.events.shift();
-    this.events.push({ index: outcome.section.index, family: outcome.section.family, pacing: outcome.section.pacing, status: outcome.status,
+    this.events.push({ policy: this.policy.name, version: this.policy.version, index: outcome.section.index, family: outcome.section.family, pacing: outcome.section.pacing, status: outcome.status,
       reason: outcome.reason, count: ids.length, distance, elapsed, ...root.player, input: { ...root.input }, warning, witness: outcome.witness?.hash, ids });
     this.pending = undefined;
   }

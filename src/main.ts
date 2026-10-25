@@ -35,8 +35,9 @@ async function boot(): Promise<void> {
     let developerModel: GameModel | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const { RuntimeGameModel } = await import('./debug/runtime-game-model.ts');
+      const { fieldPolicy } = await import('./core/field-policy.ts');
       if (disposed) return;
-      developerModel = new RuntimeGameModel();
+      developerModel = new RuntimeGameModel(fieldPolicy(new URLSearchParams(location.search).get('policy')));
     }
     game = new Game(assets, undefined, debugFactory, developerModel);
     // Opt-in test inspection only; omitted from the production build by Vite.

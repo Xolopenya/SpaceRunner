@@ -3,6 +3,8 @@ import { FIELD_LIMITS } from './field-settings.ts';
 import { DIRECTOR_SETTINGS as S } from './field-director-settings.ts';
 import { PATTERN_FAMILIES, PATTERN_RULES, patternCount } from './field-pattern-source.ts';
 import type { PatternFamily } from './field-types.ts';
+import { FIELD_POLICIES, PRESSURE_SETTINGS as P } from './field-policy.ts';
+import type { FieldPolicy } from './field-policy.ts';
 
 export type PacingState = 'regular' | 'rising' | 'high' | 'recovery';
 export interface DirectorCursor {
@@ -16,7 +18,7 @@ export interface DirectorCursor {
 }
 export interface ScheduledSection {
   readonly id: string;
-  readonly version: 'director-v1';
+  readonly version: 'director-v1' | 'pressure-v1';
   readonly seed: number;
   readonly index: number;
   readonly firstCell: number;
@@ -41,9 +43,9 @@ export function contentProgress(distance: number): number {
   return policyValue(-Math.expm1(-Math.max(0, distance - S.firstCell * FIELD_LIMITS.cellSize) / S.progressionDistance));
 }
 const policyValue = (value: number): number => Math.round(value * S.policyPrecision) / S.policyPrecision;
-function keyed(seed: number, cursor: DirectorCursor, purpose: string): Random {
+function keyed(seed: number, cursor: DirectorCursor, purpose: string, version: string = S.version): Random {
   let hash = 2166136261;
-  const key = `${S.version}/${seed}/${cursor.index}/${cursor.firstCell}/${purpose}`;
+  const key = `${version}/${seed}/${cursor.index}/${cursor.firstCell}/${purpose}`;
   for (let i = 0; i < key.length; i++) hash = Math.imul(hash ^ key.charCodeAt(i), 16777619);
   return new Random(hash >>> 0);
 }
@@ -51,9 +53,11 @@ function keyed(seed: number, cursor: DirectorCursor, purpose: string): Random {
 /** Pure replayable decisions. Cursor is bounded explicit history, never hidden RNG state. */
 export class DifficultyDirector {
   readonly seed: number;
-  constructor(seed: number) {
+  readonly policy: FieldPolicy;
+  constructor(seed: number, policy: FieldPolicy = 'baseline') {
     if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) throw new RangeError('Seed must be uint32');
-    this.seed = seed;
+    if (policy !== 'baseline' && policy !== 'pressure') throw new RangeError('Invalid field policy');
+    this.seed = seed; this.policy = policy;
   }
   initial(firstCell: number = S.firstCell): DirectorCursor {
     if (!Number.isInteger(firstCell) || firstCell < 0 || firstCell > FIELD_LIMITS.maxCell - 5) throw new RangeError('Invalid initial cell');
@@ -67,9 +71,10 @@ export class DifficultyDirector {
       || cursor.lastFamilies.length > 2 || cursor.lastFamilies.some(f => !PATTERN_FAMILIES.includes(f))
       || !Number.isInteger(cursor.coverageMask) || cursor.coverageMask < 0 || cursor.coverageMask > 15
       || !Number.isInteger(cursor.lastCorner) || cursor.lastCorner < -1 || cursor.lastCorner > 3) throw new RangeError('Invalid director cursor');
-    const random = (purpose: string) => keyed(this.seed, cursor, purpose);
+    const pressure = this.policy === 'pressure', version = FIELD_POLICIES[this.policy].version;
+    const random = (purpose: string) => keyed(this.seed, cursor, purpose, version);
     const startDistance = cursor.firstCell * FIELD_LIMITS.cellSize, progress = contentProgress(startDistance);
-    const encounterProbability = policyValue(S.patternChanceStart + (S.patternChanceEnd - S.patternChanceStart) * progress);
+    const encounterProbability = pressure ? 1 : policyValue(S.patternChanceStart + (S.patternChanceEnd - S.patternChanceStart) * progress);
     const choice = random('pacing').next();
     let pacing: PacingState;
     if (cursor.previous === 'start') pacing = 'regular';
@@ -88,11 +93,21 @@ export class DifficultyDirector {
       const available = eligible.filter(f => !cursor.lastFamilies.includes(f));
       if (available.length) family = available[Math.floor(random('eligible-family').next() * available.length)]!;
     }
-    const base = pacing === 'recovery' ? .05 + .1 * progress : pacing === 'regular' ? .15 + .4 * progress
+    if (pressure && pacing !== 'recovery') {
+      const pool: readonly PatternFamily[] = cursor.previous === 'start' ? ['scattered'] : pacing === 'regular'
+        ? ['scattered', 'narrowing'] : PATTERN_FAMILIES;
+      const eligible = pool.filter(f => !cursor.lastFamilies.includes(f));
+      const available = eligible.length ? eligible : PATTERN_FAMILIES.filter(f => !cursor.lastFamilies.includes(f));
+      family = available[Math.floor(random('pressure-family').next() * available.length)]!;
+    }
+    const base = pressure && pacing !== 'recovery'
+      ? (pacing === 'regular' ? P.regularIntensity : pacing === 'rising' ? P.risingIntensity : P.highIntensity) + P.progressionIntensity * progress
+      : pacing === 'recovery' ? .05 + .1 * progress : pacing === 'regular' ? .15 + .4 * progress
       : pacing === 'rising' ? .4 + .3 * progress : .7 + .2 * progress;
     const intensity = policyValue(Math.max(S.minIntensity, Math.min(S.maxIntensity, base + random('intensity').between(-.02, .02))));
     const duration = random('duration').next();
-    const cellCount = family === 'ambient' ? (pacing === 'recovery' ? 2 + Math.floor(duration * (3 - progress))
+    const cellCount = pressure ? (family === 'ambient' ? P.recoveryCells : cursor.previous === 'start' ? P.bootstrapCells : PATTERN_RULES[family].minCells)
+      : family === 'ambient' ? (pacing === 'recovery' ? 2 + Math.floor(duration * (3 - progress))
       : pacing === 'regular' ? 4 + Math.floor(duration * 3) : 3 + Math.floor(duration * 3))
       : Math.min(6, PATTERN_RULES[family].minCells + Math.floor(duration * (2.9 - 1.8 * progress)));
     const variation = (cursor.index % 32768) * 2;
@@ -106,8 +121,8 @@ export class DifficultyDirector {
       coverageMask = mask & ~(1 << corner); lastCorner = corner;
     }
     const section: ScheduledSection = Object.freeze({
-      id: `${S.version}/${this.seed}/${cursor.index}/${cursor.firstCell}/${cellCount}/${pacing}/${family}/${intensity}/${variation}/${placement}/${corner ?? 'free'}`,
-      version: S.version, seed: this.seed, index: cursor.index, firstCell: cursor.firstCell, cellCount,
+      id: `${version}/${this.seed}/${cursor.index}/${cursor.firstCell}/${cellCount}/${pacing}/${family}/${intensity}/${variation}/${placement}/${corner ?? 'free'}`,
+      version, seed: this.seed, index: cursor.index, firstCell: cursor.firstCell, cellCount,
       startDistance, endDistance: (cursor.firstCell + cellCount) * FIELD_LIMITS.cellSize,
       pacing, family, progress, intensity, encounterProbability, variation, placement, ...(corner === undefined ? {} : { corner }),
       densityTarget: family === 'ambient' ? 100 / FIELD_LIMITS.cellSize : patternCount(family, intensity) * 100 / (cellCount * FIELD_LIMITS.cellSize),
