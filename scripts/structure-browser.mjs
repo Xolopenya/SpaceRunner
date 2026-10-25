@@ -18,7 +18,7 @@ try {
     const context = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: mobile ? 2 : 1 });
     const page = await context.newPage(), errors = [], requests = [];
     page.on('pageerror', e => errors.push(e.message)); page.on('requestfailed', r => errors.push(r.url())); page.on('request', r => { if (r.url().endsWith('.glb')) requests.push(r.url()); });
-    const url = policy === 'large-structure' ? '?debug=field&experiment=large-structure&aperture=right&seed=42' : `?debug=field&policy=${policy}&seed=42`;
+    const url = policy === 'large-structure' ? '?debug=field&experiment=large-structure-v1&aperture=right&seed=42' : `?debug=field&policy=${policy}&seed=42`;
     await page.goto('http://127.0.0.1:5198/' + url); await page.locator('#launch').waitFor({ state: 'visible' });
     const startup = await page.evaluate(() => {
       const g = window.spaceRunner;
@@ -117,7 +117,7 @@ try {
   const variantContext = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const variantPage = await variantContext.newPage();
   for (const aperture of ['center', 'left', 'right', 'upper', 'lower']) {
-    await variantPage.goto(`http://127.0.0.1:5198/?debug=field&experiment=large-structure&aperture=${aperture}&seed=42`); await variantPage.locator('#launch').click();
+    await variantPage.goto(`http://127.0.0.1:5198/?debug=field&experiment=large-structure-v1&aperture=${aperture}&seed=42`); await variantPage.locator('#launch').click();
     await variantPage.evaluate(() => { const g = window.spaceRunner; g.loop.stop(); g.model.state = 'GAME_OVER'; g.model.start(42); });
     for (const [stage, distance] of [['entry', 148], ['exit', 160.5]]) {
       const state = await variantPage.evaluate(distance => {

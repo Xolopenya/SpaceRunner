@@ -27,6 +27,8 @@ export interface ValidationGeometry {
   axialExtent(hazard: PlannedHazard): number;
   prediction(): FlightPrediction;
   goals(hazard: PlannedHazard): readonly { x: number; y: number }[];
+  /** Optional ranking-only lookahead for a composed encounter; never acceptance. */
+  goalsAt?(hazards: readonly PlannedHazard[], distance: number): readonly { x: number; y: number }[];
 }
 export interface ControlRun { readonly ticks: number; readonly input: { readonly x: number; readonly y: number } }
 export interface ValidationWitness {

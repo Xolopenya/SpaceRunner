@@ -1,5 +1,9 @@
 # Third-party asset provenance
 
+## Original station wreck v2 — GAMEPLAY-EXPERIMENT-003B2, 2026-10-25
+
+**Salvaged station pressure-frame v2**, authored by Codex for Space Runner. Original/final format: TypeScript / Three.js meshes; composed asymmetric steel members, original panel/repair/scorch/stencil paint and a real internally offset aperture. No downloaded model, texture, font, conversion or asset pack. Source: `src/experiments/structure-variants/profile.ts` and `view.ts`. Original geometry/markings are dedicated under CC0-1.0, without attribution obligations; existing Three.js MIT and Kenney notices remain. [Provenance/source URL/license](../assets/experimental/station-wreck-v2/PROVENANCE.md), [research and construction](review/GAMEPLAY-EXPERIMENT-003B2/VISUAL_DESIGN.md). Mixed neighbors use unchanged native Kenney hazard assets and generated geometry/IDs. Everything new is DEV-only; production assets and v1 model source stay unchanged.
+
 ## Original DEV bulkhead — GAMEPLAY-EXPERIMENT-003B, 2026-10-25
 
 **Abandoned Docking Bulkhead v1**, original project model authored by Codex for Space Runner. Format: TypeScript / Three.js basic geometry, source in `src/experiments/large-structure/view.ts` and shared dimensions in `profile.ts`; no downloaded model, conversion, texture or new GLB. Four joined box solids, flush surface markings and a real5.6×4.4 passage. The model is dedicated under CC0-1.0 in `assets/experimental/bulkhead/LICENSE.txt`; no attribution/redistribution notice is required for the model. Three.js retains its existing MIT notice. [Model provenance and source URL](../assets/experimental/bulkhead/PROVENANCE.md), [official-source asset research](review/GAMEPLAY-EXPERIMENT-003B/ASSET_RESEARCH.md). This source is loaded only by the explicit DEV experiment and adds no production asset or network request. Existing Kenney assets remain unchanged.

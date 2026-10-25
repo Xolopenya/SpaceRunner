@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'structure-variants', testMatch: 'structure-variants.spec.ts', timeout: 90_000 },
     { name: 'large-structure', testMatch: 'large-structure.spec.ts', timeout: 90_000 },
     { name: 'pressure', testMatch: 'pressure.spec.ts', timeout: 90_000 },
     { name: 'runtime', testMatch: 'runtime.spec.ts', timeout: 90_000 },

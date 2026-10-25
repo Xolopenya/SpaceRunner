@@ -34,10 +34,19 @@ async function boot(): Promise<void> {
       debugFactory = scene => new ColliderDebugger(scene);
     }
     let developerModel: GameModel | undefined;
-    let structureView: LargeStructureView | undefined;
+    let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const params = new URLSearchParams(location.search), experiment = params.get('experiment');
       if (experiment === 'large-structure') {
+        if (params.has('policy')) throw new RangeError('Select either policy or structure experiment');
+        const { StructureVariantsGameModel } = await import('./experiments/structure-variants/model.ts');
+        const { StructureVariantsView } = await import('./experiments/structure-variants/view.ts');
+        const { apertureSelector, structureMode } = await import('./experiments/structure-variants/profile.ts');
+        if (disposed) return;
+        const aperture = apertureSelector(params.get('aperture')), mode = structureMode(params.get('mode'));
+        developerModel = new StructureVariantsGameModel(aperture, mode);
+        debugFactory = scene => { structureView = new StructureVariantsView(scene, aperture, mode, params.get('colliders') === '1'); return structureView; };
+      } else if (experiment === 'large-structure-v1') {
         if (params.has('policy')) throw new RangeError('Select either a field policy or the large-structure experiment');
         const { LargeStructureGameModel } = await import('./experiments/large-structure/model.ts');
         const { LargeStructureView } = await import('./experiments/large-structure/view.ts');

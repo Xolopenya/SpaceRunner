@@ -1,0 +1,12 @@
+Salvaged station pressure-frame v2
+Original model geometry and markings authored by Codex for Space Runner, 2026-10-25.
+
+To the extent possible under law, copyright and related rights in this original
+model geometry and markings are waived under CC0 1.0 Universal.
+Copying, modification and redistribution, including commercial use, are allowed
+without attribution. No warranty is provided.
+
+https://creativecommons.org/publicdomain/zero/1.0/
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+This notice does not replace licenses for Three.js or existing Kenney assets.

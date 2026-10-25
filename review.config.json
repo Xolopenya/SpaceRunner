@@ -1,79 +1,86 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003B",
-  "baseline": "56824ad60b0f2583589d6b21de4dfce8db43c07d",
+  "taskId": "GAMEPLAY-EXPERIMENT-003B2",
+  "baseline": "6ecae59074ce65a9a4fdf036583a7ba4c97485b4",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ASSET_RESEARCH.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/ASSET_RESEARCH.md",
-    "STRUCTURE_DESIGN.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/STRUCTURE_DESIGN.md",
-    "COLLISION_VALIDATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/COLLISION_VALIDATION.md",
-    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/FAIRNESS.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B/STRUCTURE_DESIGN.md"
+    "APERTURE_VARIANTS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/APERTURE_VARIANTS.md",
+    "VISUAL_DESIGN.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/VISUAL_DESIGN.md",
+    "MIXED_FIELD.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/MIXED_FIELD.md",
+    "COLLISION_AND_FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/COLLISION_AND_FAIRNESS.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B2/VISUAL_DESIGN.md"
   },
   "screenshots": [
-    "structure-baseline-desktop-live.png",
-    "structure-pressure-desktop-live.png",
-    "structure-large-structure-desktop-live.png",
-    "structure-desktop-first-visible.png",
-    "structure-desktop-approach.png",
-    "structure-desktop-entry.png",
-    "structure-desktop-passed.png",
-    "structure-desktop-solid-impact.png",
-    "structure-desktop-colliders.png",
-    "structure-large-structure-portrait-live.png",
-    "structure-portrait-first-visible.png",
-    "structure-portrait-approach.png",
-    "structure-portrait-entry.png",
-    "structure-portrait-passed.png",
-    "structure-portrait-solid-impact.png",
-    "structure-large-structure-landscape-live.png",
-    "structure-landscape-first-visible.png",
-    "structure-landscape-approach.png",
-    "structure-landscape-entry.png",
-    "structure-landscape-passed.png",
-    "structure-landscape-solid-impact.png",
-    "structure-variant-center-entry.png",
-    "structure-variant-center-exit.png",
-    "structure-variant-left-entry.png",
-    "structure-variant-left-exit.png",
-    "structure-variant-right-entry.png",
-    "structure-variant-right-exit.png",
-    "structure-variant-upper-entry.png",
-    "structure-variant-upper-exit.png",
-    "structure-variant-lower-entry.png",
-    "structure-variant-lower-exit.png"
+    "variants-baseline-desktop-live.png",
+    "variants-isolated-desktop-live.png",
+    "variants-mixed-desktop-live.png",
+    "variants-desktop-first-visible.png",
+    "variants-desktop-approach.png",
+    "variants-desktop-entry.png",
+    "variants-desktop-passed.png",
+    "variants-desktop-solid-impact.png",
+    "variants-desktop-colliders.png",
+    "variants-mixed-portrait-live.png",
+    "variants-portrait-first-visible.png",
+    "variants-portrait-approach.png",
+    "variants-portrait-entry.png",
+    "variants-portrait-passed.png",
+    "variants-portrait-solid-impact.png",
+    "variants-mixed-landscape-live.png",
+    "variants-landscape-first-visible.png",
+    "variants-landscape-approach.png",
+    "variants-landscape-entry.png",
+    "variants-landscape-passed.png",
+    "variants-landscape-solid-impact.png",
+    "variants-variant-center-neutral-approach.png",
+    "variants-variant-center-entry.png",
+    "variants-variant-center-exit.png",
+    "variants-variant-left-neutral-approach.png",
+    "variants-variant-left-entry.png",
+    "variants-variant-left-exit.png",
+    "variants-variant-right-neutral-approach.png",
+    "variants-variant-right-entry.png",
+    "variants-variant-right-exit.png",
+    "variants-variant-upper-neutral-approach.png",
+    "variants-variant-upper-entry.png",
+    "variants-variant-upper-exit.png",
+    "variants-variant-lower-neutral-approach.png",
+    "variants-variant-lower-entry.png",
+    "variants-variant-lower-exit.png",
+    "variants-isolated-solid-impact.png",
+    "variants-legacy-neutral-approach.png"
   ],
   "videoPreviews": [
-    "structure-baseline-canvas.webm",
-    "structure-pressure-canvas.webm",
-    "structure-passage-canvas.webm"
+    "variants-baseline-canvas.webm",
+    "variants-isolated-canvas.webm",
+    "variants-passage-canvas.webm"
   ],
   "extraChecks": [
     {
       "script": "scripts/collision-audit.mjs",
-      "name": "collision-audit",
-      "stripTypes": true
+      "stripTypes": true,
+      "name": "collision-audit"
     },
     {
       "script": "scripts/runtime-benchmark.mjs",
-      "name": "runtime-benchmark",
-      "stripTypes": true
+      "stripTypes": true,
+      "name": "runtime-benchmark"
     },
     {
-      "script": "scripts/structure-preservation.mjs",
-      "name": "structure-preservation",
-      "stripTypes": true
+      "script": "scripts/variants-preservation.mjs",
+      "stripTypes": true,
+      "name": "variants-preservation"
     },
     {
-      "script": "scripts/structure-benchmark.mjs",
-      "name": "structure-benchmark",
-      "stripTypes": true
+      "script": "scripts/variants-benchmark.mjs",
+      "stripTypes": true,
+      "name": "variants-benchmark"
     },
     {
-      "script": "scripts/structure-browser.mjs",
-      "name": "structure-browser",
-      "stripTypes": false
+      "script": "scripts/variants-browser.mjs",
+      "stripTypes": false,
+      "name": "variants-browser"
     }
   ],
   "preservedUntracked": [
@@ -84,19 +91,20 @@
   ],
   "intermediateEvidence": [],
   "evidenceNotes": [
-    "One original CC0 model source and four exact solid boxes, DEV only. Existing baseline and pressure policies retain approved identities and runtime behavior.",
-    "All primitive work is charged atomically in its executing tick. Original work ceilings, exact Ship, reaction prefix, margin, independent replay, actual-state publication and ledger remain.",
-    "Real browser stage screenshots and live RAF measurements distinguish accelerated snapshot steps from real-time performance. Video is native silent canvas capture; physical phones and human preference are untested.",
-    "Preoptimization timings and raw samples remain in logs/baseline. Current verification logs and inventory are authoritative for exact HEAD.",
-    "Only explicitly allowed pre-existing user work is preserved and excluded from snapshot/patch."
+    "Fixed hull and five internally offset real openings. Explicit isolated/mixed modes; old003B is preserved at the versioned large-structure-v1 selector.",
+    "Neutral-camera variant captures and projected aperture/hull centers address the center-only complaint; entry/exit images separately use real certified flight.",
+    "Mixed source retains exactly two native ambient anchor hazards with original IDs and geometry. Canonical complete transaction, weighted primitive accounting and normal actual-state gate remain.",
+    "The optional v2 lookahead affects ranking only. All accepted direct/runtime witnesses receive independent unpruned replay; natural rejections and source omissions remain.",
+    "Pre-existing untracked user work is fingerprinted and excluded. Prior reports/goldens/archives remain."
   ],
   "limitations": [
-    "Technical experiment only; no human fun, preference or physical-phone acceptance claim.",
-    "The approved forgiving ship sphere is unchanged. Visible wings can overlap at grazing edges; centered witness passages and visual captures are separate evidence.",
-    "Finite benchmark corpus, conservative separation and state-dependent omissions do not prove universal reachability or absence of all bypasses.",
-    "Cold startup and frame outliers are reported explicitly. No production activation, merge, force-push or next gameplay experiment."
+    "Original ship sphere, wing-grazing tolerance and camera are unchanged; lower exit obstruction remains a manual review item.",
+    "Finite desktop/touch viewport emulation is not physical-phone or human preference evidence.",
+    "Four natural mixed beam failures are not proofs of impossibility. Input-dependent publication can omit sources.",
+    "No production activation, moving hazards, collectibles, scoring changes, merge or force-push."
   ],
   "knownBlockers": [
-    "External review and owner/physical-device playtests are required before promotion."
+    "External review and owner acceptance of the variants, wreck visuals and mixed/touch behavior should precede moving-hazard work.",
+    "Precommit mixed desktop has a33.2–50.1ms steady-flight burst (p9949.9ms, planner max21.4ms); profile its cause before adding content. Earlier faster evidence remains, with no asserted wall-time guarantee."
   ]
 }

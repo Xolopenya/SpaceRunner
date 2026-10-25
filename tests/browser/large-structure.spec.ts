@@ -2,7 +2,7 @@ import { test, expect } from './helpers';
 import type { LargeStructureGameModel } from '../../src/experiments/large-structure/model.ts';
 
 for (const aperture of ['center', 'left', 'right', 'upper', 'lower']) test(`large structure ${aperture}: real meshes, certified aperture, pause and restart`, async ({ page }) => {
-  await page.goto(`/?debug=field&experiment=large-structure&aperture=${aperture}&seed=42&colliders=1`);
+  await page.goto(`/?debug=field&experiment=large-structure-v1&aperture=${aperture}&seed=42&colliders=1`);
   await page.locator('#launch').click();
   const result = await page.evaluate(() => {
     const g = window.spaceRunner! as unknown as { model: LargeStructureGameModel; loop: { stop(): void; render(dt: number): void }; world: {
@@ -35,14 +35,14 @@ for (const aperture of ['center', 'left', 'right', 'upper', 'lower']) test(`larg
 });
 
 test('experimental URL and source are excluded from the production build', async ({ page }) => {
-  await page.goto('http://127.0.0.1:4173/?debug=field&experiment=large-structure&seed=42'); await page.locator('#launch').click();
+  await page.goto('http://127.0.0.1:4173/?debug=field&experiment=large-structure-v1&seed=42'); await page.locator('#launch').click();
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); await expect(page.locator('#large-structure-debug-info')).toHaveCount(0);
   const src = await page.locator('script[type=module]').getAttribute('src'), js = await (await page.request.get(new URL(src!, 'http://127.0.0.1:4173').href)).text();
   for (const marker of ['bulkhead-compound-v1', 'bulkhead-size-contract-v1', 'large-structure-v1', 'large-structure-dev-root']) expect(js).not.toContain(marker);
 });
 
 test('ordinary keyboard steering traverses the right aperture in the real RAF loop', async ({ page }) => {
-  await page.goto('/?debug=field&experiment=large-structure&aperture=right&seed=42'); await page.locator('#launch').click();
+  await page.goto('/?debug=field&experiment=large-structure-v1&aperture=right&seed=42'); await page.locator('#launch').click();
   await page.waitForFunction(() => window.spaceRunner!.model.elapsed >= 2);
   await page.keyboard.down('KeyD'); await page.waitForTimeout(400); await page.keyboard.up('KeyD');
   await page.waitForFunction(() => window.spaceRunner!.model.elapsed >= 9);

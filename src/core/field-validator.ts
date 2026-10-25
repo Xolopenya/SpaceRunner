@@ -154,6 +154,7 @@ function compact(runs: readonly ControlRun[]): readonly ControlRun[] {
 
 /** Coarse lookahead GOALS ONLY. Never snap a state or use this screen for acceptance. */
 function goalsFor(p: Prepared, distance: number): readonly { x: number; y: number }[] {
+  if (p.geometry?.goalsAt) return p.geometry.goalsAt(p.hazards, distance);
   const future = p.hazards.filter(h => h.passDistance + h.radius + CONFIG.ship.radius + p.margin >= distance);
   if (!future.length) return [{ x: 0, y: 0 }];
   const depth = Math.min(...future.map(h => h.passDistance));

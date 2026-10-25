@@ -1,4 +1,4 @@
-export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1' | 'bulkhead-compound-v1';
+export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1' | 'bulkhead-compound-v1' | 'wreck-frame-compound-v2';
 
 export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';
 export interface PatternSource {

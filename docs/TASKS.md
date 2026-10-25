@@ -1,5 +1,17 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003B2 — structure variants and mixed field, 2026-10-25
+
+- [x] Verified approved6ecae59 on main, fetched origin and created `feature/gameplay-003b2-structure-variants`; preserved unrelated Skills/research/lock files.
+- [x] Traced apparent center-only behavior to translating the entire v1 frame while its local hole stayed centered, missing selected-variant diagnostics and approach-camera masking. V2 fixes the hull at(0,0), moves the opening internally and labels each selection. Default is explicitly center/isolated; five direct URLs repeat their selected aperture.
+- [x] Built an original CC0 composed station fragment with asymmetric member depths/outline, broad steel panels, repair/scorch/stencil paint and orange aperture lining. No external download, new GLB, production asset, physics/camera/audio/VFX change. Old v1 code remains unchanged under a versioned selector; historical browser checks only update that URL.
+- [x] Added isolated/mixed v2 sources. Mixed owns a complete frame+two original ambient anchors, with6primitive cost and full normal validation/actual publication. Added optional ranking-only composed lookahead; no safety test, margin or work ceiling changes.
+- [x] New8unit tests pass, including10000 unpruned-oracle sweeps, all five model/collider/paint checks, opposite velocities, native ambient membership and negative/replay/lifecycle cases. Full initial178unit suite passes.
+- [x] Recorded480direct attempts:476certified/replayed,4natural mixed beam rejections retained;5engineered ambient reaction collisions reject.36actual-model histories retain all omissions; mixed witness followers publish14/15sections with0hits. Neutral-camera variant captures numerically verify the offset with identical ship/camera/distance. Human participants0.
+- [x] Full12-command precommit verification passed:178unit/59browser tests, original collision/runtime audit (2632decisions/2147replays,384actual models/505replays,8rendered profiles),34preservation comparisons and byte-identical15-file/931651-byte production. Captured38PNGs/3decoded videos. Mixed desktop p9949.9ms/planner max21.4ms and cold max783.2ms remain visible beside earlier faster runs; no millisecond ceiling is claimed.
+- [x] Added an independent archive verifier for every inventory/snapshot blob, all accepted direct/runtime witnesses, five initially-clear reaction negatives, variant projections, restart/video evidence, preserved user work and reverse binary-patch applicability. Exact-HEAD checks, commit/remote/archive identity and executed verifier outputs are recorded in the generated manifest and final handoff.
+- [ ] External review and owner acceptance of visual/mixed/physical-touch behavior before any moving-hazard work. No moving hazards are implemented here.
+
 ## GAMEPLAY-EXPERIMENT-003B — large structural obstacle, 2026-10-25
 
 - [x] Verified approved56824ad in local/fetched remote main (0/0 divergence); created `feature/gameplay-003b-large-structure`. Preserved unrelated untracked Skill/research files and skills-lock.
