@@ -10,6 +10,7 @@ import { FLOW_GEOMETRY } from '../src/experiments/mixed-flow/source.ts';
 import { RuntimePlanningSession } from '../src/core/field-runtime-session.ts';
 import { beginValidation, beginKnownFieldValidation, beginTrajectoryReplay, beginRuntimePublicationCheck } from '../src/core/field-validator.ts';
 import { flowInputs, FLOW_HISTORIES } from '../tests/fixtures/mixed-flow-inputs.ts';
+import { classifyFlowPublication } from '../tests/fixtures/mixed-flow-diagnostics.ts';
 import { stats } from './director-fields.mjs';
 
 const output = resolve(process.env.REVIEW_RESULT_DIR ?? '.cache/review/GAMEPLAY-EXPERIMENT-003B3/final'); await mkdir(output, { recursive: true });
@@ -143,9 +144,7 @@ for (const run of evidence) for (const o of run.outcomes) {
     const freshJob = (run.variant === 'A' ? beginValidation : beginKnownFieldValidation)(p.context, { geometry }), fresh = finish(freshJob);
     if (fresh.decision === 'accept') audit(fresh.witness, geometry);
     const prefixCollision = reactionCollision(p.context);
-    const classification = prefixCollision ? 'unsafe-required-held-prefix' : fresh.decision === 'accept' && old.decision === 'reject' ? 'stale-witness'
-      : fresh.decision === 'reject' && ['COMPUTATION_BUDGET_EXCEEDED', 'HORIZON_EXCEEDED'].includes(fresh.reason) ? 'budget-or-horizon'
-      : fresh.decision === 'reject' && fresh.reason === 'STRUCTURAL_INVALID' ? 'geometry-ownership-or-capacity' : 'not-solved-by-bounded-search';
+    const classification = classifyFlowPublication(old, fresh, !!prefixCollision);
     counterfactuals.push({ seed: run.seed, history: run.history, variant: run.variant, section: o.section, context: p.context, failedWitness: p.witness, old, fresh,
       metrics: { old: oldJob?.metrics, fresh: freshJob.metrics }, prefixCollision, classification });
   }

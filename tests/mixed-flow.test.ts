@@ -15,6 +15,20 @@ import { APERTURE_NAMES, isWreck } from '../src/experiments/structure-variants/p
 import { wreckTransaction } from '../src/experiments/structure-variants/encounter.ts';
 import { mixedFlowSource, FLOW_GEOMETRY as geometry } from '../src/experiments/mixed-flow/source.ts';
 import { MixedFlowGameModel } from '../src/experiments/mixed-flow/model.ts';
+import { classifyFlowPublication } from './fixtures/mixed-flow-diagnostics.ts';
+
+test('publication diagnostics distinguish fresh success, missing preparation and an existing safe replay', () => {
+  const accepted = { decision: 'accept' } as const, rejected = { decision: 'reject', reason: 'NO_WITNESS_FOUND' } as const;
+  const missing = { decision: 'unavailable' } as const;
+  assert.equal(classifyFlowPublication(rejected, accepted, false), 'stale-witness');
+  assert.equal(classifyFlowPublication(missing, accepted, false), 'preparation-miss-fresh-root-solved');
+  assert.equal(classifyFlowPublication(accepted, accepted, false), 'publication-strategy-miss-existing-replay-safe');
+  assert.equal(classifyFlowPublication(accepted, rejected, false), 'fresh-search-miss-existing-replay-safe');
+  assert.equal(classifyFlowPublication(rejected, rejected, false), 'not-solved-by-bounded-search');
+  assert.equal(classifyFlowPublication(missing, rejected, true), 'unsafe-required-held-prefix');
+  assert.equal(classifyFlowPublication(missing, { decision: 'reject', reason: 'HORIZON_EXCEEDED' }, false), 'budget-or-horizon');
+  assert.equal(classifyFlowPublication(rejected, { decision: 'reject', reason: 'STRUCTURAL_INVALID' }, false), 'geometry-ownership-or-capacity');
+});
 
 function complete(job: ValidationJob) { while (!job.getResult()) job.advance(); return job.getResult()!; }
 function accept(job: ValidationJob): ValidationWitness { const r = complete(job); assert.equal(r.decision, 'accept', JSON.stringify(r)); if (r.decision !== 'accept') throw Error('reject'); return r.witness; }

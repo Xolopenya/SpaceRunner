@@ -9,6 +9,7 @@ import { beginTrajectoryReplay } from '../src/core/field-validator.ts';
 import { WRECK_GEOMETRY } from '../src/experiments/structure-variants/encounter.ts';
 import { FLOW_GEOMETRY } from '../src/experiments/mixed-flow/source.ts';
 import { WreckPrediction } from '../src/experiments/structure-variants/profile.ts';
+import { classifyFlowPublication } from '../tests/fixtures/mixed-flow-diagnostics.ts';
 
 const git = (...args) => execFileSync('git', args, { maxBuffer: 64 * 1024 * 1024 });
 const head = git('rev-parse', 'HEAD').toString().trim(), baseline = 'a617f59044ba234de173cf28e56aad9a5ec8f2c5';
@@ -19,7 +20,7 @@ const manifest = json('reports/manifest.json'), config = json('project_snapshot/
 assert.equal(manifest.taskId, 'GAMEPLAY-EXPERIMENT-003B3'); assert.equal(manifest.finalCommit, head); assert.equal(manifest.baselineCommit, baseline);
 assert.equal(manifest.branch, 'feature/gameplay-003b3-mixed-obstacle-flow'); assert.equal(manifest.checks.length, 13);
 assert.ok(manifest.checks.every(c => c.exitCode === 0));
-assert.equal(manifest.tests.filter(t => t.suite === 'unit').length, 186); assert.equal(manifest.tests.filter(t => t.suite === 'browser').length, 65);
+assert.equal(manifest.tests.filter(t => t.suite === 'unit').length, 187); assert.equal(manifest.tests.filter(t => t.suite === 'browser').length, 65);
 assert.ok(manifest.tests.every(t => t.result === 'passed'));
 const inventory = json('reports/content-inventory.json'); assert.equal(inventory.length, entries.size - 1);
 assert.equal(new Set(inventory.map(r => r.path)).size, inventory.length);
@@ -63,6 +64,7 @@ function replay(w) {
 for (const r of [...evidence.runs, evidence.repeat]) for (const w of r.witnesses) replay(w);
 let verifiedPrefixContacts = 0;
 for (const c of evidence.counterfactuals) {
+  assert.equal(c.classification, classifyFlowPublication(c.old, c.fresh, !!c.prefixCollision));
   if (c.old.decision === 'accept') replay(c.old.witness); if (c.fresh.decision === 'accept') replay(c.fresh.witness);
   if (c.prefixCollision) {
     const state = { ...c.context.player, elapsed: c.context.elapsed, distance: c.context.distance }, p = new WreckPrediction(); let collision;
@@ -92,7 +94,7 @@ for (const o of exported.publications) if (o.witness) replay(o.witness);
 const patch = entries.get('changes/baseline-to-head.patch'); assert.ok(patch.equals(git('diff', '--binary', '--full-index', baseline, head)));
 execFileSync('git', ['apply', '--reverse', '--check', '--cached'], { input: patch, maxBuffer: 16 * 1024 * 1024 });
 const result = { path, bytes: bytes.length, sha256: sha(bytes), entries: entries.size, inventoryVerified: inventory.length, snapshotFiles, legacySourceFiles, baseline, head,
-  checks: 13, unitTests: 186, browserTests: 65, benchmarkWitnessReplays: benchmarkReplays, archiveBrowserWitnessReplays: audits - benchmarkReplays,
+  checks: 13, unitTests: 187, browserTests: 65, benchmarkWitnessReplays: benchmarkReplays, archiveBrowserWitnessReplays: audits - benchmarkReplays,
   verifiedRequiredPrefixContacts: verifiedPrefixContacts, pairedOrdinaryInputRuns: 84, supplementaryWitnessRuns: 6, deterministicRepeat: true,
   screenshots: 22, nativeDecodedVideos: 5, productionByteIdentical: true, approvedModelComparisons: 64,
   reversePatchCheck: true, preservedUserWorkVerified: true, A: { committed: a.committed, completed: a.completed }, B: { committed: b.committed, completed: b.completed } };
