@@ -23,6 +23,7 @@ test('publication diagnostics distinguish fresh success, missing preparation and
   assert.equal(classifyFlowPublication(rejected, accepted, false), 'stale-witness');
   assert.equal(classifyFlowPublication(missing, accepted, false), 'preparation-miss-fresh-root-solved');
   assert.equal(classifyFlowPublication(accepted, accepted, false), 'publication-strategy-miss-existing-replay-safe');
+  assert.equal(classifyFlowPublication(accepted, accepted, false, true), 'certified-empty-omission');
   assert.equal(classifyFlowPublication(accepted, rejected, false), 'fresh-search-miss-existing-replay-safe');
   assert.equal(classifyFlowPublication(rejected, rejected, false), 'not-solved-by-bounded-search');
   assert.equal(classifyFlowPublication(missing, rejected, true), 'unsafe-required-held-prefix');

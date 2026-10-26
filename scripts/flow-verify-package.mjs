@@ -64,7 +64,11 @@ function replay(w) {
 for (const r of [...evidence.runs, evidence.repeat]) for (const w of r.witnesses) replay(w);
 let verifiedPrefixContacts = 0;
 for (const c of evidence.counterfactuals) {
-  assert.equal(c.classification, classifyFlowPublication(c.old, c.fresh, !!c.prefixCollision));
+  const owner = evidence.runs.find(r => r.seed === c.seed && r.history === c.history && r.variant === c.variant);
+  const outcome = owner?.outcomes.find(o => o.section.id === c.section.id); assert.ok(outcome);
+  assert.equal(c.certifiedEmpty, outcome.status === 'omitted-certified' && c.context.candidate.hazards.length === 0);
+  assert.equal(c.classification, classifyFlowPublication(c.old, c.fresh, !!c.prefixCollision, c.certifiedEmpty));
+  if (c.certifiedEmpty) assert.equal(c.context.candidate.hazards.length, 0);
   if (c.old.decision === 'accept') replay(c.old.witness); if (c.fresh.decision === 'accept') replay(c.fresh.witness);
   if (c.prefixCollision) {
     const state = { ...c.context.player, elapsed: c.context.elapsed, distance: c.context.distance }, p = new WreckPrediction(); let collision;

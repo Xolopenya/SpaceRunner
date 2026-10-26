@@ -2,8 +2,9 @@ type Result = { readonly decision: 'accept' | 'reject'; readonly reason?: string
 type OldResult = Result | { readonly decision: 'unavailable'; readonly reason?: string };
 
 /** Describe the observed proofs, without turning a planner miss into impossibility. */
-export function classifyFlowPublication(old: OldResult, fresh: Result, prefixCollision: boolean): string {
+export function classifyFlowPublication(old: OldResult, fresh: Result, prefixCollision: boolean, certifiedEmpty = false): string {
   if (prefixCollision) return 'unsafe-required-held-prefix';
+  if (certifiedEmpty && (old.decision === 'accept' || fresh.decision === 'accept')) return 'certified-empty-omission';
   if (old.decision === 'accept') return fresh.decision === 'accept'
     ? 'publication-strategy-miss-existing-replay-safe' : 'fresh-search-miss-existing-replay-safe';
   if (fresh.decision === 'accept') return old.decision === 'reject' ? 'stale-witness' : 'preparation-miss-fresh-root-solved';

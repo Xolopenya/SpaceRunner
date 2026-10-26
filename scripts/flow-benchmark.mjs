@@ -144,9 +144,10 @@ for (const run of evidence) for (const o of run.outcomes) {
     const freshJob = (run.variant === 'A' ? beginValidation : beginKnownFieldValidation)(p.context, { geometry }), fresh = finish(freshJob);
     if (fresh.decision === 'accept') audit(fresh.witness, geometry);
     const prefixCollision = reactionCollision(p.context);
-    const classification = classifyFlowPublication(old, fresh, !!prefixCollision);
+    const certifiedEmpty = o.status === 'omitted-certified' && p.context.candidate.hazards.length === 0;
+    const classification = classifyFlowPublication(old, fresh, !!prefixCollision, certifiedEmpty);
     counterfactuals.push({ seed: run.seed, history: run.history, variant: run.variant, section: o.section, context: p.context, failedWitness: p.witness, old, fresh,
-      metrics: { old: oldJob?.metrics, fresh: freshJob.metrics }, prefixCollision, classification });
+      metrics: { old: oldJob?.metrics, fresh: freshJob.metrics }, prefixCollision, certifiedEmpty, classification });
   }
 }
 const paired = [];
