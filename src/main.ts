@@ -37,7 +37,15 @@ async function boot(): Promise<void> {
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const params = new URLSearchParams(location.search), experiment = params.get('experiment');
-      if (experiment === 'large-structure') {
+      if (experiment === 'mixed-flow') {
+        if (params.has('policy') || params.has('mode')) throw new RangeError('Mixed flow owns its scheduling policy');
+        const { MixedFlowGameModel } = await import('./experiments/mixed-flow/model.ts');
+        const { MixedFlowView } = await import('./experiments/mixed-flow/view.ts');
+        const { apertureSelector } = await import('./experiments/structure-variants/profile.ts');
+        if (disposed) return;
+        developerModel = new MixedFlowGameModel(params.has('aperture') ? apertureSelector(params.get('aperture')) : undefined);
+        debugFactory = scene => { structureView = new MixedFlowView(scene, params.get('colliders') === '1'); return structureView; };
+      } else if (experiment === 'large-structure') {
         if (params.has('policy')) throw new RangeError('Select either policy or structure experiment');
         const { StructureVariantsGameModel } = await import('./experiments/structure-variants/model.ts');
         const { StructureVariantsView } = await import('./experiments/structure-variants/view.ts');

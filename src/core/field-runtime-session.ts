@@ -1,7 +1,7 @@
 import { CONFIG, difficulty } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { buildSection } from './field-section.ts';
-import { beginValidation, beginTrajectoryReplay, beginRuntimePublicationCheck, beginPublicationCheck } from './field-validator.ts';
+import { beginValidation, beginKnownFieldValidation, beginNeutralKnownFieldValidation, beginRuntimeRootSearch, beginTrajectoryReplay, beginRuntimePublicationCheck, beginPublicationCheck } from './field-validator.ts';
 import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { DIRECTOR_SETTINGS as S } from './field-director-settings.ts';
 import type { ValidationJob } from './field-validator.ts';
@@ -10,11 +10,18 @@ import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
 
-import type { SchedulerRoot, PlanningPhase, AttemptRecord, PlanningOutcome } from './field-scheduler.ts';
+import type { SchedulerRoot, PlanningPhase, AttemptRecord, PlanningOutcome, PublicationObservation } from './field-scheduler.ts';
 import { visibleAt } from './field-scheduler.ts';
 
 /** One explicit DEV candidate, using the same coordinator and publication gate. */
-export interface RuntimeCandidate { readonly transaction: FieldTransaction; readonly geometry: ValidationGeometry }
+export interface RuntimeCandidate {
+  readonly transaction: FieldTransaction;
+  readonly geometry: ValidationGeometry;
+  readonly publicationPolicy?: 'root-aware-v1';
+  /** A whole independently proposed source span, never a partial primary. */
+  readonly fallback?: FieldTransaction;
+  readonly generationReason?: string;
+}
 
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),
@@ -53,10 +60,13 @@ export class RuntimePlanningSession {
   private witness?: ValidationWitness;
   private result?: PlanningOutcome;
   private failure?: string;
+  private readonly publicationChecks: PublicationObservation[] = [];
+  private get rootAware(): boolean { return this.custom?.publicationPolicy === 'root-aware-v1'; }
   get phase(): PlanningPhase { return this.currentPhase; }
   get metrics(): Readonly<ValidationMetrics> { return { ...this.counts, planningTicks: this.tick }; }
   getResult(): PlanningOutcome | undefined { return this.result; }
   get preparedWitness(): ValidationWitness | undefined { return this.witness; }
+  publicationDue(tick: number): boolean { return tick === S.publicationTicks || (this.rootAware && this.currentPhase === 'ready'); }
   cancel(): PlanningOutcome {
     if (this.result) return this.result;
     if (this.token) this.ledger.cancel(this.token);
@@ -87,15 +97,25 @@ export class RuntimePlanningSession {
     else if (!this.completeKnownField(committed, current.distance)) this.fail('INCOMPLETE_KNOWN_FIELD');
     // The fixed publication call has its own unchanged per-tick budget. Never
     // spend a preparation chunk AND a final replay in the same tick.
-    if (tick === S.publicationTicks) {
+    if (this.publicationDue(tick)) {
       if (this.currentPhase !== 'ready' || !this.witness) return this.finish('omitted-uncertified', this.failure ?? 'PLANNING_DEADLINE');
       const transaction = this.attempts.at(-1)!.transaction!;
       const context = { ...rootCopy(current), committed: visibleAt(committed, current.distance), candidate: transaction,
         ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
       const options = this.custom ? { geometry: this.custom.geometry } : {};
-      const job = this.replayMode === 'full' ? beginPublicationCheck(this.witness, context, options) : beginRuntimePublicationCheck(this.witness, context, options);
+      const job = this.rootAware && transaction.hazards.some(h => this.custom!.geometry.validHazard(h))
+        ? beginRuntimeRootSearch(this.witness, context, options)
+        : this.replayMode === 'full' ? beginPublicationCheck(this.witness, context, options) : beginRuntimePublicationCheck(this.witness, context, options);
       this.setJob(job, 'publication');
       const checked = this.work(budget, 1);
+      if (this.rootAware) this.publicationChecks.push(Object.freeze({ tick, context, witness: this.witness,
+        result: checked ?? { decision: 'unfinished', reason: 'ACTUAL_REPLAY_BUDGET' } as const, metrics: Object.freeze({ ...job.metrics }) }));
+      if (this.rootAware && (!checked || checked.decision === 'reject') && this.attempts.length < S.maxAttempts
+        && this.counts.searches <= L.maxSearches && this.counts.replays < L.maxReplays - 1 && tick < S.publicationTicks) {
+        this.attempts.at(-1)!.reason = checked ? `publication:${checked.reason}:${checked.detail ?? ''}` : 'ACTUAL_REPLAY_BUDGET';
+        if (this.token) this.ledger.cancel(this.token); this.token = undefined; this.job = undefined; this.witness = undefined;
+        this.startAttempt('ambient-fallback', current, committed); return undefined;
+      }
       if (!checked) return this.finish('omitted-uncertified', 'ACTUAL_REPLAY_BUDGET');
       if (checked.decision === 'reject') return this.finish('omitted-uncertified', 'publication:' + checked.reason + ':' + (checked.detail ?? ''));
       if (this.counts.searches > L.maxSearches || this.counts.replays > L.maxReplays) return this.finish('omitted-uncertified', 'TRANSACTION_WORK_LIMIT');
@@ -145,7 +165,8 @@ export class RuntimePlanningSession {
       transaction = p.transaction;
     } else {
       const ambient = this.field.propose(s.firstCell, s.cellCount);
-      transaction = kind === 'empty-fallback' ? Object.freeze({ ...ambient, hazards: Object.freeze([]) }) : ambient;
+      transaction = kind === 'empty-fallback' ? Object.freeze({ ...ambient, hazards: Object.freeze([]) })
+        : this.rootAware && kind === 'ambient-fallback' ? this.custom!.fallback ?? ambient : ambient;
     }
     const context: FieldValidationContext = { ...rootCopy(root), committed: Object.freeze([...committed]), candidate: transaction,
       ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
@@ -154,6 +175,7 @@ export class RuntimePlanningSession {
     const structure = this.custom ? this.custom.geometry.inspect(transaction, committed) : this.field.inspect(transaction, committed);
     if (structure.status === 'invalid') {
       record.reason = 'STRUCTURAL_INVALID:' + structure.reason;
+      if (this.rootAware && kind === 'primary') { this.startAttempt('ambient-fallback', root, committed); return; }
       if (this.custom) { this.fail(record.reason); return; }
       if (kind === 'primary') this.startAttempt(structure.reason === 'capacity' ? 'empty-fallback' : 'ambient-fallback', root, committed);
       else this.fail(record.reason);
@@ -168,7 +190,8 @@ export class RuntimePlanningSession {
       const controls = neutralControls(context);
       if (!controls) this.fail('FALLBACK_HORIZON');
       else this.setJob(beginTrajectoryReplay(context, controls, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
-    } else this.setJob(beginValidation(context, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
+    } else this.setJob(this.rootAware ? (this.counts.searches >= L.maxSearches ? beginNeutralKnownFieldValidation : beginKnownFieldValidation)(context, { geometry: this.custom!.geometry })
+      : beginValidation(context, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
   }
   private handle(checked: TrajectoryResult, current: SchedulerRoot, committed: readonly PlannedHazard[]): void {
     const record = this.attempts.at(-1)!;
@@ -177,13 +200,13 @@ export class RuntimePlanningSession {
       if (this.currentPhase === 'validation' && record.kind !== 'empty-fallback' && this.attempts.length < S.maxAttempts
         && this.tick < S.publicationTicks) {
         if (this.token) this.ledger.cancel(this.token); this.token = undefined;
-        this.startAttempt('empty-fallback', current, committed);
+        this.startAttempt(this.rootAware ? 'ambient-fallback' : 'empty-fallback', current, committed);
       } else this.fail(record.reason);
       return;
     }
     if (this.currentPhase === 'validation') {
       this.witness = checked.witness;
-      if (record.kind === 'empty-fallback') this.currentPhase = 'ready';
+      if (record.kind === 'empty-fallback' || this.rootAware) this.currentPhase = 'ready';
       else this.setJob(beginTrajectoryReplay(checked.witness.context, checked.witness.controls, this.custom ? { geometry: this.custom.geometry } : {}), 'replay');
     } else if (this.currentPhase === 'replay') {
       if (checked.witness.hash !== this.witness?.hash) { this.fail('REPLAY_DISAGREEMENT'); return; }
@@ -208,7 +231,9 @@ export class RuntimePlanningSession {
     this.currentPhase = 'done'; this.job = undefined;
     this.result = Object.freeze({ status, section: this.section, ...(reason ? { reason } : {}),
       ...(witness ? { transaction: witness.context.candidate, witness } : {}),
-      attempts: Object.freeze(this.attempts.map(a => Object.freeze({ ...a }))), metrics: Object.freeze(this.metrics), jobs: Object.freeze([...this.jobRecords]) });
+      attempts: Object.freeze(this.attempts.map(a => Object.freeze({ ...a }))), metrics: Object.freeze(this.metrics), jobs: Object.freeze([...this.jobRecords]),
+      ...(this.rootAware ? { publicationChecks: Object.freeze([...this.publicationChecks]),
+        ...(this.custom?.generationReason ? { generationReason: this.custom.generationReason } : {}) } : {}) });
     return this.result;
   }
 }

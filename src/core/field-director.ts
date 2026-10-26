@@ -18,7 +18,7 @@ export interface DirectorCursor {
 }
 export interface ScheduledSection {
   readonly id: string;
-  readonly version: 'director-v1' | 'pressure-v1' | 'large-structure-v1' | 'structure-isolated-v2' | 'structure-mixed-v2';
+  readonly version: 'director-v1' | 'pressure-v1' | 'large-structure-v1' | 'structure-isolated-v2' | 'structure-mixed-v2' | 'mixed-flow-v1';
   readonly seed: number;
   readonly index: number;
   readonly firstCell: number;
@@ -34,6 +34,9 @@ export interface ScheduledSection {
   readonly variation: number;
   readonly placement: 'free' | 'corner-pressure-v1';
   readonly corner?: number;
+  /** Explicit DEV composition metadata; original director decisions omit it. */
+  readonly encounter?: string;
+  readonly aperture?: 'center' | 'left' | 'right' | 'upper' | 'lower';
 }
 
 export function contentProgress(distance: number): number {

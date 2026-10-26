@@ -17,7 +17,8 @@ import type { ScheduledSection } from '../core/field-director.ts';
 export interface RuntimeEncounterSource {
   readonly version: string;
   next(seed: number, cursor: DirectorCursor): ReturnType<DifficultyDirector['next']>;
-  candidate(section: ScheduledSection): RuntimeCandidate;
+  candidate(section: ScheduledSection, committed?: readonly PlannedHazard[]): RuntimeCandidate;
+  readonly diagnostics?: true;
 }
 
 export const RUNTIME_SETTINGS = Object.freeze({ firstCell: 4, eventLimit: 64, sampleLimit: 2048 });
@@ -27,6 +28,7 @@ export interface RuntimeEvent {
   index: number; family: string; pacing: string; status: string; reason?: string; count: number;
   distance: number; elapsed: number; x: number; y: number; vx: number; vy: number;
   input: { x: number; y: number }; warning?: number; witness?: string; ids: readonly string[];
+  aperture?: ScheduledSection['aperture']; selectedFamily?: string;
 }
 
 /** Dev-only adapter over the SAME72 records consumed by GameModel and World.
@@ -51,6 +53,11 @@ export class RuntimeObstacleField extends ObstacleField {
   maxChunkMs = 0;
   firstPublication?: number;
   firstOpportunity?: number;
+  readonly publicationTrace: PlanningOutcome[] = [];
+  readonly inputTrace: { firstTick: number; ticks: number; x: number; y: number }[] = [];
+  lastRejection?: string;
+  private traceEpoch = 0;
+  private traceTick = 0;
   private director = new DifficultyDirector(1);
   private cursor: DirectorCursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
   private age = 0;
@@ -71,6 +78,16 @@ export class RuntimeObstacleField extends ObstacleField {
     this.events.length = this.samples.length = 0; this.lastOutcome = undefined; this.certificate = undefined; this.fault = undefined;
     this.planningTicks = this.scheduled = this.committed = this.omitted = this.age = 0;
     this.preparationMs = this.schedulerMs = this.maxChunkMs = 0; this.firstPublication = this.firstOpportunity = undefined;
+    this.clearDiagnosticTrace(); this.traceEpoch++; this.traceTick = 0; this.lastRejection = undefined;
+  }
+
+  clearDiagnosticTrace(): void { this.publicationTrace.length = this.inputTrace.length = 0; }
+  exportDiagnosticTrace(): object {
+    return JSON.parse(JSON.stringify({ version: this.experiment?.version ?? this.policy.version, seed: this.seed, epoch: this.traceEpoch,
+      current: this.observe(), scheduled: this.scheduled, committed: this.committed, omitted: this.omitted,
+      fault: this.fault ?? null, lastRejection: this.lastRejection ?? null, inputRuns: this.inputTrace,
+      publications: this.publicationTrace, ledger: this.ledger.snapshot(),
+      limits: { decisions: 16, inputRuns: 128 }, note: 'Bounded recent decisions and exact roots; not an unlimited input recording.' }));
   }
 
   override update(_dt: number, _speed: number, distance: number, elapsed: number): void {
@@ -89,9 +106,14 @@ export class RuntimeObstacleField extends ObstacleField {
       || represented.some(s => !known.some(h => sameHazard(s.planned!, h)))) this.fault = 'INCOMPLETE_POOL_FIELD';
     if (this.fault) { this.pending?.cancel(); this.pending = undefined; return; }
     const root = this.observe();
+    if (this.experiment?.diagnostics) {
+      const last = this.inputTrace.at(-1); this.traceTick++;
+      if (last && last.x === root.input.x && last.y === root.input.y) last.ticks++;
+      else { if (this.inputTrace.length === 128) this.inputTrace.shift(); this.inputTrace.push({ firstTick: this.traceTick, ticks: 1, ...root.input }); }
+    }
     if (!this.pending && (!this.scheduled || this.cursor.firstCell * 24 - distance <= S.planningLead)) {
       const decision = this.experiment?.next(this.seed, this.cursor) ?? this.director.next(this.cursor); this.cursor = decision.next; this.scheduled++;
-      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger, 'culled', this.experiment?.candidate(decision.section));
+      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger, 'culled', this.experiment?.candidate(decision.section, known));
       const ms = performance.now() - started; this.preparationMs += ms; this.schedulerMs += ms; this.age = 0;
       if (this.pending.getResult()?.status === 'blocked') { this.fault = this.pending.getResult()!.reason; this.pending = undefined; return; }
     }
@@ -99,15 +121,20 @@ export class RuntimeObstacleField extends ObstacleField {
     if (!pending) return;
     // Preflight ALL slots before a session may finalize source ownership. With
     // <=32 logical records and72 slots this always has >=12 spare unless corrupt.
-    const free = this.age === S.publicationTicks - 1 ? this.slots.filter(s => !s.planned && !s.active) : [];
-    if (this.age === S.publicationTicks - 1 && free.length < 12) { this.fault = 'POOL_CAPACITY'; pending.cancel(); this.pending = undefined; return; }
-    const phase = this.age === S.publicationTicks - 1 ? 'actual-gate' : pending.phase, before = pending.metrics, start = performance.now();
+    const publicationDue = pending.publicationDue(this.age + 1);
+    const free = publicationDue ? this.slots.filter(s => !s.planned && !s.active) : [];
+    if (publicationDue && free.length < 12) { this.fault = 'POOL_CAPACITY'; pending.cancel(); this.pending = undefined; return; }
+    const phase = publicationDue ? 'actual-gate' : pending.phase, before = pending.metrics, start = performance.now();
     const outcome = pending.advance(root, known, ++this.age), ms = performance.now() - start, after = pending.metrics;
     this.schedulerMs += ms; this.maxChunkMs = Math.max(this.maxChunkMs, ms); this.planningTicks++;
     if (this.samples.length === RUNTIME_SETTINGS.sampleLimit) this.samples.shift();
     this.samples.push({ phase, ms, propagations: after.propagations - before.propagations, queries: after.narrowQueries - before.narrowQueries });
     if (!outcome) return;
     this.lastOutcome = outcome;
+    if (this.experiment?.diagnostics) {
+      if (this.publicationTrace.length === 16) this.publicationTrace.shift(); this.publicationTrace.push(outcome);
+      this.lastRejection = outcome.reason ?? outcome.attempts.find(a => a.reason)?.reason ?? this.lastRejection;
+    }
     if (outcome.witness) this.certificate = outcome.witness;
     if (outcome.status === 'committed') {
       // No await, event callback, renderer call or partial-capacity fallback
@@ -120,7 +147,11 @@ export class RuntimeObstacleField extends ObstacleField {
     const ids = outcome.status === 'committed' ? outcome.transaction!.hazards.map(h => h.id) : [];
     const warning = outcome.status === 'committed' && ids.length ? Math.min(...outcome.transaction!.hazards.map(h => h.passDistance-h.radius-CONFIG.ship.radius-.15))-distance : undefined;
     if (this.events.length === RUNTIME_SETTINGS.eventLimit) this.events.shift();
-    this.events.push({ policy: this.policy.name, version: this.experiment?.version ?? this.policy.version, index: outcome.section.index, family: this.experiment ? 'large-structure' : outcome.section.family, pacing: outcome.section.pacing, status: outcome.status,
+    const actual = outcome.transaction, wreck = actual?.hazards.some(h => h.collisionProfile === 'wreck-frame-compound-v2');
+    const family = this.experiment?.diagnostics ? (actual ? wreck ? 'station-wreck' : actual.provenance.pattern?.family ?? 'ambient' : outcome.section.encounter ?? outcome.section.family)
+      : this.experiment ? 'large-structure' : outcome.section.family;
+    this.events.push({ policy: this.policy.name, version: this.experiment?.version ?? this.policy.version, index: outcome.section.index, family, pacing: outcome.section.pacing, status: outcome.status,
+      ...(this.experiment?.diagnostics ? { selectedFamily: outcome.section.encounter ?? outcome.section.family, ...(wreck ? { aperture: outcome.section.aperture } : {}) } : {}),
       reason: outcome.reason, count: ids.length, distance, elapsed, ...root.player, input: { ...root.input }, warning, witness: outcome.witness?.hash, ids });
     this.pending = undefined;
   }

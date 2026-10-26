@@ -154,7 +154,8 @@ function compact(runs: readonly ControlRun[]): readonly ControlRun[] {
 
 /** Coarse lookahead GOALS ONLY. Never snap a state or use this screen for acceptance. */
 function goalsFor(p: Prepared, distance: number): readonly { x: number; y: number }[] {
-  if (p.geometry?.goalsAt) return p.geometry.goalsAt(p.hazards, distance);
+  const override = p.geometry?.goalsAt?.(p.hazards, distance);
+  if (override) return override;
   const future = p.hazards.filter(h => h.passDistance + h.radius + CONFIG.ship.radius + p.margin >= distance);
   if (!future.length) return [{ x: 0, y: 0 }];
   const depth = Math.min(...future.map(h => h.passDistance));
@@ -330,6 +331,67 @@ export function beginValidation(context: FieldValidationContext, options: Valida
   const metrics = counters(), checked = prepare(context, options, metrics);
   return new ValidationJob(metrics => 'decision' in checked ? (function* () { return checked; })()
     : validation(checked, options, metrics), metrics);
+}
+
+/** Opt-in mixed-flow search over the COMPLETE known+candidate union. A safe
+ * union route also proves the committed subset; no separate subset search is
+ * needed. Exact CCD, held prefix, terminal tail and independent full replay are
+ * identical to the union stage of beginValidation. Legacy APIs stay unchanged.
+ */
+export function beginKnownFieldValidation(context: FieldValidationContext, options: ValidationOptions): ValidationJob {
+  options = Object.freeze({ ...options });
+  const metrics = counters(), p = prepare(context, options, metrics);
+  return new ValidationJob(function* (metrics) {
+    if ('decision' in p) return p;
+    const path = yield* search(p, metrics);
+    if ('decision' in path) return path;
+    const checked = yield* replay(p, path.controls, metrics);
+    if (checked.decision === 'reject') return reject('REPLAY_DISAGREEMENT', checked.reason);
+    return JSON.stringify(checked.witness.terminal) === JSON.stringify(path.terminal) ? checked : reject('REPLAY_DISAGREEMENT', 'terminal state');
+  }, metrics);
+}
+
+/** A whole-candidate neutral proposal, fully replayed through the known union.
+ * Used only after the mixed-flow coordinator has spent its two search slots. */
+export function beginNeutralKnownFieldValidation(context: FieldValidationContext, options: ValidationOptions): ValidationJob {
+  const metrics = counters(), p = prepare(context, options, metrics);
+  return new ValidationJob(metrics => 'decision' in p ? (function* () { return p; })() : replay(p,
+    compact([{ ticks: L.reactionTicks, input: p.context.input }, { ticks: p.targetTick - L.reactionTicks, input: ACTIONS[0]! }]), metrics), metrics);
+}
+
+/** One constructive root-aware path, NOT a complete search. Every motion and
+ * query is billed; accepted paths get a fresh independent clock/CCD replay in
+ * this same job. An unfinished job cannot publish on a later observation. */
+export function beginRuntimeRootSearch(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions): ValidationJob {
+  witness = Object.freeze({ ...witness, context: snapshot(witness.context) });
+  const metrics = counters(), p = prepare(current, { ...options, margin: L.margin }, metrics);
+  return new ValidationJob(function* (metrics) {
+    if ('decision' in p) return reject('STALE_PUBLICATION_STATE', p.reason);
+    if (witness.version !== L.version || witness.margin !== L.margin || witness.structuralPolicy !== 'generator' || p.policy !== 'generator'
+      || witness.geometryVersion !== p.geometry?.version || p.context.elapsed < witness.context.elapsed
+      || p.context.elapsed - witness.context.elapsed > L.deadlineTicks * CONFIG.step + 1e-9 || p.context.distance < witness.context.distance
+      || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate)
+      || p.context.candidate.hazards.some(h => h.passDistance - h.radius - CONFIG.ship.radius - p.margin <= p.context.distance)) return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
+    metrics.searches++; metrics.peakFrontier = 1; metrics.peakExpansion = 1;
+    const state = initial(p.context), prediction = p.geometry?.prediction() ?? new FlightPrediction();
+    const runs: ControlRun[] = [{ ticks: L.reactionTicks, input: p.context.input }];
+    const prefix = yield* simulate(state, p.context.input, L.reactionTicks, p, metrics, true, prediction);
+    if (prefix) return reject('INSUFFICIENT_REACTION_DISTANCE', `${prefix.id}@${prefix.step}`);
+    let tick = L.reactionTicks;
+    while (tick < p.controlEndTick) {
+      const goals = goalsFor(p, state.distance), goal = [...goals].sort((a, b) =>
+        Math.hypot(a.x - state.x - state.vx * .25, a.y - state.y - state.vy * .25)
+        - Math.hypot(b.x - state.x - state.vx * .25, b.y - state.y - state.vy * .25))[0] ?? { x: 0, y: 0 };
+      const axis = (error: number, velocity: number) => Math.abs(error) <= velocity * velocity / (2 * CONFIG.ship.braking) + .08 && error * velocity >= 0 ? 0 : Math.sign(error);
+      const input = { x: axis(goal.x - state.x, state.vx), y: axis(goal.y - state.y, state.vy) }, ticks = Math.min(L.macroTicks, p.controlEndTick - tick);
+      const hit = yield* simulate(state, input, ticks, p, metrics, true, prediction, tick);
+      if (hit) return reject('NO_WITNESS_FOUND', `${hit.id}@${tick + hit.step}`);
+      runs.push({ ticks, input }); tick += ticks;
+    }
+    runs.push({ ticks: p.targetTick - tick, input: ACTIONS[0]! });
+    // Runtime axial culling has the same conservative guard as publicationCheck.
+    return yield* replay(p, compact(runs), metrics, true);
+  }, metrics);
 }
 
 export function beginTrajectoryReplay(context: FieldValidationContext, controls: readonly ControlRun[], options: ValidationOptions = {}): ValidationJob {

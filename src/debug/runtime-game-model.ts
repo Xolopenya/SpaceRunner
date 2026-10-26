@@ -26,5 +26,6 @@ export class RuntimeGameModel extends GameModel {
     this.disposed = true;
     this.field.pending?.cancel(); this.field.pending = undefined;
     this.field.certificate = undefined; this.field.lastOutcome = undefined;
+    this.field.clearDiagnosticTrace();
   }
 }

@@ -30,6 +30,15 @@ export interface PlanningOutcome {
   readonly attempts: readonly AttemptRecord[];
   readonly metrics: Readonly<ValidationMetrics>;
   readonly jobs: readonly { phase: PlanningPhase; attempt: number; metrics: Readonly<ValidationMetrics>; decision: string; reason?: string }[];
+  readonly publicationChecks?: readonly PublicationObservation[];
+  readonly generationReason?: string;
+}
+export interface PublicationObservation {
+  readonly tick: number;
+  readonly context: FieldValidationContext;
+  readonly witness: ValidationWitness;
+  readonly result: TrajectoryResult | { readonly decision: 'unfinished'; readonly reason: 'ACTUAL_REPLAY_BUDGET' };
+  readonly metrics: Readonly<ValidationMetrics>;
 }
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),

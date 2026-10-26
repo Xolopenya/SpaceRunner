@@ -1,0 +1,18 @@
+# Publication omissions and counterfactual diagnosis
+
+Binding owner observation:at3272m,23scheduled,5committed,18omitted; eight consecutive omissions around1585–2598m; dominant `publication:STALE_PUBLICATION_STATE:COLLISION_FOUND`. This is preserved as historical evidence. The owner's exact input tape was not supplied, so no invented bit-for-bit reproduction is claimed.
+
+The approved coordinator prepares a route from an older root, waits to tick144, then replays those old controls from the actual root. It substitutes the actual held-input reaction prefix and enforces current geometry/clocks, but performs no new route search at publication. Thus rejecting that route is correct safety behavior and does not prove that no current route exists. Seed42/vertical actually reproduced0/23commits over3300m; horizontal reproduced7/23, including an eight-section omission streak.
+
+An initial12-window pilot stored exact roots, input/velocity, known geometry, whole transaction and failed witness. Of143rejected prepared replays,104fresh original bounded searches succeeded from the identical actual roots. The broader main/supplement corpus stores917counterfactual observations:the original precommit classification found419stale-witness cases,250unsafe required held prefixes and248cases not solved by the bounded search. Final generated data additionally records exact held-prefix contact ID/profile/tick/endpoints and all accepted old/fresh replay proofs. No search failure is labeled mathematical impossibility.
+
+New `root-aware-v1` changes only opt-in sessions:
+
+1. Search/replay the full union once and publish on the next ready call, rather than waiting idle until144. All pool/ownership preflights still precede synchronous admission.
+2. For a wreck, construct one new path from that actual root, bill every120Hz propagation/primitive query, and independently replay it in the same call. It is a limited constructive search and may fail despite an available path.
+3. On failure, cancel the old reservation and propose one whole ambient replacement for the identical owned span. Independently certify it from a current root. With both search slots spent, try only a held-prefix/neutral control proposal with full replay; no extra search is granted.
+4. If proof, budget, prefix, ownership or geometry fails, omit the span and retain the reason. Unfinished publication work is discarded. No hazard is individually removed from an accepted transaction.
+
+The first integration exposed an additional bug:using short original ordinary payload spans as their own terminal boundary left insufficient reserved tail. The fix adds one owned empty cell after each **complete** payload. It does not weaken the16-unit reservation,39-step braking tail, margin or source ownership. Initial failed results remain in attempt logs.
+
+Main long diagnostics improve355/966→1277/1442commits; omissions611→165 and maximum streak23→2. These are different numbers of source sections over the same138600units/variant, not paired identical section IDs. Native gaps and some critical known-field prefixes remain. A safe replacement cannot always be established; the worst new depth gap is274.55units. Exact actual-root failures, generation reasons, complete alternatives, budgets and witnesses are retained in `flow-witnesses.json` and the bounded browser export.

@@ -1,5 +1,15 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003B3 — continuous mixed obstacle flow,2026-10-26
+
+- [x] Verified approveda617f59 in local/fetched main and created `feature/gameplay-003b3-mixed-obstacle-flow`; preserved installed skills, lock and research files. Old v1/v2/baseline/pressure demonstrations remain reproducible.
+- [x] Added versioned DEV mixed flow over existing director/producers:regular ambient/cluster families, occasional six-cell wrecks, seeded nonrepeating five-aperture bag and a visibly labeled forced override. Whole ordinary payloads own one additional empty tail cell; no individual accepted hazard is removed.
+- [x] Diagnosed old delayed witness replay with exact-root counterfactuals;104/143initial failures had a fresh route. New opt-in early readiness/actual-root constructive check and whole independently certified fallback preserve120Hz physics, held54,margin.15,39braking,3072/6144per call,144deadline,2searches/4replays and source ownership.
+- [x] Main42long paired policies:355/966→1277/1442commits, ordinary0.5014→2.9906/100units; omission streak23→2. Actual matched prefixes also improve ordinary0.4520→3.0499/100. All new long windows have3+structures; all five apertures/four original families occur. Long post-death continuation is explicitly diagnostic; every normal-model prefix is checked until actual death.
+- [x]186unit and65browser tests pass, including actual keys/touch, >650mkeyboard flight, pause/replay and bounded trace export.64approved-versus-current normal-model cases agree;52protected files and production15files/931651bytes remain identical. New exact-root/unknown/synthetic/unfinished/epoch cases pass.
+- [x] Captured ordinary-only/mixed/five-aperture/vertical/pass/solid-impact/collider/3300m and mobile evidence. Four45srender profiles plus90sdesktop/60smobile native guided supplements complete. B desktop work p954.5ms/max9.4ms versus A3.7/6.7; frame p99both17.2ms; cold stalls remain. Final exact-HEAD checks and archive/inventory/replay/patch results are recorded in the generated manifest/handoff.
+- [ ] Owner acceptance:remaining274.55-unit/10.74smaximum gaps, early deaths on some blind tapes, neutral-threat proxy339→298, wing/exit readability, physical touch and CPU variation. No new human feedback is fabricated. Review this field before moving hazards; none are implemented.
+
 ## GAMEPLAY-EXPERIMENT-003B2 — structure variants and mixed field, 2026-10-25
 
 - [x] Verified approved6ecae59 on main, fetched origin and created `feature/gameplay-003b2-structure-variants`; preserved unrelated Skills/research/lock files.
