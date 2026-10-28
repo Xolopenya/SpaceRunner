@@ -1,47 +1,61 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003B3",
-  "baseline": "a617f59044ba234de173cf28e56aad9a5ec8f2c5",
+  "taskId": "GAMEPLAY-EXPERIMENT-003C",
+  "baseline": "41812b61f23aaeca5295b4112ed75b60c1e78897",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/ARCHITECTURE.md",
-    "MIXED_FLOW.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/MIXED_FLOW.md",
-    "APERTURE_VARIATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/APERTURE_VARIATION.md",
-    "PUBLICATION_OMISSIONS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/PUBLICATION_OMISSIONS.md",
-    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/FAIRNESS.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003B3/ARCHITECTURE.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ARCHITECTURE.md",
+    "ASSET_PROVENANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ASSET_PROVENANCE.md",
+    "MOTION_MODEL.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/MOTION_MODEL.md",
+    "DYNAMIC_COLLISION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/DYNAMIC_COLLISION.md",
+    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/FAIRNESS_EVIDENCE.md",
+    "SPAWN_AND_PACING.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/SPAWN_AND_PACING.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ARCHITECTURE.md"
   },
   "screenshots": [
-    "flow-A-desktop-live.png",
-    "flow-B-desktop-live.png",
-    "flow-B-portrait-live.png",
-    "flow-B-landscape-live.png",
-    "flow-ordinary.png",
-    "flow-first-visible.png",
-    "flow-approach.png",
-    "flow-entry-right.png",
-    "flow-passed.png",
-    "flow-second-entry-left.png",
-    "flow-entry-lower.png",
-    "flow-entry-upper.png",
-    "flow-entry-center.png",
-    "flow-long-3300m.png",
-    "flow-solid-impact.png",
-    "flow-colliders.png",
-    "flow-portrait-entry.png",
-    "flow-portrait-second.png",
-    "flow-portrait-vertical.png",
-    "flow-landscape-entry.png",
-    "flow-landscape-second.png",
-    "flow-landscape-vertical.png"
+    "mine-baseline-desktop-live.png",
+    "mine-mine-desktop-live.png",
+    "mine-mine-portrait-live.png",
+    "mine-mine-landscape-live.png",
+    "mine-desktop-distant.png",
+    "mine-desktop-mid.png",
+    "mine-desktop-path.png",
+    "mine-desktop-avoidance.png",
+    "mine-portrait-distant.png",
+    "mine-portrait-mid.png",
+    "mine-portrait-path.png",
+    "mine-portrait-avoidance.png",
+    "mine-landscape-distant.png",
+    "mine-landscape-mid.png",
+    "mine-landscape-path.png",
+    "mine-landscape-avoidance.png",
+    "mine-restart.png",
+    "mine-collision.png",
+    "mine-rtl.png",
+    "mine-colliders.png"
   ],
   "videoPreviews": [
-    "flow-A-desktop.webm",
-    "flow-B-desktop.webm",
-    "flow-guided-desktop.webm",
-    "flow-guided-portrait.webm",
-    "flow-guided-landscape.webm"
+    "mine-baseline-desktop.webm",
+    "mine-desktop.webm",
+    "mine-portrait.webm",
+    "mine-landscape.webm"
+  ],
+  "additionalAssets": [
+    {
+      "id": "space-mine",
+      "name": "Space mine (Modular Spaceships and Space Fleet)",
+      "author": "3D Assets (@3dassets)",
+      "file": "src/experiments/moving-mine/space-mine.glb",
+      "source": "https://3dassets.dev/assets/interstellar-fleet-modular-starships-space-mine-4cafd369",
+      "download": "https://cdn.3dassets.dev/assets/19217/v1/model.glb",
+      "license": "CC0 1.0 Universal",
+      "downloadDate": "2026-10-28",
+      "originalSha256": "c64b8bfa0146ffc7d819f46ab74887326828b2b8266604b516a3cdc570189c77",
+      "originalFormat": "GLB",
+      "conversion": "None; original binary unchanged",
+      "transform": "Runtime centered pivot, unit vertex radius times1.35, material adjustments; DEV only"
+    }
   ],
   "extraChecks": [
     {
@@ -60,19 +74,19 @@
       "name": "runtime-benchmark"
     },
     {
-      "script": "scripts/flow-preservation.mjs",
+      "script": "scripts/mine-preservation.mjs",
       "stripTypes": true,
-      "name": "flow-preservation"
+      "name": "mine-preservation"
     },
     {
-      "script": "scripts/flow-benchmark.mjs",
+      "script": "scripts/mine-benchmark.mjs",
       "stripTypes": true,
-      "name": "flow-benchmark"
+      "name": "mine-benchmark"
     },
     {
-      "script": "scripts/flow-browser.mjs",
+      "script": "scripts/mine-browser.mjs",
       "stripTypes": false,
-      "name": "flow-browser"
+      "name": "mine-browser"
     }
   ],
   "preservedUntracked": [
@@ -81,24 +95,20 @@
     "docs/game-design/GAMEPLAY_CONSILIUM.md",
     "docs/game-design/consilium/"
   ],
-  "intermediateEvidence": [
-    "flow-browser-smoke.json"
-  ],
+  "intermediateEvidence": [],
   "evidenceNotes": [
-    "Existing director/native generators and unchanged B2 wreck geometry form one DEV mixed flow; automatic seeded apertures need no manual query.",
-    "The versioned opt-in coordinator uses early readiness, a full union search, bounded actual-root constructive replay and whole independently certified fallback. Legacy semantics are protected by64differentials.",
-    "Historical owner5/23commits and eight omitted sections remain. Actual-prefix and explicitly immortal3300m comparisons retain adverse cases, omissions and failed exact-root witnesses.",
-    "CPU/frame outliers, original B2 spike and finite forced-GC/restart resource evidence remain. Guided recordings supplement ordinary-input evidence.",
-    "Exploratory8s smoke JSON/logs are retained; its local binary is superseded by five full exact-HEAD recordings in the archive. Pre-existing user work is fingerprinted and excluded."
+    "One DEV CC0 mine extends approved mixed flow. Shared120Hz pose, relative CCD and actual-root independent replay retain existing reaction/margin/tail and work ceilings.",
+    "30 actual-model comparisons preserve real hull/death and omissions. Historical collision/runtime audits remain required.",
+    "Serial real Three.js profiles record45s each, cold/warm frame outliers, CPU, long tasks and ten same-phase restarts. Native WebM has associated RAF pose traces.",
+    "Production bytes and76 approved model histories are compared, including12 mixed-flow histories. Unrelated user work is fingerprinted and excluded."
   ],
   "limitations": [
-    "One conditional route does not establish arbitrary-input safety, search completeness or human readability/enjoyment.",
-    "Maximum measured new depth gap274.55units and nearby-free10.74s remain; some blind tapes die early. Neutral-continuation threat proxy decreases339to298.",
-    "Cold Launch stalls remain; additional planner work is measured with CPU sampling/recording overhead. No universal millisecond or physical-phone guarantee.",
-    "Original ship wing tolerance and lower-exit camera masking remain. No new human/physical-device results.",
-    "No moving hazards, collectibles, production rollout, merge, force-push or unrelated user data."
+    "Conditional route existence is not arbitrary-input safety, complete search or human acceptance.",
+    "Enclosing sphere is conservative between mine arms; distant readability and grazing need owner review.",
+    "Blind steering can compromise existing geometry and cause fallback/omission; mines are never force-spawned.",
+    "Cold and33ms+ gaps are retained. Emulated mobile viewports and finite V8 retention do not prove physical-device or indefinite memory behavior."
   ],
   "knownBlockers": [
-    "Owner mixed-flow A/B acceptance, residual-gap/maneuver-demand assessment and physical-touch/CPU review should precede moving-hazard work."
+    "Owner playtest and independent review before merge or further integration. No human results are claimed."
   ]
 }

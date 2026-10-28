@@ -1,4 +1,12 @@
-export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1' | 'bulkhead-compound-v1' | 'wreck-frame-compound-v2';
+export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1' | 'bulkhead-compound-v1' | 'wreck-frame-compound-v2' | 'moving-mine-sphere-v1';
+
+/** DEV lateral-only motion. Depth remains passDistance; phases use absolute120Hz ticks. */
+export interface LinearCrossingMotion {
+  readonly version: 'linear-crossing-v1';
+  readonly startTick: number;
+  readonly durationTicks: number;
+  readonly velocityX: number;
+}
 
 export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';
 export interface PatternSource {
@@ -38,6 +46,7 @@ export interface PlannedHazard {
   readonly phase: number;
   /** Pose uses the existing hazardOrientation at absolute simulation time. */
   readonly orientation: 'euler-xyz-v1';
+  readonly motion?: Readonly<LinearCrossingMotion>;
   readonly provenance: Readonly<FieldProvenance>;
 }
 

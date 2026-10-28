@@ -23,6 +23,14 @@ async function boot(): Promise<void> {
   retry.hidden = true;
   assets = new AssetManager(import.meta.env.BASE_URL);
   try {
+    if (import.meta.env.DEV) {
+      const params = new URLSearchParams(location.search);
+      if (params.get('debug') === 'field' && params.get('experiment') === 'moving-mine') {
+        const { MineAssetManager } = await import('./experiments/moving-mine/assets.ts');
+        if (disposed) return;
+        assets.dispose(); assets = new MineAssetManager(import.meta.env.BASE_URL);
+      }
+    }
     await assets.preload((completed, total, label) => {
       if (!disposed) message.textContent = `LOADING FLIGHT MODELS ${completed}/${total} · ${label}`;
     });
@@ -37,7 +45,29 @@ async function boot(): Promise<void> {
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const params = new URLSearchParams(location.search), experiment = params.get('experiment');
-      if (experiment === 'mixed-flow') {
+      if (experiment === 'moving-mine') {
+        if (params.has('policy') || params.has('mode') || params.has('aperture')) throw new RangeError('Moving mine owns its scheduling policy');
+        const { MovingMineGameModel } = await import('./experiments/moving-mine/model.ts');
+        const { MovingMineView } = await import('./experiments/moving-mine/view.ts');
+        const { MineAssetManager } = await import('./experiments/moving-mine/assets.ts');
+        const { mineConfiguration } = await import('./experiments/moving-mine/settings.ts');
+        const configuration = mineConfiguration(params.get('mine'));
+        if (!(assets instanceof MineAssetManager)) throw new Error('Missing mine asset owner');
+        const mineAssets = assets;
+        try {
+          await mineAssets.loadMine();
+          if (disposed) return;
+          developerModel = new MovingMineGameModel(configuration, params.get('firstMine') === '1');
+          debugFactory = scene => { structureView = new MovingMineView(scene, mineAssets, params.get('colliders') === '1'); return structureView; };
+        } catch (error) {
+          console.warn('Moving mine asset unavailable; using certified mixed field', error);
+          const { MixedFlowGameModel } = await import('./experiments/mixed-flow/model.ts');
+          const { MixedFlowView } = await import('./experiments/mixed-flow/view.ts');
+          if (disposed) return;
+          developerModel = new MixedFlowGameModel();
+          debugFactory = scene => { structureView = new MixedFlowView(scene, params.get('colliders') === '1'); return structureView; };
+        }
+      } else if (experiment === 'mixed-flow') {
         if (params.has('policy') || params.has('mode')) throw new RangeError('Mixed flow owns its scheduling policy');
         const { MixedFlowGameModel } = await import('./experiments/mixed-flow/model.ts');
         const { MixedFlowView } = await import('./experiments/mixed-flow/view.ts');

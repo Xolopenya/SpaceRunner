@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003C — moving space mine, 2026-10-28
+
+- [x] Verified approved41812b6 on local and GitHub main, created the requested feature branch, preserved unrelated user files.
+- [x] Downloaded and independently inspected the requested56,912-byte CC0 GLB; added one DEV linear crossing with relative CCD, dynamic prediction, independent replay and actual-state publication using unchanged budgets.
+- [x] 197unit/69browser tests,12000 analytical relative-sweep cases and76 approved histories pass; production15files/931651bytes identical. New100-fixture corpus accepts96/rejects4,270independent replays;48mine selections publish43 with5explicit omissions. Added20screenshots/four native videos and finite active-mine restart measurements. Exact-HEAD results are recorded in the generated review manifest.
+- [x] Retained adverse precommit timing:desktop warm50.1ms,portrait116.6ms; planner bursts and an idle-planner gap are distinguished. Owner performance/physical-touch review remains required.
+- [ ] Owner playtest, physical touch/readability and external review before merge or further integration. No human acceptance is claimed.
+
+
 ## GAMEPLAY-EXPERIMENT-003B3 — continuous mixed obstacle flow,2026-10-26
 
 - [x] Verified approveda617f59 in local/fetched main and created `feature/gameplay-003b3-mixed-obstacle-flow`; preserved installed skills, lock and research files. Old v1/v2/baseline/pressure demonstrations remain reproducible.

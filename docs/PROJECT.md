@@ -1,5 +1,7 @@
 # Space Runner
 
+DEV moving-mine prototype: `?debug=field&experiment=moving-mine&seed=42`. Its isolated modules extend the existing runtime source/geometry contracts with absolute120Hz lateral motion, relative sphere CCD and moving witness replay. Source/ledger snapshots preserve motion identity; production strips the selector and GLB. See [003C architecture](review/GAMEPLAY-EXPERIMENT-003C/ARCHITECTURE.md) and its owner playtest guide. Default gameplay and previous DEV modes retain their approved behavior.
+
 Third-person endless avoidance flight for desktop and mobile. The approved Concept A interface presents real flight, hull, distance, pause/results and native audio settings. Default/production waves, camera, steering, calibrated collisions, VFX and audio remain unchanged. B-5A adds a separately gated playable developer continuous field, described below.
 
 ## Controls and rules

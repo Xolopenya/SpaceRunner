@@ -17,7 +17,9 @@ import type { ScheduledSection } from '../core/field-director.ts';
 export interface RuntimeEncounterSource {
   readonly version: string;
   next(seed: number, cursor: DirectorCursor): ReturnType<DifficultyDirector['next']>;
-  candidate(section: ScheduledSection, committed?: readonly PlannedHazard[]): RuntimeCandidate;
+  candidate(section: ScheduledSection, committed?: readonly PlannedHazard[], root?: SchedulerRoot): RuntimeCandidate;
+  /** Authoritative pose hook; only the explicit moving experiment supplies it. */
+  pose?(hazard: PlannedHazard, elapsed: number): Readonly<{ x: number; y: number }>;
   readonly diagnostics?: true;
 }
 
@@ -94,7 +96,10 @@ export class RuntimeObstacleField extends ObstacleField {
     for (const slot of this.slots) {
       const h = slot.planned;
       if (!h) { if (slot.active) this.fault = 'UNKNOWN_POOL_HAZARD'; continue; }
-      if (slot.x !== h.x || slot.y !== h.y || slot.radius !== h.radius || slot.kind !== h.kind || slot.phase !== h.phase || slot.spin !== h.spin) this.fault = 'CHANGED_POOL_GEOMETRY';
+      const previous = this.experiment?.pose?.(h, elapsed - CONFIG.step) ?? h;
+      if (slot.x !== previous.x || slot.y !== previous.y || slot.radius !== h.radius || slot.kind !== h.kind || slot.phase !== h.phase || slot.spin !== h.spin) this.fault = 'CHANGED_POOL_GEOMETRY';
+      const pose = this.experiment?.pose?.(h, elapsed) ?? h;
+      slot.x = pose.x; slot.y = pose.y;
       slot.z = distance - h.passDistance;
       if (slot.z > CONFIG.hazards.despawnZ) slot.active = false;
       if (distance > h.passDistance + h.radius + CONFIG.hazards.despawnZ) { slot.active = false; slot.planned = undefined; }
@@ -113,7 +118,7 @@ export class RuntimeObstacleField extends ObstacleField {
     }
     if (!this.pending && (!this.scheduled || this.cursor.firstCell * 24 - distance <= S.planningLead)) {
       const decision = this.experiment?.next(this.seed, this.cursor) ?? this.director.next(this.cursor); this.cursor = decision.next; this.scheduled++;
-      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger, 'culled', this.experiment?.candidate(decision.section, known));
+      const started = performance.now(); this.pending = new RuntimePlanningSession(decision.section, root, known, this.ledger, 'culled', this.experiment?.candidate(decision.section, known, root));
       const ms = performance.now() - started; this.preparationMs += ms; this.schedulerMs += ms; this.age = 0;
       if (this.pending.getResult()?.status === 'blocked') { this.fault = this.pending.getResult()!.reason; this.pending = undefined; return; }
     }
@@ -140,7 +145,7 @@ export class RuntimeObstacleField extends ObstacleField {
       // No await, event callback, renderer call or partial-capacity fallback
       // exists between actual-state replay and this complete atomic admission.
       for (const [i,h] of outcome.transaction!.hazards.entries()) Object.assign(free[i]!, {
-        planned: h, active: true, x: h.x, y: h.y, z: distance - h.passDistance, radius: h.radius, kind: h.kind, spin: h.spin, phase: h.phase });
+        planned: h, active: true, ...(this.experiment?.pose?.(h, elapsed) ?? { x: h.x, y: h.y }), z: distance - h.passDistance, radius: h.radius, kind: h.kind, spin: h.spin, phase: h.phase });
       this.committed++; this.firstPublication ??= elapsed;
     } else if (outcome.status === 'blocked') this.fault = outcome.reason;
     else this.omitted++;

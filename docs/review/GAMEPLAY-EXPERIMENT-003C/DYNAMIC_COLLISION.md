@@ -1,0 +1,11 @@
+# Relative continuous collision
+
+For each120Hz interval, query the segment from `(shipPrevious.x-minePrevious.x, shipPrevious.y-mine.y, passDistance-previousDistance)` to the corresponding next state. The radius is `1.35+.42` in gameplay and an additional`.15` for safety prediction. The shared approved `sweptSphereHit` performs the complete relative sweep, including between-endpoint contact and tangency. Forward acceleration uses the real GameModel/FlightPrediction end-speed clock.
+
+MinePrediction overrides only moving queries and inherits original Ship dynamics and native/wreck collision behavior. Independent replay creates a fresh predictor, recomputes its own clock and checks both margin and actual gameplay queries. Runtime MineCollision receives GameModel's endpoints relative to the end pose and adds `mineNext.x-minePrevious.x` to the previous X. This produces the same relative segment without changing the protected GameModel.
+
+Start/end clamps occur exactly at fixed-tick boundaries; each interval is therefore linear. A mine holds its boundary position after crossing until depth retirement. Its world depth never moves, so the approved conservative axial broad phase remains valid. This extension would not support an axial mover or within-step acceleration/reversal; those need a new contract.
+
+The model is normalized using the maximum distance of every transformed vertex from its centered pivot. Scaling that unit envelope to1.35 encloses all arms and the red light. This is conservative through empty spaces between arms. It does not claim triangle-level precision or exact silhouette contact, and the owner should evaluate grazing perception. The ship's established`.42` sphere is preserved.
+
+Tests compare12000 randomized intervals with a separately implemented analytical closest-point oracle at forward speeds20–34, both crossing directions/speeds, opposing/same/diagonal/stationary relative motion, near boundaries and clamp transitions. An explicit high-displacement primitive stress detects tunneling, tangency/margin tests distinguish near misses, and the final crossing interval is checked. Another1500 native sweeps compare the extended and original gameplay collision classes. Original collision tests and audits remain unchanged.

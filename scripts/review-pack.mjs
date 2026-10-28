@@ -123,6 +123,14 @@ const assets = MODEL_ASSETS.map(model => {
   const bytes = entries.find(entry => entry.name === `project_snapshot/${path}`).data;
   return { name: model.label, id: model.id, file: path, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), author: 'Kenney', source: 'https://kenney.nl/assets/space-kit', license: 'CC0 1.0', originalFormat: 'GLB', conversion: 'None; original file bytes unchanged', transform: 'width' in model ? `Center pivot, width ${model.width}, Y rotation ${model.rotationY}` : 'Center pivot, unit vertex radius; scale by logical hazard radius' };
 });
+for (const asset of config.additionalAssets ?? []) {
+  if (excludedPath(asset.file)) throw new Error('Unsafe additional asset path');
+  const entry = entries.find(e => e.name === `project_snapshot/${asset.file}`);
+  if (!entry) throw new Error(`Additional asset missing from snapshot: ${asset.file}`);
+  const digest = createHash('sha256').update(entry.data).digest('hex');
+  if (asset.originalSha256 && digest !== asset.originalSha256) throw new Error('Original asset digest mismatch');
+  assets.push({ ...asset, bytes: entry.data.length, sha256: digest });
+}
 const measurements = config.collisionMeasurements ? JSON.parse(await readFile(join(directory, 'collision-measurements.json'), 'utf8')) : undefined;
 if (measurements) add('reports/COLLISION-MEASUREMENTS.json', JSON.stringify(measurements, null, 2) + '\n');
 const performanceMeasurements = config.performanceMeasurements ? {

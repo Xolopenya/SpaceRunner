@@ -42,7 +42,7 @@ const counters = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, 
 function snapshot(context: FieldValidationContext): FieldValidationContext {
   const provenance = (p: FieldValidationContext['candidate']['provenance']) => Object.freeze({ ...p,
     ...(p.pattern ? { pattern: Object.freeze({ ...p.pattern }) } : {}) });
-  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, provenance: provenance(h.provenance) });
+  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, ...(h.motion ? { motion: Object.freeze({ ...h.motion }) } : {}), provenance: provenance(h.provenance) });
   return Object.freeze({ ...context, player: Object.freeze({ ...context.player }), input: Object.freeze({ ...context.input }),
     committed: Object.freeze(context.committed.map(copyHazard)), candidate: Object.freeze({ ...context.candidate,
       provenance: provenance(context.candidate.provenance), hazards: Object.freeze(context.candidate.hazards.map(copyHazard)) }) });
@@ -61,6 +61,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
   const all = [...raw.committed, ...raw.candidate.hazards], ids = new Set<string>();
   for (const h of all) {
     const extended = !!h && !!options.geometry?.validHazard(h);
+    if (h?.motion && (!extended || h.collisionProfile !== 'moving-mine-sphere-v1')) return reject('UNKNOWN_PROFILE', 'uncertified motion');
     if (!h || !h.provenance || ![h.x, h.y, h.passDistance, h.radius, h.phase, h.spin].every(Number.isFinite)
       || (!extended && (h.radius < .65 || h.radius > 1.1 || !Number.isInteger(h.kind) || h.kind < 0 || h.kind > 2))
       || h.phase < 0 || h.phase >= Math.PI * 2 || Math.abs(h.spin) > .7

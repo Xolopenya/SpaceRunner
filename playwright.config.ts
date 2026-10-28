@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'moving-mine', testMatch: 'moving-mine.spec.ts', timeout: 120_000 },
     { name: 'mixed-flow', testMatch: 'mixed-flow.spec.ts', timeout: 120_000 },
     { name: 'structure-variants', testMatch: 'structure-variants.spec.ts', timeout: 90_000 },
     { name: 'large-structure', testMatch: 'large-structure.spec.ts', timeout: 90_000 },

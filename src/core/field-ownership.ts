@@ -12,6 +12,8 @@ export function sameHazard(a: PlannedHazard, b: PlannedHazard): boolean {
     && a.passDistance === b.passDistance && a.x === b.x && a.y === b.y && a.radius === b.radius
     && a.kind === b.kind && a.visualVariant === b.visualVariant && a.collisionProfile === b.collisionProfile
     && a.spin === b.spin && a.phase === b.phase && a.orientation === b.orientation
+    && (a.motion ? !!b.motion && a.motion.version === b.motion.version && a.motion.startTick === b.motion.startTick
+      && a.motion.durationTicks === b.motion.durationTicks && a.motion.velocityX === b.motion.velocityX : !b.motion)
     && p.version === q.version && p.seed === q.seed && p.settingsKey === q.settingsKey
     && (x ? !!y && x.family === y.family && x.firstCell === y.firstCell && x.cellCount === y.cellCount
       && x.variation === y.variation && x.intensity === y.intensity && x.mirrorX === y.mirrorX && x.mirrorY === y.mirrorY
@@ -64,7 +66,7 @@ export class OwnershipLedger {
     const existing = new Set(this.records.flatMap(r => r.ids));
     if (new Set(ids).size !== ids.length || ids.some(id => existing.has(id))) return { status: 'rejected', reason: 'DUPLICATE_ID' };
     const token = `${this.generation}/${this.serial++}`;
-    const copy = hazards.map(h => Object.freeze({ ...h, provenance: Object.freeze({ ...h.provenance,
+    const copy = hazards.map(h => Object.freeze({ ...h, ...(h.motion ? { motion: Object.freeze({ ...h.motion }) } : {}), provenance: Object.freeze({ ...h.provenance,
       ...(h.provenance.pattern ? { pattern: Object.freeze({ ...h.provenance.pattern }) } : {}) }) }));
     this.records.push(Object.freeze({ token, writer, firstCell, cellCount, ids: Object.freeze([...ids]), hazards: Object.freeze(copy), state: 'pending' }));
     return { status: 'reserved', token };
