@@ -39,7 +39,7 @@ export class MovingMineView {
       if (h.active) { this.mine.visible = true; this.mine.position.set(h.x, h.y, h.z); }
     }
     const proposals = m.field.events.filter(e => e.selectedFamily === 'moving-mine'), publications = proposals.filter(e => e.ids.some(id => id.startsWith(MINE.version)));
-    this.info.textContent = `DEV MOVING MINE · linear crossing · ${Math.floor(m.distance)}m\nRecent mines proposed ${proposals.length} / published ${publications.length} / omitted ${proposals.length - publications.length}\n${m.field.fault ?? '120Hz · single contact hazard · asteroid field'}`;
+    this.info.textContent = `DEV MOVING MINE · ${m.motionPolicy} · ${Math.floor(m.distance)}m\nRecent mines proposed ${proposals.length} / published ${publications.length} / omitted ${proposals.length - publications.length}\n${m.field.fault ?? '120Hz · single contact hazard · asteroid field'}`;
   }
   dispose(): void { this.flow.dispose(); this.root.removeFromParent(); this.resources.dispose(); this.info.remove(); this.slots = []; }
 }

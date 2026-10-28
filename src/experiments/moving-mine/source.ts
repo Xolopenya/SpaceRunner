@@ -9,9 +9,9 @@ import type { ValidationGeometry } from '../../core/field-validator-types.ts';
 import type { RuntimeEncounterSource } from '../../debug/runtime-field.ts';
 import { mixedFlowSource, FLOW_GEOMETRY } from '../mixed-flow/source.ts';
 import { WRECK_GEOMETRY } from '../structure-variants/encounter.ts';
-import { MINE as S, MINE_CONFIGURATIONS } from './settings.ts';
-import type { MineConfiguration } from './settings.ts';
-import { isMine, mineX, simulationTick, validMotion } from './motion.ts';
+import { MINE as S, ALL_MINE_CONFIGURATIONS, configurations, motionVector } from './settings.ts';
+import type { MineConfiguration, MineMotionPolicy } from './settings.ts';
+import { isMine, mineX, mineY, simulationTick, validMotion } from './motion.ts';
 import { MinePrediction } from './collision.ts';
 
 interface MineCursor extends DirectorCursor { readonly mine?: { readonly ordinary: number; readonly count: number } }
@@ -29,14 +29,15 @@ export function passTick(root: SchedulerRoot, passDistance: number): number {
   throw new RangeError('Mine outside prediction horizon');
 }
 export function mineTransaction(seed: number, firstCell: number, startTick: number, configuration: MineConfiguration): FieldTransaction {
-  if (!Number.isSafeInteger(startTick) || startTick < 0 || !MINE_CONFIGURATIONS.includes(configuration)) throw new RangeError('Invalid mine request');
-  const speed = configuration.startsWith('slow') ? S.slow : S.moderate, direction = configuration.endsWith('ltr') ? 1 : -1;
+  if (!Number.isSafeInteger(startTick) || startTick < 0 || !ALL_MINE_CONFIGURATIONS.includes(configuration)) throw new RangeError('Invalid mine request');
+  const velocity = motionVector(configuration), speed = Math.abs(velocity.x), direction = Math.sign(velocity.x);
   const provenance = Object.freeze({ version: S.version, seed, settingsKey: fieldSettingsKey(DEFAULT_FIELD_SETTINGS) });
   const passDistance = firstCell * 24 + S.offset, ownerCell = Math.floor(passDistance / 24);
   const mine: PlannedHazard = Object.freeze({ id: `${S.version}/${seed}/${firstCell}/${startTick}/${configuration}`, ownerCell, anchorCell: ownerCell,
-    localIndex: 0, passDistance, x: -direction * S.startX, y: 0, radius: S.radius, kind: S.kind, visualVariant: S.visualVariant,
+    localIndex: 0, passDistance, x: -direction * S.startX, y: velocity.y ? -velocity.y * S.startX / speed : 0, radius: S.radius, kind: S.kind, visualVariant: S.visualVariant,
     collisionProfile: S.profile, spin: 0, phase: 0, orientation: 'euler-xyz-v1', provenance,
-    motion: Object.freeze({ version: S.motion, startTick, durationTicks: Math.round(12 / speed / CONFIG.step), velocityX: direction * speed }) });
+    motion: Object.freeze({ version: S.motion, startTick, durationTicks: Math.round(12 / speed / CONFIG.step), velocityX: velocity.x,
+      ...(velocity.y ? { velocityY: velocity.y } : {}) }) });
   // Complete original two-cell ambient payload, then a crossing, then reserved runway.
   const ambient = new FieldGenerator(seed).propose(firstCell, 2);
   return Object.freeze({ firstCell, cellCount: S.cellCount, startDistance: firstCell * 24, endDistance: (firstCell + S.cellCount) * 24,
@@ -78,18 +79,24 @@ export const MINE_GEOMETRY: ValidationGeometry = Object.freeze({ ...FLOW_GEOMETR
     return { status: 'valid', candidateCount: candidate.hazards.reduce((n, h) => n + FLOW_GEOMETRY.queryCost(h), 0), totalCount: total, aboveSoftLimit: total > 24 };
   },
 });
-export function movingMineSource(configuration?: MineConfiguration, first = false): RuntimeEncounterSource {
+export function movingMineSource(configuration?: MineConfiguration, first = false, policy: MineMotionPolicy = 'baseline'): RuntimeEncounterSource {
+  const choices = configurations(policy);
+  if (!choices || (configuration && !choices.includes(configuration))) throw new RangeError('Mine configuration does not match motion policy');
   const flow = mixedFlowSource();
   return Object.freeze<RuntimeEncounterSource>({ version: S.version, diagnostics: true,
-    pose: (h, elapsed) => isMine(h) ? { x: mineX(h, elapsed), y: h.y } : h,
+    pose: (h, elapsed) => isMine(h) ? { x: mineX(h, elapsed), y: mineY(h, elapsed) } : h,
     next(seed, raw) {
       const cursor = raw as MineCursor, history = cursor.mine ?? { ordinary: 0, count: 0 }, base = flow.next(seed, cursor);
       const selected = (first && !history.count) || (base.section.encounter !== 'station-wreck' && history.ordinary >= S.minimumOrdinary
         && (history.ordinary >= S.maximumOrdinary || random(seed, `${cursor.index}/selection`).next() < S.chance));
       if (!selected) return { section: base.section, next: Object.freeze({ ...base.next, mine: { ...history, ordinary: history.ordinary + 1 } }) };
-      const choice = configuration ?? MINE_CONFIGURATIONS[Math.floor(random(seed, `${cursor.index}/direction-speed`).next() * 4)]!;
+      // Preserve the original X sign for paired seeds; use its speed bit for Y.
+      // Changing policy then isolates velocity rather than also reshuffling sides.
+      const bucket = Math.floor(random(seed, `${cursor.index}/direction-speed`).next() * 4);
+      const index = policy === 'baseline' ? bucket : policy === 'fast' ? bucket % 2 : (bucket % 2) * 2 + Math.floor(bucket / 2);
+      const choice = configuration ?? choices[index]!;
       return { section: Object.freeze({ ...base.section, id: `${S.version}/${seed}/${cursor.index}/${choice}`, version: S.version,
-        cellCount: S.cellCount, endDistance: (cursor.firstCell + S.cellCount) * 24, encounter: 'moving-mine', family: 'ambient', variation: MINE_CONFIGURATIONS.indexOf(choice) }),
+        cellCount: S.cellCount, endDistance: (cursor.firstCell + S.cellCount) * 24, encounter: 'moving-mine', family: 'ambient', variation: choices.indexOf(choice) }),
         next: Object.freeze({ ...base.next, firstCell: cursor.firstCell + S.cellCount,
           lastFamilies: cursor.lastFamilies, coverageMask: cursor.coverageMask, lastCorner: cursor.lastCorner,
           mine: Object.freeze({ ordinary: 0, count: history.count + 1 }) }) };
@@ -97,7 +104,7 @@ export function movingMineSource(configuration?: MineConfiguration, first = fals
     candidate(section, committed = [], root) {
       if (section.encounter !== 'moving-mine') return { ...flow.candidate(section, committed.filter(h => !isMine(h))), geometry: MINE_GEOMETRY };
       if (!root) throw new Error('Mine requires actual proposal clock');
-      const choice = MINE_CONFIGURATIONS[section.variation]!, speed = choice.startsWith('slow') ? S.slow : S.moderate;
+      const choice = choices[section.variation]!, speed = Math.abs(motionVector(choice).x);
       const start = Math.max(0, passTick(root, section.startDistance + S.offset) - Math.round(6 / speed / CONFIG.step));
       const payload = new FieldGenerator(section.seed).propose(section.firstCell, section.cellCount - 1);
       const fallback = Object.freeze({ ...payload, cellCount: section.cellCount, endDistance: section.endDistance });

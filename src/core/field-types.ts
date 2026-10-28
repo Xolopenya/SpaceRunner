@@ -1,11 +1,13 @@
 export type FieldProfile = 'sphere-v1' | 'half-meteor-v1' | 'barrel-v1' | 'generator-v1' | 'bulkhead-compound-v1' | 'wreck-frame-compound-v2' | 'moving-mine-sphere-v1';
 
-/** DEV lateral-only motion. Depth remains passDistance; phases use absolute120Hz ticks. */
+/** DEV linear XY motion. Depth remains passDistance; phases use absolute120Hz ticks. */
 export interface LinearCrossingMotion {
   readonly version: 'linear-crossing-v1';
   readonly startTick: number;
   readonly durationTicks: number;
   readonly velocityX: number;
+  /** Omitted by the original horizontal records, preserving their exact identity. */
+  readonly velocityY?: number;
 }
 
 export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';

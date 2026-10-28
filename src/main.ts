@@ -50,14 +50,15 @@ async function boot(): Promise<void> {
         const { MovingMineGameModel } = await import('./experiments/moving-mine/model.ts');
         const { MovingMineView } = await import('./experiments/moving-mine/view.ts');
         const { MineAssetManager } = await import('./experiments/moving-mine/assets.ts');
-        const { mineConfiguration } = await import('./experiments/moving-mine/settings.ts');
-        const configuration = mineConfiguration(params.get('mine'));
+        const { mineConfiguration, motionPolicy, configurations } = await import('./experiments/moving-mine/settings.ts');
+        const configuration = mineConfiguration(params.get('mine')), motion = motionPolicy(params.get('motion'));
+        if (configuration && !configurations(motion).includes(configuration)) throw new RangeError('Mine configuration does not match motion policy');
         if (!(assets instanceof MineAssetManager)) throw new Error('Missing mine asset owner');
         const mineAssets = assets;
         try {
           await mineAssets.loadMine();
           if (disposed) return;
-          developerModel = new MovingMineGameModel(configuration, params.get('firstMine') === '1');
+          developerModel = new MovingMineGameModel(configuration, params.get('firstMine') === '1', motion);
           debugFactory = scene => { structureView = new MovingMineView(scene, mineAssets, params.get('colliders') === '1'); return structureView; };
         } catch (error) {
           console.warn('Moving mine asset unavailable; using certified mixed field', error);

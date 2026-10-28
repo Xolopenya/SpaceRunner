@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003C2 — fast and diagonal motion, 2026-10-28
+
+- [x] Created requested feature branch from approved3779d32 already on main; preserved unrelated files. Extended existing linear-crossing-v1 with optional Y velocity while preserving original horizontal records.
+- [x] Added DEV baseline/fast3.5/diagonal±3X,±1.5Y and early certified reproduction. Preserved source frequency, model/light, controls, damage and all planning safeguards. No homing.
+- [x] New six unit/four browser cases cover all signed vectors,18000analytical CCD comparisons, phase/identity, late reaction, exact rendering, pause/restart and production exclusion. Original tests/audits stay required.
+- [x] A/B/C45actual-model runs: each policy43/48mine publications,5omissions;250fixtures240accepted/10reaction-rejected;762independent replays. Release-input contacts7/43each, fixed-grid contacts3/25each, zero tested perimeter contacts: increased maneuver demand is not established.
+- [x] Added real Three.js serial A/B/C profiles, screenshots/videos, historical outlier records and92-history/production preservation diagnostics. Exact-HEAD manifest records final command and archive results.
+- [ ] Owner A/B/C selection and physical-device review; no new human acceptance is claimed.
+
 ## GAMEPLAY-EXPERIMENT-003C — moving space mine, 2026-10-28
 
 - [x] Verified approved41812b6 on local and GitHub main, created the requested feature branch, preserved unrelated user files.

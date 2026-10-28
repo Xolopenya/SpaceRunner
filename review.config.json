@@ -1,45 +1,49 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003C",
-  "baseline": "41812b61f23aaeca5295b4112ed75b60c1e78897",
+  "taskId": "GAMEPLAY-EXPERIMENT-003C2",
+  "baseline": "3779d3247a65e27046180f8f0541a467ea0eb75c",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ARCHITECTURE.md",
-    "ASSET_PROVENANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ASSET_PROVENANCE.md",
-    "MOTION_MODEL.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/MOTION_MODEL.md",
-    "DYNAMIC_COLLISION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/DYNAMIC_COLLISION.md",
-    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/FAIRNESS_EVIDENCE.md",
-    "SPAWN_AND_PACING.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/SPAWN_AND_PACING.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C/ARCHITECTURE.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/ARCHITECTURE.md",
+    "MOTION_VARIANTS.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/MOTION_VARIANTS.md",
+    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/FAIRNESS.md",
+    "GAMEPLAY_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/GAMEPLAY_COMPARISON.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/ARCHITECTURE.md"
   },
   "screenshots": [
-    "mine-baseline-desktop-live.png",
-    "mine-mine-desktop-live.png",
-    "mine-mine-portrait-live.png",
-    "mine-mine-landscape-live.png",
-    "mine-desktop-distant.png",
-    "mine-desktop-mid.png",
-    "mine-desktop-path.png",
-    "mine-desktop-avoidance.png",
-    "mine-portrait-distant.png",
-    "mine-portrait-mid.png",
-    "mine-portrait-path.png",
-    "mine-portrait-avoidance.png",
-    "mine-landscape-distant.png",
-    "mine-landscape-mid.png",
-    "mine-landscape-path.png",
-    "mine-landscape-avoidance.png",
-    "mine-restart.png",
-    "mine-collision.png",
-    "mine-rtl.png",
-    "mine-colliders.png"
+    "mine-motion-baseline-desktop-live.png",
+    "mine-motion-baseline-desktop-distant.png",
+    "mine-motion-baseline-desktop-mid.png",
+    "mine-motion-baseline-desktop-path.png",
+    "mine-motion-baseline-desktop-avoidance.png",
+    "mine-motion-fast-desktop-live.png",
+    "mine-motion-fast-desktop-distant.png",
+    "mine-motion-fast-desktop-mid.png",
+    "mine-motion-fast-desktop-path.png",
+    "mine-motion-fast-desktop-avoidance.png",
+    "mine-motion-diagonal-desktop-live.png",
+    "mine-motion-diagonal-desktop-distant.png",
+    "mine-motion-diagonal-desktop-mid.png",
+    "mine-motion-diagonal-desktop-path.png",
+    "mine-motion-diagonal-desktop-avoidance.png",
+    "mine-motion-diagonal-portrait-live.png",
+    "mine-motion-diagonal-portrait-distant.png",
+    "mine-motion-diagonal-portrait-mid.png",
+    "mine-motion-diagonal-portrait-path.png",
+    "mine-motion-diagonal-portrait-avoidance.png",
+    "mine-motion-diagonal-landscape-live.png",
+    "mine-motion-diagonal-landscape-distant.png",
+    "mine-motion-diagonal-landscape-mid.png",
+    "mine-motion-diagonal-landscape-path.png",
+    "mine-motion-diagonal-landscape-avoidance.png"
   ],
   "videoPreviews": [
-    "mine-baseline-desktop.webm",
-    "mine-desktop.webm",
-    "mine-portrait.webm",
-    "mine-landscape.webm"
+    "mine-motion-baseline-desktop.webm",
+    "mine-motion-fast-desktop.webm",
+    "mine-motion-diagonal-desktop.webm",
+    "mine-motion-diagonal-portrait.webm",
+    "mine-motion-diagonal-landscape.webm"
   ],
   "additionalAssets": [
     {
@@ -87,6 +91,21 @@
       "script": "scripts/mine-browser.mjs",
       "stripTypes": false,
       "name": "mine-browser"
+    },
+    {
+      "script": "scripts/mine-motion-preservation.mjs",
+      "stripTypes": true,
+      "name": "mine-motion-preservation"
+    },
+    {
+      "script": "scripts/mine-motion-benchmark.mjs",
+      "stripTypes": true,
+      "name": "mine-motion-benchmark"
+    },
+    {
+      "script": "scripts/mine-motion-browser.mjs",
+      "stripTypes": false,
+      "name": "mine-motion-browser"
     }
   ],
   "preservedUntracked": [
@@ -97,18 +116,16 @@
   ],
   "intermediateEvidence": [],
   "evidenceNotes": [
-    "One DEV CC0 mine extends approved mixed flow. Shared120Hz pose, relative CCD and actual-root independent replay retain existing reaction/margin/tail and work ceilings.",
-    "30 actual-model comparisons preserve real hull/death and omissions. Historical collision/runtime audits remain required.",
-    "Serial real Three.js profiles record45s each, cold/warm frame outliers, CPU, long tasks and ten same-phase restarts. Native WebM has associated RAF pose traces.",
-    "Production bytes and76 approved model histories are compared, including12 mixed-flow histories. Unrelated user work is fingerprinted and excluded."
+    "A/B/C uses unchanged mine frequency and source spans, legacy records and fixed120Hz vector pose. XY relative CCD is shared by actual model and independent trajectory replay.",
+    "45 normal three-hull runs use the same seeds and input histories; geometry-only grid and response probes are explicitly separate.",
+    "Matched serial45s real Three.js profiles record all policies with equal CPU sampling and VP8 capture; historical003C frame anomalies remain in baseline evidence.",
+    "92 approved model history comparisons include original mine mode; production bytes, model/material/light and protected gameplay remain unchanged."
   ],
   "limitations": [
-    "Conditional route existence is not arbitrary-input safety, complete search or human acceptance.",
-    "Enclosing sphere is conservative between mine arms; distant readability and grazing need owner review.",
-    "Blind steering can compromise existing geometry and cause fallback/omission; mines are never force-spawned.",
-    "Cold and33ms+ gaps are retained. Emulated mobile viewports and finite V8 retention do not prove physical-device or indefinite memory behavior."
+    "A finite safe witness does not prove arbitrary-input safety or search completeness.",
+    "Centered crossings still leave permanent boundary bypasses; increased speed alone is not measured increased maneuver demand.",
+    "Emulated mobile and finite heap retention do not establish physical-device or long-session behavior.",
+    "Human preference for new variants has not yet been tested."
   ],
-  "knownBlockers": [
-    "Owner playtest and independent review before merge or further integration. No human results are claimed."
-  ]
+  "knownBlockers": []
 }

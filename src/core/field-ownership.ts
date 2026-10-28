@@ -13,7 +13,8 @@ export function sameHazard(a: PlannedHazard, b: PlannedHazard): boolean {
     && a.kind === b.kind && a.visualVariant === b.visualVariant && a.collisionProfile === b.collisionProfile
     && a.spin === b.spin && a.phase === b.phase && a.orientation === b.orientation
     && (a.motion ? !!b.motion && a.motion.version === b.motion.version && a.motion.startTick === b.motion.startTick
-      && a.motion.durationTicks === b.motion.durationTicks && a.motion.velocityX === b.motion.velocityX : !b.motion)
+      && a.motion.durationTicks === b.motion.durationTicks && a.motion.velocityX === b.motion.velocityX
+      && a.motion.velocityY === b.motion.velocityY : !b.motion)
     && p.version === q.version && p.seed === q.seed && p.settingsKey === q.settingsKey
     && (x ? !!y && x.family === y.family && x.firstCell === y.firstCell && x.cellCount === y.cellCount
       && x.variation === y.variation && x.intensity === y.intensity && x.mirrorX === y.mirrorX && x.mirrorY === y.mirrorY
