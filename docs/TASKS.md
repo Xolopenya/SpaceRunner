@@ -6,7 +6,7 @@
 - [x] Distance500 Phase 2 changes speed and encounter spacing independently; shared predictive clock preserves fairness.
 - [x] Production subpath, pause/restart, three persisted volume sliders and three180s model runs verified.
 - [x] Russian README, changelog, architecture notes, reflection and demo guide prepared.
-- [ ] Pages workflow publication and real URL acceptance; final regression/archive results recorded at delivery.
+- [x] Pages published from main; public Chrome acceptance passed. Full implementation regression: 228 unit +84 browser tests, ten verification groups, 180s production soak. Documentation-only archive checkpoint records the source SHA and verified evidence hashes.
 
 
 ## GAMEPLAY-EXPERIMENT-003C4 — Adaptive Homing Mine, 2026-11-02
