@@ -26,3 +26,7 @@ The same-root unhinted counterfactual accepts 35/37 actual accepted targets; the
 One known/active moving mine maximum; no wreck and mine in the same source transaction. Native full-span fallbacks retain ownership. Actual damage, scoring, invulnerability, controls, speed, pause/resume/restart, model, audio and production HUD use existing code. Preview has no collider or live slot. The red pulse/path controller is created only for Target-Lock and joins existing resource ownership. Restart resets capture clocks/IDs without new GLB loads.
 
 The production selector and experimental asset remain stripped. `target-lock-preservation.json` checks116 approved-versus-current histories, protected source/assets and the exact15-file/931651-byte production output. Historical suites and moving/mixed audits remain required in review.config.json.
+
+## Historical mixed-flow audit scope
+
+All three standalone flow audits are included in the22-check packaging run. The original pre-mine flow-preservation byte guard rejects current field-ownership.ts because moving trajectories intentionally extend ownership identity; its unmodified failure log is retained. The same original script/assertions run on approved003B3 source41812b61f23aaeca5295b4112ed75b60c1e78897 through target-lock-flow-preservation.mjs. This source-pinned result is explicitly separate from the116 current-versus-approved003C2 differential histories and the current-source flow-benchmark/flow-browser. No historical assertion is weakened or rewritten.

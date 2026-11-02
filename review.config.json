@@ -81,6 +81,21 @@
       "name": "runtime-benchmark"
     },
     {
+      "script": "scripts/target-lock-flow-preservation.mjs",
+      "stripTypes": true,
+      "name": "flow-preservation"
+    },
+    {
+      "script": "scripts/flow-benchmark.mjs",
+      "stripTypes": true,
+      "name": "flow-benchmark"
+    },
+    {
+      "script": "scripts/flow-browser.mjs",
+      "stripTypes": false,
+      "name": "flow-browser"
+    },
+    {
       "script": "scripts/mine-preservation.mjs",
       "stripTypes": true,
       "name": "mine-preservation"

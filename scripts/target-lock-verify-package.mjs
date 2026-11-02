@@ -3,6 +3,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
+import { FLOW_GEOMETRY } from '../src/experiments/mixed-flow/source.ts';
+import { WRECK_GEOMETRY } from '../src/experiments/structure-variants/encounter.ts';
 import { TARGET_GEOMETRY, targetCapture } from '../src/experiments/moving-mine/target-lock-source.ts';
 import { readZip } from './zip.mjs';
 import { reviewWorktree } from './review-worktree.mjs';
@@ -17,7 +19,7 @@ const bytes=await readFile(path),entries=readZip(bytes),sha=b=>createHash('sha25
 function json(name){assert.ok(entries.has(name),name);return JSON.parse(entries.get(name));}
 const manifest=json('reports/manifest.json'),config=json('project_snapshot/review.config.json');
 assert.equal(manifest.finalCommit,head);assert.equal(manifest.baselineCommit,baseline);assert.equal(manifest.taskId,'GAMEPLAY-EXPERIMENT-003C3');assert.equal(manifest.branch,'feature/gameplay-003c3-target-lock-mine');
-assert.equal(manifest.checks.length,19);assert.ok(manifest.checks.every(c=>c.exitCode===0));
+assert.equal(manifest.checks.length,22);assert.ok(manifest.checks.every(c=>c.exitCode===0));
 assert.equal(manifest.tests.filter(t=>t.suite==='unit').length,212);assert.equal(manifest.tests.filter(t=>t.suite==='browser').length,77);assert.ok(manifest.tests.every(t=>t.result==='passed'));
 const inventory=json('reports/content-inventory.json');assert.equal(inventory.length,entries.size-1);
 for(const r of inventory){assert.equal(entries.get(r.path)?.length,r.bytes);assert.equal(sha(entries.get(r.path)),r.sha256);}
@@ -53,6 +55,12 @@ for(const r of target.runs){const map=new Map();for(const o of r.publications){a
 }
 assert.deepEqual(benchmark.policies.map(p=>[p.proposed,p.published,p.omitted]),[[48,43,5],[48,43,5],[48,37,11]]);
 assert.equal(benchmark.policies[2].gridContacts,75);assert.equal(benchmark.policies[2].boundaryContacts,48);
+const flow=json('logs/flow-benchmark.json'),flowEvidence=json('logs/flow-witnesses.json'),flowPinned=json('logs/flow-source-pinned.json');
+assert.equal(flow.runs.length,90);assert.equal(flow.violations,0);assert.equal(flowPinned.originalAssertionsUnchanged,true);assert.equal(flowPinned.exitCode,0);
+let flowAudits=0;function replayFlow(w){const g=w.geometryVersion===FLOW_GEOMETRY.version?FLOW_GEOMETRY:WRECK_GEOMETRY;assert.equal(w.geometryVersion,g.version);const r=finish(beginTrajectoryReplay(w.context,w.controls,{geometry:g}));assert.equal(r.decision,'accept');assert.equal(r.witness.hash,w.hash);flowAudits++;}
+for(const r of [...flowEvidence.runs,flowEvidence.repeat]){for(const w of r.witnesses)replayFlow(w);for(const o of r.outcomes)assert.ok(o.metrics.searches<=2&&o.metrics.replays<=4&&o.metrics.planningTicks<=144&&o.attempts.length<=2);for(const c of r.chunks)assert.ok(c.propagations<=3072&&c.queries<=6144);}
+for(const c of flowEvidence.counterfactuals){if(c.old.decision==='accept')replayFlow(c.old.witness);if(c.fresh.decision==='accept')replayFlow(c.fresh.witness);}assert.equal(flowAudits,flow.audits);
+assert.equal(json('logs/flow-browser.json').results.length,4);
 const browser=json('logs/target-lock-browser.json');assert.equal(browser.results.length,7);assert.equal(browser.videos.length,6);assert.equal(browser.screenshots.length,26);
 let browserAudits=0;
 for(const r of browser.results){assert.deepEqual(r.errors,[]);assert.equal(r.restarts.samples.length,10);assert.equal(r.requests.length,7);for(const s of r.restarts.samples)assert.deepEqual({...s,heap:undefined},{...r.restarts.before,heap:undefined});
@@ -73,5 +81,5 @@ const patch=entries.get('changes/baseline-to-head.patch');assert.ok(patch.equals
 execFileSync('git',['apply','--reverse','--check','--binary','-'],{input:patch,maxBuffer:8*1024*1024});
 const approved=resolve('.cache/review/GAMEPLAY-EXPERIMENT-003C3/approved-c2');
 execFileSync('git',['apply','--check','--binary','-'],{cwd:approved,env:{...process.env,GIT_CEILING_DIRECTORIES:resolve(approved,'..')},input:patch,maxBuffer:8*1024*1024});
-const result={path,head,baseline,bytes:bytes.length,sha256:sha(bytes),entries:entries.size,snapshotFiles,inventory:inventory.length,independentMovingReplays:audits,negativeReplays:negative,browserIndependentReplays:browserAudits,forwardPatchApplicable:true,reversePatchApplicable:true,readable:true,productionByteIdentical:true};
+const result={path,head,baseline,bytes:bytes.length,sha256:sha(bytes),entries:entries.size,snapshotFiles,inventory:inventory.length,independentMovingReplays:audits,negativeReplays:negative,browserIndependentReplays:browserAudits,independentFlowReplays:flowAudits,forwardPatchApplicable:true,reversePatchApplicable:true,readable:true,productionByteIdentical:true};
 await writeFile(path+'.verification.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));
