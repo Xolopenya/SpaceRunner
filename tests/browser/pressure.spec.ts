@@ -48,6 +48,7 @@ for (const policy of ['baseline', 'pressure']) test(`${policy} selector preserve
 
 test('pressure URL is ignored in production and without the field debug selector', async ({ page }) => {
   await page.goto('/?debug=inspect&policy=pressure&seed=42');
+  await page.waitForFunction(()=>Boolean(window.spaceRunner));
   expect(await page.evaluate(() => 'policy' in window.spaceRunner!.model.field)).toBe(false);
   await page.goto('http://127.0.0.1:4173/?debug=field&policy=pressure&seed=42'); await page.locator('#launch').click();
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();

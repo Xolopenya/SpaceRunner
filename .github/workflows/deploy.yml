@@ -1,7 +1,7 @@
 name: Verify and deploy Pages
 on:
   push:
-    branches: [main, feature/assignment-002-public-release]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
