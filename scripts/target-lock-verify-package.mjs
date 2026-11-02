@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
+import { REVIEW_ONLY_FILES } from './target-lock-review-resume.mjs';
 import { FLOW_GEOMETRY } from '../src/experiments/mixed-flow/source.ts';
 import { WRECK_GEOMETRY } from '../src/experiments/structure-variants/encounter.ts';
 import { TARGET_GEOMETRY, targetCapture } from '../src/experiments/moving-mine/target-lock-source.ts';
@@ -20,7 +21,11 @@ function json(name){assert.ok(entries.has(name),name);return JSON.parse(entries.
 const manifest=json('reports/manifest.json'),config=json('project_snapshot/review.config.json');
 assert.equal(manifest.finalCommit,head);assert.equal(manifest.baselineCommit,baseline);assert.equal(manifest.taskId,'GAMEPLAY-EXPERIMENT-003C3');assert.equal(manifest.branch,'feature/gameplay-003c3-target-lock-mine');
 assert.equal(manifest.checks.length,22);assert.ok(manifest.checks.every(c=>c.exitCode===0));
-assert.equal(manifest.tests.filter(t=>t.suite==='unit').length,212);assert.equal(manifest.tests.filter(t=>t.suite==='browser').length,77);assert.ok(manifest.tests.every(t=>t.result==='passed'));
+assert.equal(manifest.tests.filter(t=>t.suite==='unit').length,216);assert.equal(manifest.tests.filter(t=>t.suite==='browser').length,77);assert.ok(manifest.tests.every(t=>t.result==='passed'));
+const receipt=json('logs/review-resume-receipt.json');git('merge-base','--is-ancestor',receipt.head,head);
+const reviewChanges=git('diff','--name-only',receipt.head,head).toString().trim().split('\n').filter(Boolean);assert.ok(reviewChanges.every(p=>REVIEW_ONLY_FILES.includes(p)));
+for(const r of receipt.files){const b=entries.get('logs/'+r.file);assert.equal(b?.length,r.bytes);assert.equal(sha(b),r.sha256);}
+const reused=manifest.checks.filter(c=>c.executedAtCommit);assert.equal(reused.length,3);for(const c of reused){assert.equal(c.executedAtCommit,receipt.head);assert.equal(c.reusedAtCommit,head);assert.deepEqual(c.reviewOnlyChanges,reviewChanges);}
 const inventory=json('reports/content-inventory.json');assert.equal(inventory.length,entries.size-1);
 for(const r of inventory){assert.equal(entries.get(r.path)?.length,r.bytes);assert.equal(sha(entries.get(r.path)),r.sha256);}
 let snapshotFiles=0;for(const[name,b]of entries)if(name.startsWith('project_snapshot/')){assert.ok(b.equals(git('show',`${head}:${name.slice(17)}`)),name);snapshotFiles++;}

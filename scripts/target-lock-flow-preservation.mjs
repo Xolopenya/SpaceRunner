@@ -13,7 +13,7 @@ const git=(...args)=>execFileSync('git',args,{cwd:root,maxBuffer:64*1024*1024});
 await mkdir(directory,{recursive:true});await mkdir(output,{recursive:true});git('merge-base','--is-ancestor',approved,'HEAD');
 for(const p of git('ls-tree','-r','--name-only',approved).toString().trim().split('\n')){const target=resolve(directory,p);assert.ok(target.startsWith(directory+'\\')||target.startsWith(directory+'/'));await mkdir(dirname(target),{recursive:true});await writeFile(target,git('show',`${approved}:${p}`));}
 try{assert.ok((await lstat(join(directory,'node_modules'))).isSymbolicLink());}catch(e){if(e.code!=='ENOENT')throw e;await symlink(join(root,'node_modules'),join(directory,'node_modules'),'junction');}
-const npm=process.env.npm_execpath??join(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js'),env={...process.env,REVIEW_RESULT_DIR:output};
+const npm=process.env.npm_execpath??join(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js'),env={...process.env,REVIEW_RESULT_DIR:output,GIT_DIR:join(root,'.git'),GIT_WORK_TREE:directory};
 const run=args=>execFileSync(process.execPath,args,{cwd:directory,env,windowsHide:true,maxBuffer:16*1024*1024});
 await writeFile(join(output,'flow-approved-build.log'),run([npm,'run','build']));const log=run(['--experimental-strip-types','scripts/flow-preservation.mjs']);process.stdout.write(log);
 const script=await readFile(join(directory,'scripts/flow-preservation.mjs'));assert.ok(script.equals(git('show',`${approved}:scripts/flow-preservation.mjs`)));

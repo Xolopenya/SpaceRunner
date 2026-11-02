@@ -4,6 +4,7 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { loadReviewCheckpoint, resumableCheck } from './target-lock-review-resume.mjs';
 
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const git = (...args) => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024 });
@@ -12,6 +13,7 @@ export async function verify(taskId, extraChecks = []) {
   const directory = resolve(root, '.cache/review', taskId, 'final');
   await mkdir(directory, { recursive: true });
   const head = git('rev-parse', 'HEAD').toString().trim();
+  const checkpoint = await loadReviewCheckpoint(taskId, directory, head, git);
   const env = { ...process.env, NO_COLOR: '1', REVIEW_RESULT_DIR: directory };
   delete env.FORCE_COLOR;
   const npmCli = process.env.npm_execpath || join(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
@@ -27,6 +29,12 @@ export async function verify(taskId, extraChecks = []) {
   const checks = [];
   for (const command of commands) {
     const log = `${command.name.replaceAll(':', '-')}.log`;
+    const previous = checkpoint?.receipt.checks.find(c => c.command === command.command);
+    if (checkpoint && resumableCheck(taskId, checkpoint.changed, command.command, previous)) {
+      checks.push({ ...previous, executedAtCommit: checkpoint.receipt.head, reusedAtCommit: head, reviewOnlyChanges: checkpoint.changed });
+      console.log(`\nVerified checkpoint ${command.command} from ${checkpoint.receipt.head}: gameplay/test inputs unchanged; receipt SHA256 verified.`);
+      continue;
+    }
     console.log(`\nRunning ${command.command}`);
     const stream = createWriteStream(join(directory, log));
     const exitCode = await new Promise((resolveCode, reject) => {
