@@ -31,7 +31,8 @@ export async function collide(page: Page, resetCooldown = false) {
 }
 
 export async function endRun(page: Page) {
-  const remaining = Number(await page.locator('#hull').getAttribute('aria-valuenow'));
+  // A restart updates the model before the next HUD frame; read the live hull.
+  const remaining = await page.evaluate(() => window.spaceRunner!.model.hull);
   for (let hull = remaining - 1; hull >= 0; hull--) {
     await collide(page, true);
     await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', String(hull));

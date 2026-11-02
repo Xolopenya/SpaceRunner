@@ -27,8 +27,13 @@ test('automatic mixed flow traverses3300m, shows all five apertures and exports 
 
 test('normal horizontal keyboard steering exceeds650m with actual damage, pause and replay', async ({ page }) => {
   await page.goto('/?debug=field&experiment=mixed-flow&seed=42'); await page.locator('#launch').click();
-  for (let i = 0; i < 26; i++) { const key = i % 2 ? 'ArrowLeft' : 'ArrowRight'; await page.keyboard.down(key); await page.waitForTimeout(1500); await page.keyboard.up(key);
-    if (await page.evaluate(() => window.spaceRunner!.model.distance >= 700)) break; }
+  for (let i = 0; i < 26; i++) {
+    const key = i % 2 ? 'ArrowLeft' : 'ArrowRight'; await page.keyboard.down(key);
+    // Schedule input against simulation time: clamped slow frames must not alter the route.
+    await page.waitForFunction(end => { const m = window.spaceRunner!.model; return m.elapsed >= end || m.distance >= 660 || m.state !== 'PLAYING'; }, (i + 1) * 1.5);
+    await page.keyboard.up(key);
+    if (await page.evaluate(() => window.spaceRunner!.model.distance >= 660 || window.spaceRunner!.model.state !== 'PLAYING')) break;
+  }
   expect(await page.evaluate(() => window.spaceRunner!.model.distance)).toBeGreaterThan(650);
   expect(await page.evaluate(() => window.spaceRunner!.model.hull)).toBeGreaterThan(0);
   await page.locator('#pause').click(); const before = await page.evaluate(() => window.spaceRunner!.model.distance); await page.waitForTimeout(300);
