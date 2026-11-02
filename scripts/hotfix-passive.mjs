@@ -1,4 +1,5 @@
-import {writeFile} from 'node:fs/promises';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {dirname} from 'node:path';
 import {ReleaseModel} from '../src/release/model.ts';
 const rows=[];
 for(const seed of [0,11,42])for(const phase of [1,2])for(const mode of ['neutral','left','right','off-center']){
@@ -16,5 +17,6 @@ for(const seed of [0,11,42])for(const phase of [1,2])for(const mode of ['neutral
  }
  rows.push({seed,phase,mode,elapsed:m.elapsed-start,distance:m.distance,hull:m.hull,x:m.ship.x,y:m.ship.y,committed:m.field.committed-committed,omitted:m.field.omitted-omitted,maxBlank,events,fault:m.field.fault??null});m.dispose();
 }
-await writeFile(process.argv[2]??'.cache/hotfix-assignment-002/passive.json',JSON.stringify(rows,null,2));
+const output=process.argv[2]??'.cache/hotfix-assignment-002/passive.json';
+await mkdir(dirname(output),{recursive:true});await writeFile(output,JSON.stringify(rows,null,2));
 console.log(JSON.stringify(rows.map(({events,...r})=>r),null,2));
