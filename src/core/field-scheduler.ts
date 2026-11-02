@@ -1,4 +1,5 @@
-import { CONFIG, difficulty } from '../config.ts';
+import { flightSpeed } from '../release/settings.ts';
+import { CONFIG } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { buildSection } from './field-section.ts';
 import { FlightPrediction } from './field-prediction.ts';
@@ -12,7 +13,7 @@ import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
 
-export type SchedulerRoot = Pick<FieldValidationContext, 'player' | 'input' | 'elapsed' | 'distance' | 'homing'>;
+export type SchedulerRoot = Pick<FieldValidationContext, 'player' | 'input' | 'elapsed' | 'distance' | 'homing' | 'release'>;
 export type PlanningPhase = 'validation' | 'replay' | 'publication' | 'ready' | 'failed' | 'done';
 export interface AttemptRecord {
   readonly kind: 'primary' | 'ambient-fallback' | 'empty-fallback';
@@ -44,7 +45,7 @@ export interface PublicationObservation {
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),
   input: Object.freeze({ x: r.input.x, y: r.input.y }), elapsed: r.elapsed, distance: r.distance,
-  ...(r.homing?{homing:Object.freeze({...r.homing})}:{}) });
+  ...(r.release?{release:true as const}:{}), ...(r.homing?{homing:Object.freeze({...r.homing})}:{}) });
 const zeroMetrics = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, broadPhaseSkips: 0, clockSteps: 0,
   searchPropagations: 0, replayPropagations: 0, replayQueries: 0, peakFrontier: 0, peakExpansion: 0, searches: 0, replays: 0, planningTicks: 0 });
 export const visibleAt = (hazards: readonly PlannedHazard[], distance: number): readonly PlannedHazard[] =>
@@ -55,20 +56,20 @@ export function forecastPublication(root: SchedulerRoot, inputs?: readonly Contr
   if(root.homing)throw new RangeError('Feedback forecasts require coupled dynamics');
   if (inputs && (inputs.length > L.horizonTicks || inputs.some(r => !Number.isInteger(r.ticks) || r.ticks < 1 || r.ticks > L.horizonTicks
     || !Number.isFinite(r.input.x) || !Number.isFinite(r.input.y) || Math.abs(r.input.x) > 1 || Math.abs(r.input.y) > 1))) throw new RangeError('Invalid bounded forecast controls');
-  const state = { ...root.player, elapsed: root.elapsed, distance: root.distance }, prediction = new FlightPrediction();
+  const state = { ...root.player, elapsed: root.elapsed, distance: root.distance, ...(root.release?{release:true as const}:{}) }, prediction = new FlightPrediction();
   let run = 0, left = inputs?.[0]?.ticks ?? 0, input = root.input;
   for (let tick = 0; tick < S.publicationTicks; tick++) {
     while (inputs && left === 0 && run < inputs.length) { run++; left = inputs[run]?.ticks ?? 0; }
     input = inputs ? inputs[run]?.input ?? { x: 0, y: 0 } : root.input;
     prediction.step(state, input); if (left) left--;
   }
-  return rootCopy({ player: state, input, elapsed: state.elapsed, distance: state.distance });
+  return rootCopy({ player: state, input, elapsed: state.elapsed, distance: state.distance, ...(root.release?{release:true as const}:{}) });
 }
 function neutralControls(c: FieldValidationContext): readonly ControlRun[] | undefined {
   let elapsed = c.elapsed, distance = c.distance, end = 0;
   const exit = Math.max(c.distance, ...c.committed.map(h => h.passDistance + h.radius + CONFIG.ship.radius + L.margin));
   for (let tick = 1; tick <= L.horizonTicks; tick++) {
-    elapsed += CONFIG.step; distance += difficulty(elapsed).speed * CONFIG.step;
+    elapsed += CONFIG.step; distance += flightSpeed(elapsed,distance,c.release) * CONFIG.step;
     if (!end && tick >= L.reactionTicks && distance > exit) end = tick + L.brakingTicks;
     if (end && tick === end) return [{ ticks: L.reactionTicks, input: c.input }, { ticks: end - L.reactionTicks, input: { x: 0, y: 0 } }];
   }

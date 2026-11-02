@@ -1,3 +1,4 @@
+import { RELEASE } from './release/settings.ts';
 import { GameModel } from './core/game-model.ts';
 
 export function element<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -30,6 +31,8 @@ export class HUD {
   private readonly hint = element('flight-hint');
   private readonly damage = element('damage');
   private readonly telemetry = element('telemetry');
+  private phaseAt=0;
+  private phaseShown=1;
   private lastScore = -1;
   private lastHull = -1;
   private lastSpeed = -1;
@@ -55,6 +58,15 @@ export class HUD {
   }
 
   update(model: GameModel): void {
+    const phase='phase' in model ? Number(model.phase) : 1;
+    if(phase===1){this.phaseShown=1;this.phaseAt=0;}
+    if(phase===2&&this.phaseShown===1){this.phaseShown=2;this.phaseAt=model.elapsed;}
+    element('phase-label').textContent=phase===2?'PHASE 2 / DANGEROUS SECTOR':'PHASE 1 / NORMAL FLIGHT';
+    element('phase-label').dataset.speed=String(model.speed);
+    element('phase-label').dataset.gap=String(phase===1?RELEASE.phase1ExtraCells*RELEASE.cellSize:0);
+    element('phase-notice').textContent='PHASE 2 / DANGEROUS SECTOR / SPEED +'+Math.round((RELEASE.phase2SpeedMultiplier-1)*100)+'% / RECOVERY GAP -'+RELEASE.phase1ExtraCells*RELEASE.cellSize;
+    element('phase-notice').hidden=phase!==2||model.elapsed-this.phaseAt>3;
+
     if (this.lastScore !== model.score) {
       this.lastScore = model.score;
       score(this.distance, model.score);

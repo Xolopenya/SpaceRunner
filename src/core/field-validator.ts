@@ -1,4 +1,5 @@
-import { CONFIG, difficulty } from '../config.ts';
+import { flightSpeed } from '../release/settings.ts';
+import { CONFIG } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { FlightPrediction } from './field-prediction.ts';
 import { frozenMotion } from './field-motion.ts';
@@ -34,7 +35,7 @@ const PROFILES = ['sphere-v1', 'sphere-v1', 'half-meteor-v1', 'barrel-v1', 'gene
 const reject = (reason: ValidationFailure, detail?: string): Rejection => ({ decision: 'reject', reason, ...(detail ? { detail } : {}) });
 const initial = (context: FieldValidationContext, geometry?: ValidationGeometry): FlightState => {
   const homing = geometry?.initialMine?.(context);
-  return { ...context.player, elapsed: context.elapsed, distance: context.distance, ...(homing ? { homing } : {}) };
+  return { ...context.player, elapsed: context.elapsed, distance: context.distance, ...(context.release?{release:true as const}:{}), ...(homing ? { homing } : {}) };
 };
 const neutral = (input: ControlRun['input']): boolean => input.x === 0 && input.y === 0;
 const sameInput = (a: ControlRun['input'], b: ControlRun['input']): boolean => a.x === b.x && a.y === b.y;
@@ -98,7 +99,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
   const times = new Float64Array(L.horizonTicks + 1), distances = new Float64Array(L.horizonTicks + 1);
   times[0] = time; distances[0] = distance;
   for (let tick = 1; tick <= L.horizonTicks; tick++) {
-    time += CONFIG.step; distance += difficulty(time).speed * CONFIG.step; metrics.clockSteps++;
+    time += CONFIG.step; distance += flightSpeed(time,distance,context.release) * CONFIG.step; metrics.clockSteps++;
     times[tick] = time; distances[tick] = distance;
     if (tick === L.reactionTicks) {
       const minimum = Math.max(lastCenter, distance) + L.terminalTail;

@@ -1,11 +1,12 @@
-import { CONFIG, difficulty } from '../config.ts';
+import { flightSpeed } from '../release/settings.ts';
+import { CONFIG } from '../config.ts';
 import { Ship } from './ship.ts';
 import { ClearanceHazardCollision } from './field-clearance.ts';
 import { HazardCollision } from './hazard-collision.ts';
 import type { Axis } from './ship.ts';
 import type { AdaptiveMineState, PlannedHazard } from './field-types.ts';
 
-export interface FlightState { x: number; y: number; vx: number; vy: number; elapsed: number; distance: number; homing?: Readonly<AdaptiveMineState> }
+export interface FlightState { release?: true; x: number; y: number; vx: number; vy: number; elapsed: number; distance: number; homing?: Readonly<AdaptiveMineState> }
 
 /** Private shadow Ship, never the live player. Exact GameModel update ordering. */
 export class FlightPrediction {
@@ -18,7 +19,7 @@ export class FlightPrediction {
   step(state: FlightState, input: Readonly<Axis>): void {
     this.lateral(state, input);
     state.elapsed += CONFIG.step;
-    state.distance += difficulty(state.elapsed).speed * CONFIG.step;
+    state.distance += flightSpeed(state.elapsed,state.distance,state.release) * CONFIG.step;
   }
 
   /** Search can reuse an exact, input-independent end-step clock table. */

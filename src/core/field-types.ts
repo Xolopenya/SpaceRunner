@@ -102,6 +102,7 @@ export type StructuralResult =
 
 /** Isolated planning input. Caller supplies all relevant known hazards. */
 export interface FieldValidationContext {
+  readonly release?: true;
   /** Actual current feedback state for the single committed adaptive mine. */
   readonly homing?: Readonly<AdaptiveMineState>;
   readonly player: { readonly x: number; readonly y: number; readonly vx: number; readonly vy: number };

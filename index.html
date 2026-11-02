@@ -15,7 +15,7 @@
       <canvas id="flight" aria-label="Space Runner flight area. Steer with WASD, arrow keys, or drag. Avoid the incoming obstacles."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <section id="hud" class="hud" aria-label="Flight status" hidden>
-        <div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="hull-count">3</span><small>/3</small></span></div></div>
+        <div id="phase-label" class="phase-label">PHASE 1 · NORMAL FLIGHT</div><div id="phase-notice" class="phase-notice" hidden>PHASE 2 · DANGEROUS SECTOR<br>Speed +8% · Shorter encounter spacing</div><div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="hull-count">3</span><small>/3</small></span></div></div>
         <div class="distance-block"><span class="label">DISTANCE</span><div class="number-line"><strong id="distance">0</strong><span class="unit">m</span></div></div>
         <button id="pause" class="pause-button" aria-label="Pause flight" hidden><span class="pause-mark" aria-hidden="true"></span><span>Pause</span></button>
       </section>
@@ -30,7 +30,7 @@
       <section id="paused" class="overlay paused" aria-labelledby="paused-title" hidden>
         <div class="state-copy">
           <div class="state-heading"><span class="state-label">FLIGHT PAUSED</span><h2 id="paused-title" class="state-title">Hold<br /> position.</h2><p id="pause-reason" class="state-description">Your flight is paused.</p></div>
-          <div class="state-actions"><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><button class="sound-open text-button" data-sound-open>Sound settings</button><div class="controls"><p class="steer"><span class="desktop-control"><kbd>WASD</kbd> / <kbd>↑ ↓ ← →</kbd> &nbsp; Steer</span><span class="touch-control">Drag anywhere to steer</span></p><p><kbd>ESC / P</kbd> &nbsp; Resume &nbsp; / &nbsp; <kbd>M</kbd> &nbsp; Mute</p></div></div>
+          <div class="state-actions"><button id="restart-pause" class="text-button">Restart run</button><button id="resume" class="primary">Resume flight <span aria-hidden="true">→</span></button><button class="sound-open text-button" data-sound-open>Sound settings</button><div class="controls"><p class="steer"><span class="desktop-control"><kbd>WASD</kbd> / <kbd>↑ ↓ ← →</kbd> &nbsp; Steer</span><span class="touch-control">Drag anywhere to steer</span></p><p><kbd>ESC / P</kbd> &nbsp; Resume &nbsp; / &nbsp; <kbd>M</kbd> &nbsp; Mute</p></div></div>
         </div>
         <div class="paused-metrics"><span class="label">DISTANCE</span><div class="number-line result-number"><strong id="paused-score">0</strong><span class="unit">m</span></div><div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="paused-hull" class="hull" role="meter" aria-label="Paused hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="paused-hull-count">3</span><small>/3</small></span></div></div></div>
       </section>

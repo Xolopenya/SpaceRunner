@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## ASSIGNMENT-002 — Public release
+
+- [x] Normal Play integrates approved Mixed Flow and variable-aperture wrecks; homing excluded due to measured risks.
+- [x] Distance500 Phase 2 changes speed and encounter spacing independently; shared predictive clock preserves fairness.
+- [x] Production subpath, pause/restart, three persisted volume sliders and three180s model runs verified.
+- [x] Russian README, changelog, architecture notes, reflection and demo guide prepared.
+- [ ] Pages workflow publication and real URL acceptance; final regression/archive results recorded at delivery.
+
+
 ## GAMEPLAY-EXPERIMENT-003C4 — Adaptive Homing Mine, 2026-11-02
 
 - [x] Branched from approved003C3 on main; preserved unrelated files and Skills. Added isolated DEV adaptive-homing-v1 with bounded current-Ship feedback, immutable branch-local state, exact coupled prediction/CCD and actual-root publication. No production activation or work-budget increase.

@@ -1,60 +1,21 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003C4",
-  "baseline": "d82181351a62d0600716142b9a0ad972f5613ca1",
+  "taskId": "ASSIGNMENT-002",
+  "baseline": "b7d9dd6c70baa4eb5d5a55780b07aae2b0bd2134",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/ARCHITECTURE.md",
-    "HOMING_CONTROLLER.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/HOMING_CONTROLLER.md",
-    "COUPLED_VALIDATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/COUPLED_VALIDATION.md",
-    "DYNAMIC_COLLISION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/DYNAMIC_COLLISION.md",
-    "GAMEPLAY_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/GAMEPLAY_COMPARISON.md",
-    "FAIRNESS_EVIDENCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/FAIRNESS_EVIDENCE.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C4/ARCHITECTURE.md"
+    "ARCHITECTURE.md": "docs/assignment-002/ARCHITECTURE_NOTES.md",
+    "REFLECTION.md": "docs/assignment-002/REFLECTION.md",
+    "IMPLEMENTATION.md": "docs/assignment-002/DELIVERY_CHECKLIST.md",
+    "DEMO_GUIDE.md": "docs/assignment-002/DEMO_GUIDE.md",
+    "README.md": "README.md",
+    "CHANGELOG.md": "CHANGELOG.md"
   },
   "screenshots": [
-    "homing-target-lock-desktop-live.png",
-    "homing-soft-desktop-live.png",
-    "homing-balanced-desktop-live.png",
-    "homing-aggressive-desktop-live.png",
-    "homing-balanced-portrait-live.png",
-    "homing-balanced-landscape-live.png",
-    "homing-target-lock-unrecorded-desktop-live.png",
-    "homing-balanced-unrecorded-desktop-live.png",
-    "homing-desktop-warning.png",
-    "homing-desktop-tracking-right.png",
-    "homing-desktop-reverse-input.png",
-    "homing-desktop-inertia.png",
-    "homing-desktop-heading-correction.png",
-    "homing-desktop-evasion.png",
-    "homing-portrait-warning.png",
-    "homing-portrait-tracking-right.png",
-    "homing-portrait-reverse-input.png",
-    "homing-portrait-inertia.png",
-    "homing-portrait-heading-correction.png",
-    "homing-portrait-evasion.png",
-    "homing-landscape-warning.png",
-    "homing-landscape-tracking-right.png",
-    "homing-landscape-reverse-input.png",
-    "homing-landscape-inertia.png",
-    "homing-landscape-heading-correction.png",
-    "homing-landscape-evasion.png",
-    "homing-demo-tracking.png",
-    "homing-demo-bait.png",
-    "homing-demo-collision.png"
+    "assignment-menu.png",
+    "assignment-phase2.png",
+    "assignment-settings.png"
   ],
-  "videoPreviews": [
-    "homing-target-lock-desktop.webm",
-    "homing-soft-desktop.webm",
-    "homing-balanced-desktop.webm",
-    "homing-aggressive-desktop.webm",
-    "homing-balanced-portrait.webm",
-    "homing-balanced-landscape.webm",
-    "homing-demo-tracking.webm",
-    "homing-demo-bait.webm",
-    "homing-demo-collision.webm"
-  ],
+  "videoPreviews": [],
   "additionalAssets": [
     {
       "id": "space-mine",
@@ -78,89 +39,14 @@
       "name": "collision-audit"
     },
     {
-      "script": "scripts/runtime-history.mjs",
+      "script": "scripts/assignment-audit.mjs",
       "stripTypes": true,
-      "name": "runtime-history"
+      "name": "assignment-audit"
     },
     {
-      "script": "scripts/runtime-benchmark.mjs",
-      "stripTypes": true,
-      "name": "runtime-benchmark"
-    },
-    {
-      "script": "scripts/target-lock-flow-preservation.mjs",
-      "stripTypes": true,
-      "name": "flow-preservation"
-    },
-    {
-      "script": "scripts/flow-benchmark.mjs",
-      "stripTypes": true,
-      "name": "flow-benchmark"
-    },
-    {
-      "script": "scripts/flow-browser.mjs",
+      "script": "scripts/assignment-browser.mjs",
       "stripTypes": false,
-      "name": "flow-browser"
-    },
-    {
-      "script": "scripts/mine-preservation.mjs",
-      "stripTypes": true,
-      "name": "mine-preservation"
-    },
-    {
-      "script": "scripts/mine-benchmark.mjs",
-      "stripTypes": true,
-      "name": "mine-benchmark"
-    },
-    {
-      "script": "scripts/mine-browser.mjs",
-      "stripTypes": false,
-      "name": "mine-browser"
-    },
-    {
-      "script": "scripts/mine-motion-preservation.mjs",
-      "stripTypes": true,
-      "name": "mine-motion-preservation"
-    },
-    {
-      "script": "scripts/mine-motion-benchmark.mjs",
-      "stripTypes": true,
-      "name": "mine-motion-benchmark"
-    },
-    {
-      "script": "scripts/mine-motion-browser.mjs",
-      "stripTypes": false,
-      "name": "mine-motion-browser"
-    },
-    {
-      "script": "scripts/target-lock-preservation.mjs",
-      "stripTypes": true,
-      "name": "target-lock-preservation"
-    },
-    {
-      "script": "scripts/target-lock-benchmark.mjs",
-      "stripTypes": true,
-      "name": "target-lock-benchmark"
-    },
-    {
-      "script": "scripts/target-lock-browser.mjs",
-      "stripTypes": false,
-      "name": "target-lock-browser"
-    },
-    {
-      "script": "scripts/adaptive-homing-preservation.mjs",
-      "stripTypes": true,
-      "name": "adaptive-homing-preservation"
-    },
-    {
-      "script": "scripts/adaptive-homing-benchmark.mjs",
-      "stripTypes": true,
-      "name": "adaptive-homing-benchmark"
-    },
-    {
-      "script": "scripts/adaptive-homing-browser.mjs",
-      "stripTypes": false,
-      "name": "adaptive-homing-browser"
+      "name": "assignment-browser"
     }
   ],
   "preservedUntracked": [
@@ -171,19 +57,16 @@
   ],
   "intermediateEvidence": [],
   "evidenceNotes": [
-    "Authoritative end-of-step current-Ship feedback, immutable branch-local mine state, coupled actual-root search and separate full replay precede atomic publication. No future mine trajectory is frozen.",
-    "128 approved-C3 differential histories and production byte comparisons protect all old modes; historical collision/moving/mixed/Target-Lock audits remain required.",
-    "972 actual-root fixtures,300 grid attempts,184 response probes,84 real three-hull games and tick-aligned paired-input forks distinguish threat, causality, evasion and omissions.",
-    "Fresh-process matched45s recorded/20s unrecorded CPU1ms profiles, native actual-game videos, restart resources and raw historical outliers are retained. No human recognition or enjoyment is inferred from geometric proxies."
+    "Production integration is authorized; historical byte-identity assertions are not release gates.",
+    "Adaptive homing remains DEV-only and is not shipped.",
+    "Release speed is shared by live simulation, search and independent replay.",
+    "Raw assignment evidence is retained under logs/baseline in the ZIP."
   ],
   "limitations": [
-    "Finite witnesses are not arbitrary-input safety, search completeness or universal avoidability. Omitted mines remain counted.",
-    "Balanced44/62 publications in the precommit ordinary-history corpus; engineered bounded root proposals reject191/972 NO_WITNESS_FOUND. No work/reaction/margin relaxation.",
-    "Fixed depth yields3s approach pursuit but only0.104-0.177s maximum lethal depth window. Sustained near-plane chase was not implemented.",
-    "Emulated mobile and finite forced-GC samples do not establish physical-device or long-session behavior. Cold/warm frame spikes are retained without unsupported causal attribution.",
-    "Owner playtest and independent architecture approval are required before merge; no production rollout or human acceptance is claimed."
+    "Physical phones untested. Finite witnesses do not guarantee survival for arbitrary input.",
+    "Bounded planner omissions and frame spikes remain possible."
   ],
   "knownBlockers": [
-    "Production promotion is prohibited. Owner gameplay decision and independent architecture approval remain before merge."
+    "Public Pages deployment must be confirmed separately after push."
   ]
 }

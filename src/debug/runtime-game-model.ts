@@ -10,9 +10,9 @@ export class RuntimeGameModel extends GameModel {
   override readonly field: RuntimeObstacleField;
   private observedInput: Axis = { x: 0, y: 0 };
   private disposed = false;
-  constructor(policy: FieldPolicy = 'baseline', experiment?: RuntimeEncounterSource) {
+  constructor(policy: FieldPolicy = 'baseline', experiment?: RuntimeEncounterSource, release = false) {
     super();
-    this.field = new RuntimeObstacleField(() => ({ player: this.ship, input: this.observedInput, elapsed: this.elapsed, distance: this.distance }), policy, experiment);
+    this.field = new RuntimeObstacleField(() => ({ player: this.ship, input: this.observedInput, elapsed: this.elapsed, distance: this.distance, ...(release?{release:true as const}:{}) }), policy, experiment);
   }
   override step(dt: number, axis: Axis): void {
     if (this.disposed) return;

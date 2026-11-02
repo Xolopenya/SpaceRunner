@@ -38,6 +38,7 @@ export class Game {
     this.soundPanel = new SoundPanel(this.audio);
     const options = { signal: this.events.signal };
     element('launch').addEventListener('click', () => this.start(), options);
+    element('restart-pause').addEventListener('click', () => { if(this.model.state==='PAUSED'){this.model.state='GAME_OVER';this.start();} }, options);
     element('replay').addEventListener('click', () => this.start(), options);
     element('pause').addEventListener('click', () => this.pause('Your flight is paused.', true), options);
     element('resume').addEventListener('click', () => this.resume(), options);
