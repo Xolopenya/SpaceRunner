@@ -22,6 +22,7 @@ export async function loadReviewCheckpoint(taskId,directory,head,git){
     for(const f of receipt.files){assert.ok(/^[a-zA-Z0-9-]+\.(?:json|log)$/.test(f.file));const b=await readFile(join(directory,f.file));assert.equal(b.length,f.bytes);assert.equal(createHash('sha256').update(b).digest('hex'),f.sha256);}
     return{receipt,changed};
   }
+
   assert.ok(changed.every(p=>REVIEW_ONLY_FILES.includes(p)),'Resume refuses changes outside the explicit review-only allowlist');
   assert.equal(receipt.checks.length,3);assert.ok(receipt.checks.every(c=>resumableCheck(taskId,changed,c.command,c)));
   for(const file of [...receipt.checks.map(c=>c.log),'browser-results.json','runtime-history.json','runtime-metrics.json','runtime-model-metrics.json'])assert.ok(receipt.files.some(r=>r.file===file),'Missing checkpoint evidence: '+file);
