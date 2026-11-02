@@ -2,6 +2,8 @@
 
 Browser-based 3D space endless runner developed with Three.js, TypeScript, and Vite.
 
+**GAMEPLAY-EXPERIMENT-003C4:** [Adaptive homing DEV, seed42](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&motion=adaptive-homing&seed=42&firstMine=1) follows the current spacecraft with bounded acceleration and inertia. Add `homing=soft|balanced|aggressive` (default Balanced). [Bait/reverse owner guide](docs/review/GAMEPLAY-EXPERIMENT-003C4/PLAYTEST_GUIDE.md), [coupled safety model](docs/review/GAMEPLAY-EXPERIMENT-003C4/COUPLED_VALIDATION.md). Target-Lock remains a historical comparison after the owner rejected its frozen-target behavior. Human acceptance and independent architecture review remain pending; production is unchanged.
+
 **GAMEPLAY-EXPERIMENT-003C3 (Partial):** [Target-Lock DEV, seed42](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&motion=target-lock&seed=42&firstMine=1) captures actual ship XY on certified publication, freezes the course and permits deliberate post-lock evasion. [A/B/C owner protocol](docs/review/GAMEPLAY-EXPERIMENT-003C3/PLAYTEST_GUIDE.md). Safety routes replay successfully; publication omissions remain higher (11/48 versus5/48Fast/Diagonal). Owner acceptance and bounded planner improvement are pending. Production is unchanged.
 
 **GAMEPLAY-EXPERIMENT-003C2:** compare DEV mine `motion=baseline|fast|diagonal` using the [quick A/B/C playtest](docs/review/GAMEPLAY-EXPERIMENT-003C2/PLAYTEST_GUIDE.md). Fast is3.5units/s; diagonal is±3X/±1.5Y. Add `firstMine=1` for a certified encounter near8.78s. Original mine URLs/defaults remain reproducible. Measured maneuver-demand proxies did not materially increase; owner selection is pending.

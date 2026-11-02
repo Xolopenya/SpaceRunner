@@ -1,13 +1,14 @@
 import type { HazardMotion } from './field-types.ts';
 
 export function frozenMotion(m: HazardMotion): Readonly<HazardMotion> {
-  return Object.freeze({ ...m, ...(m.version === 'target-lock-v1' ? { capture: Object.freeze({ ...m.capture }) } : {}) });
+  return Object.freeze({ ...m, ...(m.version !== 'linear-crossing-v1' ? { capture: Object.freeze({ ...m.capture }) } : {}) });
 }
 export function sameMotion(a?: HazardMotion, b?: HazardMotion): boolean {
   if (!a || !b) return !a && !b;
   if (a.version !== b.version || a.startTick !== b.startTick || a.durationTicks !== b.durationTicks
     || a.velocityX !== b.velocityX || a.velocityY !== b.velocityY) return false;
   if (a.version === 'linear-crossing-v1' && b.version === 'linear-crossing-v1') return true;
+  if (a.version === 'adaptive-homing-v1' || b.version === 'adaptive-homing-v1') return JSON.stringify(a)===JSON.stringify(b);
   if (a.version !== 'target-lock-v1' || b.version !== 'target-lock-v1') return false;
   if (!a.capture || !b.capture) return false;
   return a.acquisitionStartTick === b.acquisitionStartTick && a.passTick === b.passTick

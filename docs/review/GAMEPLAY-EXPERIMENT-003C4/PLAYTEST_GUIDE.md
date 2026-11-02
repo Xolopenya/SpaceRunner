@@ -1,0 +1,13 @@
+# Owner playtest
+
+Run `npm run dev` and open [Balanced, seed42, first mine](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&motion=adaptive-homing&seed=42&firstMine=1). Existing keyboard WASD/arrows and touch drag controls apply. Pause/resume and restart retain normal behavior. Add `homing=soft` or `homing=aggressive`; omit it for Balanced. For comparison use `motion=target-lock`, `baseline`, `fast` or `diagonal` with the same debug/experiment/seed/firstMine parameters.
+
+First mine is at world distance180, depth plane about8.78s for an uninterrupted initial run. Red warning begins about4.78s, pursuit about5.78s. Exact fixed ticks and actual publication can be read in DEV telemetry. A displayed target changes with Ship every120Hz update. Export pursuit trace saves bounded actual controller/input/publication records locally.
+
+Try neutral flight once to see real contact and hull loss. Try a steady edge/corner to see the mine pursue that position. Early movement can help, but parking at the edge does not reliably evade it. Then try [seed43/Balanced](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&motion=adaptive-homing&seed=43&firstMine=1): begin right near6.85s, reverse left near7.45s (72ticks later), continue through the encounter. Ship should still be moving right at reversal; the mine continues right while Ship turns left. The supplied `homing-demo-bait.webm` and tick trace reproduce this without modified health/geometry. Manual timing need not match a tick exactly; repeat with Restart.
+
+On seed42 a longer right bait from pursuit start, reversing132ticks (1.1s) before the plane, also passes in the fixture. Reversing only30ticks (0.25s) before the plane can collide. The mine is not universally harmless and not every input is guaranteed safe.
+
+Record the chosen URL/seed, input device and approximate reversal time. Answer: does it visibly follow a new position; can you make it turn twice; is inertia believable; can you deliberately bait/reverse; is a failed timing understandable; is the red warning sufficient; which preset is too slow/aggressive; do ordinary debris and the mine work together; is this more enjoyable than Target-Lock; would you want it in ordinary endless runs? Export the trace after a useful or confusing case.
+
+Review videos are actual Three.js canvas captures (no HTML HUD/audio); PNGs show DEV diagnostics and actual motion trail. Mobile captures/tests are emulated portrait/landscape only. Human/physical-device acceptance has not been performed. Next step is owner acceptance/rejection/tuning decision and independent architecture review, before collectibles or advanced combinations. Production remains unchanged.

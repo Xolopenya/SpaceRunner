@@ -1,5 +1,7 @@
 # Gameplay decisions — owner-approved scope record
 
+Current experiment decision (2026-11-02): owner playtest rejected frozen Target-Lock as the desired mine interaction. GAMEPLAY-EXPERIMENT-003C4 authorizes an isolated adaptive current-position pursuit prototype with bounded inertia and reproducible bait/reversal. [Implemented controller and evidence](../review/GAMEPLAY-EXPERIMENT-003C4/ARCHITECTURE.md). Production rollout is prohibited; owner decision and independent architecture approval remain required before merge. Collectibles and advanced combinations are deferred.
+
 Source: owner's GAMEPLAY-001A brief, 2026-10-23. These ten product decisions are binding. Proposed algorithms, numeric budgets and pacing values in the accompanying research are **not** automatically owner-approved implementation details. GAMEPLAY-001B needs independent architecture approval first.
 
 | # | Owner decision | Status / consequence |

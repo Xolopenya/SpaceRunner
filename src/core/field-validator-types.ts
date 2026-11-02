@@ -1,4 +1,4 @@
-import type { FieldValidationContext, FieldTransaction, PlannedHazard, StructuralResult } from './field-types.ts';
+import type { AdaptiveMineState, FieldValidationContext, FieldTransaction, PlannedHazard, StructuralResult } from './field-types.ts';
 import type { FlightPrediction, FlightState } from './field-prediction.ts';
 
 export const VALIDATION_LIMITS = Object.freeze({
@@ -25,12 +25,17 @@ export interface ValidationGeometry {
   queryCost(hazard: PlannedHazard): number;
   /** Conservative axial half-extent of the actual static profile. */
   axialExtent(hazard: PlannedHazard): number;
-  prediction(): FlightPrediction;
+  prediction(context?: FieldValidationContext): FlightPrediction;
+  /** One immutable branch-local feedback state; absent for all historical profiles. */
+  initialMine?(context: FieldValidationContext): Readonly<AdaptiveMineState> | undefined;
+  validRoot?(context: FieldValidationContext): boolean;
+  /** Control proposal only: full120Hz coupled collision/replay still authorizes it. */
+  steering?(hazards: readonly PlannedHazard[], state: Readonly<FlightState>): ControlRun['input'] | undefined;
   /** Opt-in actual-root binding for a newly resolved, fully specified transaction. */
   resolvedAt?(context: FieldValidationContext): boolean;
   goals(hazard: PlannedHazard): readonly { x: number; y: number }[];
   /** Optional ranking-only lookahead for a composed encounter; never acceptance. */
-  goalsAt?(hazards: readonly PlannedHazard[], distance: number): readonly { x: number; y: number }[] | undefined;
+  goalsAt?(hazards: readonly PlannedHazard[], distance: number, state?: Readonly<FlightState>): readonly { x: number; y: number }[] | undefined;
 }
 export interface ControlRun { readonly ticks: number; readonly input: { readonly x: number; readonly y: number } }
 /** Previously proposed controls, never authority for a changed transaction. */
@@ -51,6 +56,7 @@ export type ValidationFailure = 'STRUCTURAL_INVALID' | 'COLLISION_FOUND' | 'NO_W
   | 'STALE_PUBLICATION_STATE' | 'UNKNOWN_PROFILE' | 'EXISTING_FIELD_UNCERTIFIED'
   | 'INVALID_TERMINAL_STATE' | 'REPLAY_DISAGREEMENT';
 export interface ValidationMetrics {
+  mineUpdates?: number; prunedStates?: number;
   propagations: number; narrowQueries: number; broadPhaseSkips: number; clockSteps: number;
   searchPropagations: number; replayPropagations: number; replayQueries: number;
   peakFrontier: number; peakExpansion: number; searches: number; replays: number; planningTicks: number;

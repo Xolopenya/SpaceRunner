@@ -9,17 +9,17 @@ export const FAST_CONFIGURATIONS = Object.freeze(['fast-ltr', 'fast-rtl'] as con
 export const DIAGONAL_CONFIGURATIONS = Object.freeze(['diagonal-ltr-up', 'diagonal-ltr-down', 'diagonal-rtl-up', 'diagonal-rtl-down'] as const);
 export const MOTION_POLICIES = Object.freeze(['baseline', 'fast', 'diagonal'] as const);
 export type CrossingPolicy = typeof MOTION_POLICIES[number];
-export type MineMotionPolicy = CrossingPolicy | 'target-lock';
+export type MineMotionPolicy = CrossingPolicy | 'target-lock' | 'adaptive-homing';
 export type MineConfiguration = typeof MINE_CONFIGURATIONS[number] | typeof FAST_CONFIGURATIONS[number] | typeof DIAGONAL_CONFIGURATIONS[number];
 export const ALL_MINE_CONFIGURATIONS = Object.freeze([...MINE_CONFIGURATIONS, ...FAST_CONFIGURATIONS, ...DIAGONAL_CONFIGURATIONS]);
 export function motionPolicy(value: string | null): MineMotionPolicy {
   if (value === null) return 'baseline';
-  if (value === 'target-lock') return value;
+  if (value === 'target-lock' || value === 'adaptive-homing') return value;
   if (MOTION_POLICIES.includes(value as CrossingPolicy)) return value as CrossingPolicy;
   throw new RangeError('Unknown mine motion policy');
 }
 export function configurations(policy: MineMotionPolicy): readonly MineConfiguration[] {
-  switch (policy) { case 'baseline': return MINE_CONFIGURATIONS; case 'fast': return FAST_CONFIGURATIONS; case 'diagonal': return DIAGONAL_CONFIGURATIONS; case 'target-lock': return []; }
+  switch (policy) { case 'baseline': return MINE_CONFIGURATIONS; case 'fast': return FAST_CONFIGURATIONS; case 'diagonal': return DIAGONAL_CONFIGURATIONS; case 'target-lock': case 'adaptive-homing': return []; }
 }
 /** No ship-dependent targeting. Every path crosses the geometric field center. */
 export function motionVector(configuration: MineConfiguration): Readonly<{ x: number; y: number }> {

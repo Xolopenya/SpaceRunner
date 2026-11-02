@@ -1,5 +1,7 @@
 # Procedural fairness — implementation proposal
 
+Implemented DEV extension003C4: adaptive motion is validated as a coupled Ship/mine state, with the actual controller responding to each branch's current Ship endpoint and an independent full replay before atomic publication. [Exact causal contract and retained limits](../review/GAMEPLAY-EXPERIMENT-003C4/COUPLED_VALIDATION.md). A witness proves one safe control sequence, not arbitrary-input safety; omitted candidates remain part of availability evidence. This does not authorize production rollout.
+
 **Not implemented or proven by the research script.** This is the review contract for GAMEPLAY-001B. Constants described as proposed are starting engineering targets, not modifications to CONFIG or evidence of human fairness. [The audit](CURRENT_GENERATOR_AUDIT.md) contains measured current behavior.
 
 ## 1. State and actual movement

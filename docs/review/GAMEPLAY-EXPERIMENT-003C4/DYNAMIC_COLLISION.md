@@ -1,0 +1,9 @@
+# Simultaneous motion collision
+
+The mine's logical collider remains a sphere of radius1.35 and Ship radius0.42. Gameplay contact uses1.77; validation adds the approved0.15margin for1.92. Both bodies move during every120Hz interval. Define relative endpoints `(shipX-mineX,shipY-mineY,mineDepth-shipDistance)` at its beginning and end, then use the existing continuous swept-sphere predicate. Tangency counts as contact. It is not an endpoint-only distance check.
+
+The controller is explicitly a discrete kick/drift integrator: after sampling Ship's endpoint, velocity is updated once and the mine moves on one straight segment for the interval. Collision, prediction, actual model and renderer all use those same endpoints. There is no hidden continuous curved interpolation for which endpoint chord checking would be an approximation. Bounded acceleration limits consecutive velocity changes. Cosmetic rotations do not alter the sphere.
+
+`AdaptivePrediction` advances branch-local feedback and calls `adaptiveHit`. The actual GameModel adapter receives GameModel's existing end-relative Ship segment and corrects its previous XY by the mine's current-minus-previous displacement, yielding the same relative segment. Slot/presentation reads never advance physics. Expired logical state can be dropped only after the entire interval is past the conservative axial opportunity; normal source retirement follows the existing distance rule.
+
+The new analytical audit compares12000 independent randomized closest-point intervals at both gameplay and safety radii, plus exact tangency, a miss just beyond it and a collision between widely separated endpoints. Actual-model/browser fixtures retain real hull/invulnerability handling: neutral or poorly timed input damages hull; timed reversal passes. All historical static, moving, mixed and Target-Lock collision audits remain required. No collider, hull or Ship dynamics were reduced to make an escape pass.

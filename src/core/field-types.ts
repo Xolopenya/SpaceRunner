@@ -26,7 +26,23 @@ export interface TargetLockMotion {
   readonly originChoice: 0 | 1;
   readonly capture: Readonly<TargetCapture>;
 }
-export type HazardMotion = LinearCrossingMotion | TargetLockMotion;
+/** Feedback controller metadata is immutable; its future pose is NOT stored here. */
+export interface AdaptiveHomingMotion {
+  readonly version: 'adaptive-homing-v1';
+  readonly startTick: number; readonly durationTicks: number;
+  readonly velocityX: number; readonly velocityY: number;
+  readonly warningTick: number; readonly passTick: number;
+  readonly maxSpeed: number; readonly maxAcceleration: number; readonly responsiveness: number;
+  readonly preset: 'soft' | 'balanced' | 'aggressive';
+  readonly capture: Readonly<TargetCapture>;
+}
+export interface AdaptiveMineState {
+  readonly id: string; readonly tick: number;
+  readonly x: number; readonly y: number; readonly vx: number; readonly vy: number;
+  readonly ax: number; readonly ay: number; readonly targetX: number; readonly targetY: number;
+  readonly phase: 'waiting' | 'warning' | 'pursuit' | 'coast';
+}
+export type HazardMotion = LinearCrossingMotion | TargetLockMotion | AdaptiveHomingMotion;
 
 export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';
 export interface PatternSource {
@@ -86,6 +102,8 @@ export type StructuralResult =
 
 /** Isolated planning input. Caller supplies all relevant known hazards. */
 export interface FieldValidationContext {
+  /** Actual current feedback state for the single committed adaptive mine. */
+  readonly homing?: Readonly<AdaptiveMineState>;
   readonly player: { readonly x: number; readonly y: number; readonly vx: number; readonly vy: number };
   readonly input: { readonly x: number; readonly y: number };
   readonly elapsed: number;

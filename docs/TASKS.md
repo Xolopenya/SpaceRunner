@@ -1,5 +1,13 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003C4 — Adaptive Homing Mine, 2026-11-02
+
+- [x] Branched from approved003C3 on main; preserved unrelated files and Skills. Added isolated DEV adaptive-homing-v1 with bounded current-Ship feedback, immutable branch-local state, exact coupled prediction/CCD and actual-root publication. No production activation or work-budget increase.
+- [x] Three presets, one active mine, original asset/light/mixed source frequency and complete known geometry. Reproducible moving right→left bait escape, late-collision case, fixed/perimeter threats, bounded trace and actual trail.
+- [x] Precommit972fixtures:781accepted/191NO_WITNESS_FOUND/0unfinished;1962extra coupled replays;300grid attempts/184response histories/84normal three-hull games. Balanced44/62publications; omissions remain visible. Existing tests/goldens are preserved.
+- [x] Eight reports and exact-HEAD review workflow retain command logs, native desktop/mobile-emulated videos, CPU/RAF/resource measurements, historical adverse records, witness contexts, negative cases, binary patch and SHA inventory. Final executed counts and package verification are recorded in the delivery manifest.
+- [ ] Owner playtest and independent architecture approval before merge; physical-device performance/readability remains unverified. Decide this mechanic before collectibles or advanced combinations.
+
 ## GAMEPLAY-EXPERIMENT-003C3 — Target-Lock Mine, 2026-11-02
 
 - [x] Added isolated DEV target-lock-v1:96-tick acquisition, actual-root frozen XY, depth-aligned4unit/s attack, minimum1s warning and existing relative CCD/damage. Preserved original policies, controls, source frequency and production.

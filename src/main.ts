@@ -52,13 +52,16 @@ async function boot(): Promise<void> {
         const { MineAssetManager } = await import('./experiments/moving-mine/assets.ts');
         const { mineConfiguration, motionPolicy, configurations } = await import('./experiments/moving-mine/settings.ts');
         const configuration = mineConfiguration(params.get('mine')), motion = motionPolicy(params.get('motion'));
+        const preset = motion === 'adaptive-homing' ? (await import('./experiments/adaptive-homing/settings.ts')).homingPreset(params.get('homing')) : undefined;
         if (configuration && !configurations(motion).includes(configuration)) throw new RangeError('Mine configuration does not match motion policy');
         if (!(assets instanceof MineAssetManager)) throw new Error('Missing mine asset owner');
         const mineAssets = assets;
         try {
           await mineAssets.loadMine();
           if (disposed) return;
-          developerModel = new MovingMineGameModel(configuration, params.get('firstMine') === '1', motion);
+          developerModel = motion === 'adaptive-homing'
+            ? new (await import('./experiments/adaptive-homing/model.ts')).AdaptiveHomingGameModel(params.get('firstMine') === '1',preset)
+            : new MovingMineGameModel(configuration, params.get('firstMine') === '1', motion);
           debugFactory = scene => { structureView = new MovingMineView(scene, mineAssets, params.get('colliders') === '1', motion); return structureView; };
         } catch (error) {
           console.warn('Moving mine asset unavailable; using certified mixed field', error);

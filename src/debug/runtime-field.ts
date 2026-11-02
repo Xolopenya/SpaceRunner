@@ -6,7 +6,7 @@ import { OwnershipLedger, sameHazard } from '../core/field-ownership.ts';
 import { RuntimePlanningSession } from '../core/field-runtime-session.ts';
 import type { DirectorCursor } from '../core/field-director.ts';
 import type { Hazard } from '../core/obstacles.ts';
-import type { PlannedHazard } from '../core/field-types.ts';
+import type { FieldTransaction, PlannedHazard } from '../core/field-types.ts';
 import type { PlanningOutcome, SchedulerRoot } from '../core/field-scheduler.ts';
 import type { ValidationWitness } from '../core/field-validator-types.ts';
 import { FIELD_POLICIES } from '../core/field-policy.ts';
@@ -21,6 +21,12 @@ export interface RuntimeEncounterSource {
   /** Authoritative pose hook; only the explicit moving experiment supplies it. */
   pose?(hazard: PlannedHazard, elapsed: number): Readonly<{ x: number; y: number }>;
   readonly diagnostics?: true;
+  /** Single feedback encounter lifecycle. Pose remains a read-only query. */
+  advance?(root: SchedulerRoot): void;
+  bindRoot?(root: SchedulerRoot, known: readonly PlannedHazard[]): SchedulerRoot;
+  published?(transaction: FieldTransaction, root: SchedulerRoot): void;
+  reset?(): void;
+  trace?(): unknown;
 }
 
 export const RUNTIME_SETTINGS = Object.freeze({ firstCell: 4, eventLimit: 64, sampleLimit: 2048 });
@@ -74,6 +80,7 @@ export class RuntimeObstacleField extends ObstacleField {
   override reset(seed: number): void {
     this.seed = seed;
     this.pending?.cancel(); this.pending = undefined; super.reset(seed);
+    this.experiment?.reset?.();
     this.director = new DifficultyDirector(seed, this.policy.name); this.cursor = this.director.initial(RUNTIME_SETTINGS.firstCell);
     this.ledger.reset(RUNTIME_SETTINGS.firstCell);
     for (const slot of this.slots) slot.planned = undefined;
@@ -86,13 +93,15 @@ export class RuntimeObstacleField extends ObstacleField {
   clearDiagnosticTrace(): void { this.publicationTrace.length = this.inputTrace.length = 0; }
   exportDiagnosticTrace(): object {
     return JSON.parse(JSON.stringify({ version: this.experiment?.version ?? this.policy.version, seed: this.seed, epoch: this.traceEpoch,
-      current: this.observe(), scheduled: this.scheduled, committed: this.committed, omitted: this.omitted,
+      current: this.observe(), ...(this.experiment?.trace?{feedback:this.experiment.trace()}:{}), scheduled: this.scheduled, committed: this.committed, omitted: this.omitted,
       fault: this.fault ?? null, lastRejection: this.lastRejection ?? null, inputRuns: this.inputTrace,
       publications: this.publicationTrace, ledger: this.ledger.snapshot(),
       limits: { decisions: 16, inputRuns: 128 }, note: 'Bounded recent decisions and exact roots; not an unlimited input recording.' }));
   }
 
   override update(_dt: number, _speed: number, distance: number, elapsed: number): void {
+    const observation = this.observe();
+    this.experiment?.advance?.(observation);
     for (const slot of this.slots) {
       const h = slot.planned;
       if (!h) { if (slot.active) this.fault = 'UNKNOWN_POOL_HAZARD'; continue; }
@@ -110,7 +119,7 @@ export class RuntimeObstacleField extends ObstacleField {
     if (represented.length !== known.length || new Set(represented.map(s => s.planned!.id)).size !== represented.length
       || represented.some(s => !known.some(h => sameHazard(s.planned!, h)))) this.fault = 'INCOMPLETE_POOL_FIELD';
     if (this.fault) { this.pending?.cancel(); this.pending = undefined; return; }
-    const root = this.observe();
+    const root = this.experiment?.bindRoot?.(observation,known) ?? observation;
     if (this.experiment?.diagnostics) {
       const last = this.inputTrace.at(-1); this.traceTick++;
       if (last && last.x === root.input.x && last.y === root.input.y) last.ticks++;
@@ -143,6 +152,7 @@ export class RuntimeObstacleField extends ObstacleField {
     }
     if (outcome.witness) this.certificate = outcome.witness;
     if (outcome.status === 'committed') {
+      this.experiment?.published?.(outcome.transaction!,root);
       // No await, event callback, renderer call or partial-capacity fallback
       // exists between actual-state replay and this complete atomic admission.
       for (const [i,h] of outcome.transaction!.hazards.entries()) Object.assign(free[i]!, {

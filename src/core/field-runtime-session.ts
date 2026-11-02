@@ -28,7 +28,8 @@ export interface RuntimeCandidate {
 
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),
-  input: Object.freeze({ x: r.input.x, y: r.input.y }), elapsed: r.elapsed, distance: r.distance });
+  input: Object.freeze({ x: r.input.x, y: r.input.y }), elapsed: r.elapsed, distance: r.distance,
+  ...(r.homing?{homing:Object.freeze({...r.homing})}:{}) });
 const zeroMetrics = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, broadPhaseSkips: 0, clockSteps: 0,
   searchPropagations: 0, replayPropagations: 0, replayQueries: 0, peakFrontier: 0, peakExpansion: 0, searches: 0, replays: 0, planningTicks: 0 });
 function neutralControls(c: FieldValidationContext): readonly ControlRun[] | undefined {
@@ -186,9 +187,11 @@ export class RuntimePlanningSession {
     job.advance(budget, tick); const after = job.metrics;
     for (const key of Object.keys(this.counts) as (keyof ValidationMetrics)[]) {
       if (key === 'planningTicks') continue;
+      if (key === 'mineUpdates' || key === 'prunedStates') continue;
       if (key === 'peakFrontier' || key === 'peakExpansion') this.counts[key] = Math.max(this.counts[key], after[key]);
       else this.counts[key] += after[key] - before[key];
     }
+    for(const key of ['mineUpdates','prunedStates'] as const)if(after[key]!==undefined)this.counts[key]=(this.counts[key]??0)+after[key]!-(before[key]??0);
     this.lastMetrics = { ...after };
     const checked = job.getResult();
     if (checked) {

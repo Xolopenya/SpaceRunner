@@ -8,11 +8,13 @@ export function simulationTick(elapsed: number): number { return Math.round(elap
 export function mineX(h: PlannedHazard, elapsed: number): number {
   const m = h.motion;
   if (!m) return h.x;
+  if (m.version === 'adaptive-homing-v1') throw new RangeError('Feedback pose requires actual coupled state');
   const ticks = Math.max(0, Math.min(m.durationTicks, simulationTick(elapsed) - m.startTick));
   return h.x + m.velocityX * ticks * CONFIG.step;
 }
 export function mineY(h: PlannedHazard, elapsed: number): number {
   const m = h.motion;
+  if (m?.version === 'adaptive-homing-v1') throw new RangeError('Feedback pose requires actual coupled state');
   if (!m?.velocityY) return h.y;
   const ticks = Math.max(0, Math.min(m.durationTicks, simulationTick(elapsed) - m.startTick));
   return h.y + m.velocityY * ticks * CONFIG.step;

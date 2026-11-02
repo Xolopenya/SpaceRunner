@@ -86,6 +86,10 @@ Planning must finish ahead of visible commitments. Initial targets are a 128-uni
 
 Future near-miss measurement can observe stable hazard IDs and logical separation along real trajectories; offer optional tighter routes beside certified safer ones. Do not optimize generation for bonuses or add rewards now. Future drifting/crossing objects must provide a time-bounded pose and enlarge broad-phase intervals; rotated boxes already need actual orientation over time. An unrecognized motion/profile must be rejected until its conservative prediction is implemented.
 
+## Adaptive feedback experiment, 003C4
+
+The DEV [adaptive homing implementation](../review/GAMEPLAY-EXPERIMENT-003C4/COUPLED_VALIDATION.md) extends actual-root publication with immutable branch-local mine state. Ship advances first, then feedback uses its current endpoint; search, independent replay, live motion and relative CCD share that order. Publication commits initial state/controller/configuration, never a future pursuit tape. Existing caps, reaction reserve, full known geometry and atomic ownership remain. Historical modes omit the optional state and are protected by approved003C3 differential tests. This isolated implementation is not production approval.
+
 ## Review gates
 
 The major open questions are validator cost on phones, stale-root replay rejection, state-veto exploitability, bootstrap pacing and human readability of overlapping depths. Do not label the design proven, implemented, faster or more fun. [The test plan](GENERATOR_TEST_PLAN.md) defines measurable gates; [the B roadmap](GAMEPLAY_001B_IMPLEMENTATION_PLAN.md) orders the work.

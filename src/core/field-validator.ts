@@ -32,7 +32,10 @@ const ACTIONS = Object.freeze([{ x: 0, y: 0 }, { x: -1, y: 0 }, { x: 1, y: 0 }, 
   { x: 0, y: 1 }, { x: -1, y: -1 }, { x: -1, y: 1 }, { x: 1, y: -1 }, { x: 1, y: 1 }].map(action => Object.freeze(action)));
 const PROFILES = ['sphere-v1', 'sphere-v1', 'half-meteor-v1', 'barrel-v1', 'generator-v1'];
 const reject = (reason: ValidationFailure, detail?: string): Rejection => ({ decision: 'reject', reason, ...(detail ? { detail } : {}) });
-const initial = (context: FieldValidationContext): FlightState => ({ ...context.player, elapsed: context.elapsed, distance: context.distance });
+const initial = (context: FieldValidationContext, geometry?: ValidationGeometry): FlightState => {
+  const homing = geometry?.initialMine?.(context);
+  return { ...context.player, elapsed: context.elapsed, distance: context.distance, ...(homing ? { homing } : {}) };
+};
 const neutral = (input: ControlRun['input']): boolean => input.x === 0 && input.y === 0;
 const sameInput = (a: ControlRun['input'], b: ControlRun['input']): boolean => a.x === b.x && a.y === b.y;
 const validInput = (input: ControlRun['input']): boolean => !!input && Number.isFinite(input.x) && Number.isFinite(input.y) && Math.abs(input.x) <= 1 && Math.abs(input.y) <= 1;
@@ -44,7 +47,7 @@ function snapshot(context: FieldValidationContext): FieldValidationContext {
   const provenance = (p: FieldValidationContext['candidate']['provenance']) => Object.freeze({ ...p,
     ...(p.pattern ? { pattern: Object.freeze({ ...p.pattern }) } : {}) });
   const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, ...(h.motion ? { motion: frozenMotion(h.motion) } : {}), provenance: provenance(h.provenance) });
-  return Object.freeze({ ...context, player: Object.freeze({ ...context.player }), input: Object.freeze({ ...context.input }),
+  return Object.freeze({ ...context, ...(context.homing ? { homing:Object.freeze({...context.homing}) } : {}), player: Object.freeze({ ...context.player }), input: Object.freeze({ ...context.input }),
     committed: Object.freeze(context.committed.map(copyHazard)), candidate: Object.freeze({ ...context.candidate,
       provenance: provenance(context.candidate.provenance), hazards: Object.freeze(context.candidate.hazards.map(copyHazard)) }) });
 }
@@ -87,6 +90,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
       if (structure.status === 'invalid') return reject('STRUCTURAL_INVALID', structure.reason);
     } catch { return reject('STRUCTURAL_INVALID', 'generator settings'); }
   }
+  if (options.geometry?.validRoot && !options.geometry.validRoot(raw)) return reject('STRUCTURAL_INVALID','coupled root');
   const context = snapshot(raw), hazards = [...context.committed, ...context.candidate.hazards];
   let time = context.elapsed, distance = context.distance, lastCenter = distance, lastExit = distance;
   for (const h of hazards) { lastCenter = Math.max(lastCenter, h.passDistance); lastExit = Math.max(lastExit, h.passDistance + (options.geometry?.axialExtent(h) ?? h.radius) + CONFIG.ship.radius + margin); }
@@ -120,8 +124,10 @@ function* simulate(state: FlightState, input: ControlRun['input'], ticks: number
     yield 'propagation';
     previous.x = state.x; previous.y = state.y; previous.vx = state.vx; previous.vy = state.vy;
     previous.elapsed = state.elapsed; previous.distance = state.distance;
+    if (state.homing || previous.homing) previous.homing = state.homing;
     if (broadPhase) prediction.stepAt(state, input, p.times[startTick + tick + 1]!, p.distances[startTick + tick + 1]!);
     else prediction.step(state, input); // replay independently recomputes its own clock
+    if (state.homing || previous.homing) metrics.mineUpdates = (metrics.mineUpdates ?? 0) + 1;
     if (broadPhase) metrics.searchPropagations++; else metrics.replayPropagations++;
     for (const h of p.hazards) {
       const radius = p.geometry?.axialExtent(h) ?? h.radius;
@@ -155,8 +161,8 @@ function compact(runs: readonly ControlRun[]): readonly ControlRun[] {
 }
 
 /** Coarse lookahead GOALS ONLY. Never snap a state or use this screen for acceptance. */
-function goalsFor(p: Prepared, distance: number): readonly { x: number; y: number }[] {
-  const override = p.geometry?.goalsAt?.(p.hazards, distance);
+function goalsFor(p: Prepared, distance: number, state?: Readonly<FlightState>): readonly { x: number; y: number }[] {
+  const override = p.geometry?.goalsAt?.(p.hazards, distance, state);
   if (override) return override;
   const future = p.hazards.filter(h => h.passDistance + h.radius + CONFIG.ship.radius + p.margin >= distance);
   if (!future.length) return [{ x: 0, y: 0 }];
@@ -181,7 +187,7 @@ function ranking(state: FlightState, changes: number, goals: readonly { x: numbe
 
 function* search(p: Prepared, metrics: ValidationMetrics): Work<Path | Rejection> {
   if (++metrics.searches > L.maxSearches) return reject('COMPUTATION_BUDGET_EXCEEDED', 'search limit');
-  const prediction = p.geometry?.prediction() ?? new FlightPrediction(), root = initial(p.context);
+  const prediction = p.geometry?.prediction(p.context) ?? new FlightPrediction(), root = initial(p.context,p.geometry);
   const prefixHit = yield* simulate(root, p.context.input, L.reactionTicks, p, metrics, true, prediction);
   if (prefixHit) return reject('INSUFFICIENT_REACTION_DISTANCE', prefixHit.id);
   let serial = 0, tick = L.reactionTicks;
@@ -190,7 +196,7 @@ function* search(p: Prepared, metrics: ValidationMetrics): Work<Path | Rejection
   metrics.peakFrontier = Math.max(metrics.peakFrontier, 1);
   while (tick < p.controlEndTick) {
     const ticks = Math.min(L.macroTicks, p.controlEndTick - tick), expansion: Node[] = [];
-    const goals = goalsFor(p, frontier[0]!.state.distance);
+    const goals = goalsFor(p, frontier[0]!.state.distance,frontier[0]!.state);
     for (const parent of frontier) for (let action = 0; action < ACTIONS.length; action++) {
       const input = ACTIONS[action]!, state = { ...parent.state };
       const hit = yield* simulate(state, input, ticks, p, metrics, true, prediction, parent.tick);
@@ -204,13 +210,14 @@ function* search(p: Prepared, metrics: ValidationMetrics): Work<Path | Rejection
     const bins = new Map<string, number>(); frontier = [];
     for (const node of expansion) {
       const s = node.state;
-      const key = `${Math.floor(s.x / L.positionBin)},${Math.floor(s.y / L.positionBin)},${Math.floor(s.vx / L.velocityBin)},${Math.floor(s.vy / L.velocityBin)}`;
+      const key = trajectoryStateKey(s);
       const count = bins.get(key) ?? 0;
       if (count === L.representatives) continue;
       bins.set(key, count + 1); frontier.push(node);
       if (frontier.length === L.beamWidth) break;
     }
     metrics.peakFrontier = Math.max(metrics.peakFrontier, frontier.length);
+    if(root.homing)metrics.prunedStates=(metrics.prunedStates??0)+expansion.length-frontier.length;
     if (!frontier.length) return reject('NO_WITNESS_FOUND');
     tick += ticks;
   }
@@ -235,11 +242,18 @@ export function witnessHash(value: unknown): string {
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
+/** Bins only prune exact representatives; feedback velocity/pose affects future reachability. */
+export function trajectoryStateKey(s: Readonly<FlightState>): string {
+  const key=`${Math.floor(s.x/L.positionBin)},${Math.floor(s.y/L.positionBin)},${Math.floor(s.vx/L.velocityBin)},${Math.floor(s.vy/L.velocityBin)}`;
+  const h=s.homing;
+  return h ? key+`/mine/${h.id}/${h.tick}/${h.phase}/${Math.floor(h.x/L.positionBin)},${Math.floor(h.y/L.positionBin)},${Math.floor(h.vx/L.velocityBin)},${Math.floor(h.vy/L.velocityBin)}` : key;
+}
+
 function* replay(p: Prepared, controls: readonly ControlRun[], metrics: ValidationMetrics, axialCull = false): Work<TrajectoryResult> {
   if (++metrics.replays > L.maxReplays) return reject('COMPUTATION_BUDGET_EXCEEDED', 'replay limit');
   if (controls.length > L.horizonTicks || controls.some(run => !Number.isInteger(run.ticks) || run.ticks <= 0 || !validInput(run.input))
     || controls.reduce((sum, run) => sum + run.ticks, 0) !== p.targetTick) return reject('INVALID_TERMINAL_STATE', 'control duration');
-  const state = initial(p.context), prediction = p.geometry?.prediction() ?? new FlightPrediction();
+  const state = initial(p.context,p.geometry), prediction = p.geometry?.prediction(p.context) ?? new FlightPrediction();
   let tick = 0;
   for (const run of controls) {
     if ((tick < L.reactionTicks && !sameInput(run.input, p.context.input)) || (tick + run.ticks > p.controlEndTick && !neutral(run.input))) {
@@ -386,7 +400,7 @@ function runtimeRootSearch(previous: ValidationWitness | undefined, current: Fie
       || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate) : p.geometry?.resolvedAt?.(p.context) !== true)
       || p.context.candidate.hazards.some(h => h.passDistance - h.radius - CONFIG.ship.radius - p.margin <= p.context.distance)) return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
     metrics.searches++; metrics.peakFrontier = 1; metrics.peakExpansion = 1;
-    const state = initial(p.context), prediction = p.geometry?.prediction() ?? new FlightPrediction();
+    const state = initial(p.context,p.geometry), prediction = p.geometry?.prediction(p.context) ?? new FlightPrediction();
     const runs: ControlRun[] = [{ ticks: L.reactionTicks, input: p.context.input }];
     const prefix = yield* simulate(state, p.context.input, L.reactionTicks, p, metrics, true, prediction);
     if (prefix) return reject('INSUFFICIENT_REACTION_DISTANCE', `${prefix.id}@${prefix.step}`);
@@ -394,11 +408,12 @@ function runtimeRootSearch(previous: ValidationWitness | undefined, current: Fie
     const committedExit=Math.max(p.context.distance,...p.context.committed.map(h=>h.passDistance+(p.geometry?.axialExtent(h)??h.radius)+CONFIG.ship.radius+p.margin));
     let hintRun=0,hintStart=0;
     while (tick < p.controlEndTick) {
-      const goals = goalsFor(p, state.distance), goal = [...goals].sort((a, b) =>
+      const goals = goalsFor(p, state.distance,state), goal = [...goals].sort((a, b) =>
         Math.hypot(a.x - state.x - state.vx * .25, a.y - state.y - state.vy * .25)
         - Math.hypot(b.x - state.x - state.vx * .25, b.y - state.y - state.vy * .25))[0] ?? { x: 0, y: 0 };
       const axis = (error: number, velocity: number) => Math.abs(error) <= velocity * velocity / (2 * CONFIG.ship.braking) + .08 && error * velocity >= 0 ? 0 : Math.sign(error);
       let input = { x: axis(goal.x - state.x, state.vx), y: axis(goal.y - state.y, state.vy) }, ticks = Math.min(L.macroTicks, p.controlEndTick - tick);
+      input = p.geometry?.steering?.(p.hazards,state) ?? input;
       if(hint && state.distance<=committedExit){
         const at=Math.round((p.context.elapsed-hint.elapsed)/CONFIG.step)+tick;
         while(hintRun<hint.controls.length&&hintStart+hint.controls[hintRun]!.ticks<=at){hintStart+=hint.controls[hintRun]!.ticks;hintRun++;}

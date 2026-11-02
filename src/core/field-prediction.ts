@@ -3,9 +3,9 @@ import { Ship } from './ship.ts';
 import { ClearanceHazardCollision } from './field-clearance.ts';
 import { HazardCollision } from './hazard-collision.ts';
 import type { Axis } from './ship.ts';
-import type { PlannedHazard } from './field-types.ts';
+import type { AdaptiveMineState, PlannedHazard } from './field-types.ts';
 
-export interface FlightState { x: number; y: number; vx: number; vy: number; elapsed: number; distance: number }
+export interface FlightState { x: number; y: number; vx: number; vy: number; elapsed: number; distance: number; homing?: Readonly<AdaptiveMineState> }
 
 /** Private shadow Ship, never the live player. Exact GameModel update ordering. */
 export class FlightPrediction {

@@ -12,7 +12,7 @@ import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
 
-export type SchedulerRoot = Pick<FieldValidationContext, 'player' | 'input' | 'elapsed' | 'distance'>;
+export type SchedulerRoot = Pick<FieldValidationContext, 'player' | 'input' | 'elapsed' | 'distance' | 'homing'>;
 export type PlanningPhase = 'validation' | 'replay' | 'publication' | 'ready' | 'failed' | 'done';
 export interface AttemptRecord {
   readonly kind: 'primary' | 'ambient-fallback' | 'empty-fallback';
@@ -43,7 +43,8 @@ export interface PublicationObservation {
 }
 const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   player: Object.freeze({ x: r.player.x, y: r.player.y, vx: r.player.vx, vy: r.player.vy }),
-  input: Object.freeze({ x: r.input.x, y: r.input.y }), elapsed: r.elapsed, distance: r.distance });
+  input: Object.freeze({ x: r.input.x, y: r.input.y }), elapsed: r.elapsed, distance: r.distance,
+  ...(r.homing?{homing:Object.freeze({...r.homing})}:{}) });
 const zeroMetrics = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, broadPhaseSkips: 0, clockSteps: 0,
   searchPropagations: 0, replayPropagations: 0, replayQueries: 0, peakFrontier: 0, peakExpansion: 0, searches: 0, replays: 0, planningTicks: 0 });
 export const visibleAt = (hazards: readonly PlannedHazard[], distance: number): readonly PlannedHazard[] =>
@@ -51,6 +52,7 @@ export const visibleAt = (hazards: readonly PlannedHazard[], distance: number): 
 
 /** Prediction is NOT a safety decision. Commit requires equality with the actual future root. */
 export function forecastPublication(root: SchedulerRoot, inputs?: readonly ControlRun[]): SchedulerRoot {
+  if(root.homing)throw new RangeError('Feedback forecasts require coupled dynamics');
   if (inputs && (inputs.length > L.horizonTicks || inputs.some(r => !Number.isInteger(r.ticks) || r.ticks < 1 || r.ticks > L.horizonTicks
     || !Number.isFinite(r.input.x) || !Number.isFinite(r.input.y) || Math.abs(r.input.x) > 1 || Math.abs(r.input.y) > 1))) throw new RangeError('Invalid bounded forecast controls');
   const state = { ...root.player, elapsed: root.elapsed, distance: root.distance }, prediction = new FlightPrediction();
@@ -131,7 +133,7 @@ export class PlanningSession {
       for (const key of Object.keys(this.counts) as (keyof ValidationMetrics)[]) {
         if (key === 'planningTicks') continue;
         if (key === 'peakFrontier' || key === 'peakExpansion') this.counts[key] = Math.max(this.counts[key], after[key]);
-        else this.counts[key] += after[key] - before[key];
+        else this.counts[key] = (this.counts[key] ?? 0) + (after[key] ?? 0) - (before[key] ?? 0);
       }
       this.lastMetrics = { ...after };
       const checked = this.job.getResult();
