@@ -37,6 +37,10 @@ export class Game {
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     this.soundPanel = new SoundPanel(this.audio);
     const options = { signal: this.events.signal };
+    // Unlock the existing menu loop on a real menu gesture, without autoplay.
+    const menuAudio = () => { if (this.model.state === 'MENU' && this.audio.status !== 'running') void this.audio.unlock(); };
+    element('menu').addEventListener('pointerdown', menuAudio, options);
+    element('menu').addEventListener('keydown', menuAudio, options);
     element('launch').addEventListener('click', () => this.start(), options);
     element('restart-pause').addEventListener('click', () => { if(this.model.state==='PAUSED'){this.model.state='GAME_OVER';this.start();} }, options);
     element('replay').addEventListener('click', () => this.start(), options);

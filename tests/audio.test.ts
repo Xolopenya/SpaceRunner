@@ -100,6 +100,21 @@ test('mute and individual volumes route to the intended buses', async () => {
   audio.dispose();
 });
 
+test('menu music reacts immediately to settings and menu return reuses the same loop', async () => {
+  const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
+  const model = { ...frame(), state: 'MENU' }; audio.update(model); await audio.unlock();
+  const initial = graph(audio), starts = context.starts;
+  assert.equal(initial.engine.output.gain.value, 0);
+  const music = initial as unknown as { musicLevel: { gain: Parameter } };
+  assert.ok(music.musicLevel.gain.value > 0);
+  audio.setSettings({ music: 0, sfx: .81 }); assert.equal(initial.musicBus.gain.value, 0); assert.equal(initial.sfxBus.gain.value, .81);
+  audio.setSettings({ music: .7, muted: true }); assert.equal(initial.musicBus.gain.value, .7); assert.equal(initial.master.gain.value, 0);
+  audio.setSettings({ muted: false }); assert.ok(initial.master.gain.value > 0);
+  for (const state of ['PLAYING', 'PAUSED', 'GAME_OVER', 'MENU']) { model.state = state; audio.update(model); }
+  await audio.unlock(); assert.equal(graph(audio), initial); assert.equal(context.starts, starts);
+  assert.ok(music.musicLevel.gain.value > 0); audio.dispose();
+});
+
 test('one impact per damage serial, distinct final sounds, bounded voices and completed cleanup', async () => {
   const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
   const model = frame(); audio.update(model); await audio.unlock();

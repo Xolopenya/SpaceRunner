@@ -3,6 +3,62 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 
+interface HotfixProbe { contexts: number; loops: number; gains: GainNode[]; analyser?: AnalyserNode }
+declare global { interface Window { hotfixAudio: HotfixProbe } }
+
+test('hotfix production menu music, passive flight, Phase 2 and restart', async ({ page }) => {
+  test.setTimeout(75_000);
+  const downloads: string[] = [];
+  page.on('response', r => { if (r.url().endsWith('.glb')) downloads.push(r.url()); });
+  await page.addInitScript(() => {
+    crypto.getRandomValues = <T extends ArrayBufferView | null>(a: T): T => { (a as unknown as Uint32Array).fill(11); return a; };
+    const Native = window.AudioContext, probe: HotfixProbe = { contexts: 0, loops: 0, gains: [] }; window.hotfixAudio = probe;
+    window.AudioContext = class extends Native {
+      constructor(options?: AudioContextOptions) {
+        super(options); probe.contexts++;
+        const gain = this.createGain.bind(this), buffer = this.createBufferSource.bind(this);
+        this.createGain = () => { const n = gain(); probe.gains.push(n); if (probe.gains.length === 1) { probe.analyser = this.createAnalyser(); n.connect(probe.analyser); } return n; };
+        this.createBufferSource = () => { const n = buffer(), start = n.start.bind(n); n.start = (...args: Parameters<typeof n.start>) => { if (n.loop) probe.loops++; start(...args); }; return n; };
+      }
+    };
+  });
+  await page.goto(process.env.HOTFIX_PUBLIC_URL ?? 'http://127.0.0.1:4173/');
+  await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
+  expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();
+  expect(await page.evaluate(() => window.hotfixAudio.contexts)).toBe(0);
+  await page.locator('#menu h1').click();
+  const rms = () => page.evaluate(() => { const a = window.hotfixAudio.analyser; if (!a) return 0; const samples = new Float32Array(a.fftSize); a.getFloatTimeDomainData(samples); return Math.sqrt(samples.reduce((n, x) => n + x * x, 0) / samples.length); });
+  await expect.poll(rms).toBeGreaterThan(.0005);
+  await page.locator('#menu [data-sound-open]').click();
+  const slider = async (key: string, value: string) => { await page.locator('#sound-' + key).fill(value); await page.locator('#sound-' + key).dispatchEvent('input'); };
+  await slider('music', '0'); await page.waitForTimeout(600); expect(await rms()).toBeLessThan(.00001);
+  await slider('music', '80'); await expect.poll(rms).toBeGreaterThan(.001);
+  expect(await page.evaluate(() => window.hotfixAudio.gains[2]!.gain.value)).toBeCloseTo(.75, 3);
+  await slider('master', '0'); await expect.poll(rms).toBeLessThan(.00001);
+  await slider('master', '65'); await expect.poll(rms).toBeGreaterThan(.001);
+  await page.locator('#sound-mute').click(); await expect.poll(rms).toBeLessThan(.00001);
+  await page.locator('#sound-mute').click(); await expect.poll(rms).toBeGreaterThan(.001);
+  await page.locator('#sound-close').click(); await page.locator('#launch').click();
+  // No steering, no model access and normal production collision/hull rules.
+  await page.waitForFunction(() => Number(document.querySelector('#distance')!.textContent!.replaceAll(',', '')) >= 510, {}, { timeout: 45000 });
+  await page.screenshot({ path: 'test-results/hotfix-phase2.png' });
+  await page.locator('#pause').click(); const distance = await page.locator('#distance').textContent();
+  await expect(page.locator('#phase-label')).toContainText('PHASE 2');
+  expect(await page.locator('#phase-label').getAttribute('data-gap')).toBe('0');
+  const speed = Number(await page.locator('#phase-label').getAttribute('data-speed')); expect(speed).toBeGreaterThan(24);
+  await page.waitForTimeout(300); expect(await page.locator('#distance').textContent()).toBe(distance);
+  await page.locator('#resume').click(); await expect.poll(() => page.locator('#distance').textContent()).not.toBe(distance);
+  await page.locator('#pause').click(); await page.locator('#restart-pause').click();
+  await expect(page.locator('#phase-label')).toContainText('PHASE 1');
+  await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', '3');
+  expect(await page.locator('#phase-label').getAttribute('data-gap')).toBe('48');
+  expect(downloads).toHaveLength(6); expect(await page.evaluate(() => [window.hotfixAudio.contexts, window.hotfixAudio.loops])).toEqual([1, 2]);
+  await page.reload(); await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
+  await page.locator('#menu [data-sound-open]').click(); await expect(page.locator('#sound-music')).toHaveValue('80');
+  await expect.poll(rms).toBeGreaterThan(.001);
+  console.log('Hotfix production smoke:', JSON.stringify({ url: page.url(), passiveDistance: distance, phase2Speed: speed, modelsPerLoad: 6, contextsPerPage: 1, music: await rms() }));
+});
+
 async function inspect(page: Page) {
   return page.evaluate(() => {
     const audio = window.spaceRunner!.audio as unknown as {

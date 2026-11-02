@@ -48,7 +48,7 @@ export class SoundPanel {
     this.lastSettings = settings;
     this.lastStatus = status;
     const states = {
-      locked: 'Sound starts after Launch or a sound control.', running: 'Audio enabled.',
+      locked: 'Click or press a key in the menu to enable sound.', running: 'Audio enabled.',
       muted: 'Sound muted.', blocked: 'Audio blocked. Use a sound control or Resume.',
       unavailable: 'Audio unavailable. Silent flight remains ready.', suspended: 'Audio suspended. Use a sound control or Resume.', disposed: 'Audio stopped.',
     };
