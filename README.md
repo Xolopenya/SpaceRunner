@@ -2,6 +2,8 @@
 
 Browser-based 3D space endless runner developed with Three.js, TypeScript, and Vite.
 
+**GAMEPLAY-EXPERIMENT-003C3 (Partial):** [Target-Lock DEV, seed42](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&motion=target-lock&seed=42&firstMine=1) captures actual ship XY on certified publication, freezes the course and permits deliberate post-lock evasion. [A/B/C owner protocol](docs/review/GAMEPLAY-EXPERIMENT-003C3/PLAYTEST_GUIDE.md). Safety routes replay successfully; publication omissions remain higher (11/48 versus5/48Fast/Diagonal). Owner acceptance and bounded planner improvement are pending. Production is unchanged.
+
 **GAMEPLAY-EXPERIMENT-003C2:** compare DEV mine `motion=baseline|fast|diagonal` using the [quick A/B/C playtest](docs/review/GAMEPLAY-EXPERIMENT-003C2/PLAYTEST_GUIDE.md). Fast is3.5units/s; diagonal is±3X/±1.5Y. Add `firstMine=1` for a certified encounter near8.78s. Original mine URLs/defaults remain reproducible. Measured maneuver-demand proxies did not materially increase; owner selection is pending.
 
 **GAMEPLAY-EXPERIMENT-003C:** [moving mine, seed42](http://127.0.0.1:5173/?debug=field&experiment=moving-mine&seed=42) adds one DEV contact hazard with deterministic lateral motion, relative CCD and dynamic safety replay. Add `&firstMine=1&mine=slow-ltr` for an early certified crossing near180m; other configurations: `slow-rtl`, `moderate-ltr`, `moderate-rtl`. [Owner protocol](docs/review/GAMEPLAY-EXPERIMENT-003C/PLAYTEST_GUIDE.md). Production and previous modes remain unchanged.

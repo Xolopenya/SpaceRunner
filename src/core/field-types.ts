@@ -10,6 +10,24 @@ export interface LinearCrossingMotion {
   readonly velocityY?: number;
 }
 
+/** Observed, not forecast. Copied at the synchronous publication event. */
+export interface TargetCapture {
+  readonly tick: number; readonly elapsed: number; readonly distance: number;
+  readonly x: number; readonly y: number; readonly vx: number; readonly vy: number;
+  readonly inputX: number; readonly inputY: number;
+}
+export interface TargetLockMotion {
+  readonly version: 'target-lock-v1';
+  readonly startTick: number; readonly durationTicks: number;
+  readonly velocityX: number; readonly velocityY: number;
+  readonly acquisitionStartTick: number; readonly passTick: number;
+  readonly minimumWarningTicks: number; readonly attackSpeed: number;
+  readonly targetX: number; readonly targetY: number;
+  readonly originChoice: 0 | 1;
+  readonly capture: Readonly<TargetCapture>;
+}
+export type HazardMotion = LinearCrossingMotion | TargetLockMotion;
+
 export type PatternFamily = 'scattered' | 'narrowing' | 'alternating' | 'vertical-weave';
 export interface PatternSource {
   readonly family: PatternFamily;
@@ -48,7 +66,7 @@ export interface PlannedHazard {
   readonly phase: number;
   /** Pose uses the existing hazardOrientation at absolute simulation time. */
   readonly orientation: 'euler-xyz-v1';
-  readonly motion?: Readonly<LinearCrossingMotion>;
+  readonly motion?: Readonly<HazardMotion>;
   readonly provenance: Readonly<FieldProvenance>;
 }
 

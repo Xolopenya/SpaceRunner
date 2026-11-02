@@ -10,7 +10,7 @@ import type { RuntimeEncounterSource } from '../../debug/runtime-field.ts';
 import { mixedFlowSource, FLOW_GEOMETRY } from '../mixed-flow/source.ts';
 import { WRECK_GEOMETRY } from '../structure-variants/encounter.ts';
 import { MINE as S, ALL_MINE_CONFIGURATIONS, configurations, motionVector } from './settings.ts';
-import type { MineConfiguration, MineMotionPolicy } from './settings.ts';
+import type { MineConfiguration, CrossingPolicy } from './settings.ts';
 import { isMine, mineX, mineY, simulationTick, validMotion } from './motion.ts';
 import { MinePrediction } from './collision.ts';
 
@@ -79,7 +79,7 @@ export const MINE_GEOMETRY: ValidationGeometry = Object.freeze({ ...FLOW_GEOMETR
     return { status: 'valid', candidateCount: candidate.hazards.reduce((n, h) => n + FLOW_GEOMETRY.queryCost(h), 0), totalCount: total, aboveSoftLimit: total > 24 };
   },
 });
-export function movingMineSource(configuration?: MineConfiguration, first = false, policy: MineMotionPolicy = 'baseline'): RuntimeEncounterSource {
+export function movingMineSource(configuration?: MineConfiguration, first = false, policy: CrossingPolicy = 'baseline'): RuntimeEncounterSource {
   const choices = configurations(policy);
   if (!choices || (configuration && !choices.includes(configuration))) throw new RangeError('Mine configuration does not match motion policy');
   const flow = mixedFlowSource();

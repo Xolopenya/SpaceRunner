@@ -130,7 +130,8 @@ export class RuntimeObstacleField extends ObstacleField {
     const free = publicationDue ? this.slots.filter(s => !s.planned && !s.active) : [];
     if (publicationDue && free.length < 12) { this.fault = 'POOL_CAPACITY'; pending.cancel(); this.pending = undefined; return; }
     const phase = publicationDue ? 'actual-gate' : pending.phase, before = pending.metrics, start = performance.now();
-    const outcome = pending.advance(root, known, ++this.age), ms = performance.now() - start, after = pending.metrics;
+    const hint = publicationDue && pending.resolvingTarget && this.certificate ? { elapsed:this.certificate.context.elapsed, controls:this.certificate.controls } : undefined;
+    const outcome = pending.advance(root, known, ++this.age, undefined, hint), ms = performance.now() - start, after = pending.metrics;
     this.schedulerMs += ms; this.maxChunkMs = Math.max(this.maxChunkMs, ms); this.planningTicks++;
     if (this.samples.length === RUNTIME_SETTINGS.sampleLimit) this.samples.shift();
     this.samples.push({ phase, ms, propagations: after.propagations - before.propagations, queries: after.narrowQueries - before.narrowQueries });

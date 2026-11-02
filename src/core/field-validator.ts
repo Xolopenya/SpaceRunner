@@ -1,12 +1,13 @@
 import { CONFIG, difficulty } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { FlightPrediction } from './field-prediction.ts';
+import { frozenMotion } from './field-motion.ts';
 import { hazardVariant } from './hazard-profile.ts';
 import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { FIELD_LIMITS } from './field-settings.ts';
 import type { FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { FlightState } from './field-prediction.ts';
-import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationFailure, ValidationGeometry, ValidationMetrics, ValidationOptions, ValidationWitness } from './field-validator-types.ts';
+import type { ControlRun, ControlHint, TrajectoryResult, ValidationBudget, ValidationFailure, ValidationGeometry, ValidationMetrics, ValidationOptions, ValidationWitness } from './field-validator-types.ts';
 
 type Rejection = Extract<TrajectoryResult, { decision: 'reject' }>;
 type Operation = 'propagation' | 'query' | { readonly queries: number };
@@ -42,7 +43,7 @@ const counters = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, 
 function snapshot(context: FieldValidationContext): FieldValidationContext {
   const provenance = (p: FieldValidationContext['candidate']['provenance']) => Object.freeze({ ...p,
     ...(p.pattern ? { pattern: Object.freeze({ ...p.pattern }) } : {}) });
-  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, ...(h.motion ? { motion: Object.freeze({ ...h.motion }) } : {}), provenance: provenance(h.provenance) });
+  const copyHazard = (h: PlannedHazard) => Object.freeze({ ...h, ...(h.motion ? { motion: frozenMotion(h.motion) } : {}), provenance: provenance(h.provenance) });
   return Object.freeze({ ...context, player: Object.freeze({ ...context.player }), input: Object.freeze({ ...context.input }),
     committed: Object.freeze(context.committed.map(copyHazard)), candidate: Object.freeze({ ...context.candidate,
       provenance: provenance(context.candidate.provenance), hazards: Object.freeze(context.candidate.hazards.map(copyHazard)) }) });
@@ -364,14 +365,25 @@ export function beginNeutralKnownFieldValidation(context: FieldValidationContext
  * query is billed; accepted paths get a fresh independent clock/CCD replay in
  * this same job. An unfinished job cannot publish on a later observation. */
 export function beginRuntimeRootSearch(witness: ValidationWitness, current: FieldValidationContext, options: ValidationOptions): ValidationJob {
-  witness = Object.freeze({ ...witness, context: snapshot(witness.context) });
+  return runtimeRootSearch(witness, current, options);
+}
+/** Fresh actual-root proof. Old controls are only proposals; every interval and
+ * the independent replay check the NEW frozen target and complete geometry. */
+export function beginResolvedRuntimeSearch(current: FieldValidationContext, options: ValidationOptions, hint?: ControlHint): ValidationJob {
+  return runtimeRootSearch(undefined, current, options, hint);
+}
+function runtimeRootSearch(previous: ValidationWitness | undefined, current: FieldValidationContext, options: ValidationOptions, rawHint?: ControlHint): ValidationJob {
+  const witness = previous ? Object.freeze({ ...previous, context: snapshot(previous.context) }) : undefined;
+  const hint = rawHint && Number.isFinite(rawHint.elapsed) && rawHint.elapsed <= current.elapsed && Array.isArray(rawHint.controls)
+    && rawHint.controls.length <= L.horizonTicks && rawHint.controls.every(r => Number.isSafeInteger(r.ticks) && r.ticks > 0 && r.ticks <= L.horizonTicks && validInput(r.input))
+    ? {elapsed:rawHint.elapsed,controls:rawHint.controls.map(r=>({ticks:r.ticks,input:{...r.input}}))}:undefined;
   const metrics = counters(), p = prepare(current, { ...options, margin: L.margin }, metrics);
   return new ValidationJob(function* (metrics) {
     if ('decision' in p) return reject('STALE_PUBLICATION_STATE', p.reason);
-    if (witness.version !== L.version || witness.margin !== L.margin || witness.structuralPolicy !== 'generator' || p.policy !== 'generator'
+    if (p.policy !== 'generator' || (witness ? witness.version !== L.version || witness.margin !== L.margin || witness.structuralPolicy !== 'generator'
       || witness.geometryVersion !== p.geometry?.version || p.context.elapsed < witness.context.elapsed
       || p.context.elapsed - witness.context.elapsed > L.deadlineTicks * CONFIG.step + 1e-9 || p.context.distance < witness.context.distance
-      || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate)
+      || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate) : p.geometry?.resolvedAt?.(p.context) !== true)
       || p.context.candidate.hazards.some(h => h.passDistance - h.radius - CONFIG.ship.radius - p.margin <= p.context.distance)) return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
     metrics.searches++; metrics.peakFrontier = 1; metrics.peakExpansion = 1;
     const state = initial(p.context), prediction = p.geometry?.prediction() ?? new FlightPrediction();
@@ -379,12 +391,19 @@ export function beginRuntimeRootSearch(witness: ValidationWitness, current: Fiel
     const prefix = yield* simulate(state, p.context.input, L.reactionTicks, p, metrics, true, prediction);
     if (prefix) return reject('INSUFFICIENT_REACTION_DISTANCE', `${prefix.id}@${prefix.step}`);
     let tick = L.reactionTicks;
+    const committedExit=Math.max(p.context.distance,...p.context.committed.map(h=>h.passDistance+(p.geometry?.axialExtent(h)??h.radius)+CONFIG.ship.radius+p.margin));
+    let hintRun=0,hintStart=0;
     while (tick < p.controlEndTick) {
       const goals = goalsFor(p, state.distance), goal = [...goals].sort((a, b) =>
         Math.hypot(a.x - state.x - state.vx * .25, a.y - state.y - state.vy * .25)
         - Math.hypot(b.x - state.x - state.vx * .25, b.y - state.y - state.vy * .25))[0] ?? { x: 0, y: 0 };
       const axis = (error: number, velocity: number) => Math.abs(error) <= velocity * velocity / (2 * CONFIG.ship.braking) + .08 && error * velocity >= 0 ? 0 : Math.sign(error);
-      const input = { x: axis(goal.x - state.x, state.vx), y: axis(goal.y - state.y, state.vy) }, ticks = Math.min(L.macroTicks, p.controlEndTick - tick);
+      let input = { x: axis(goal.x - state.x, state.vx), y: axis(goal.y - state.y, state.vy) }, ticks = Math.min(L.macroTicks, p.controlEndTick - tick);
+      if(hint && state.distance<=committedExit){
+        const at=Math.round((p.context.elapsed-hint.elapsed)/CONFIG.step)+tick;
+        while(hintRun<hint.controls.length&&hintStart+hint.controls[hintRun]!.ticks<=at){hintStart+=hint.controls[hintRun]!.ticks;hintRun++;}
+        const proposal=hint.controls[hintRun];if(proposal&&at>=hintStart){input=proposal.input;ticks=Math.min(ticks,hintStart+proposal.ticks-at);}
+      }
       const hit = yield* simulate(state, input, ticks, p, metrics, true, prediction, tick);
       if (hit) return reject('NO_WITNESS_FOUND', `${hit.id}@${tick + hit.step}`);
       runs.push({ ticks, input }); tick += ticks;

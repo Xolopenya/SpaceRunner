@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'target-lock', testMatch: 'target-lock.spec.ts', timeout: 120_000 },
     { name: 'mine-motion', testMatch: 'mine-motion.spec.ts', timeout: 120_000 },
     { name: 'moving-mine', testMatch: 'moving-mine.spec.ts', timeout: 120_000 },
     { name: 'mixed-flow', testMatch: 'mixed-flow.spec.ts', timeout: 120_000 },

@@ -1,5 +1,15 @@
 # Delivery checklist
 
+## GAMEPLAY-EXPERIMENT-003C3 — Target-Lock Mine, 2026-11-02
+
+- [x] Added isolated DEV target-lock-v1:96-tick acquisition, actual-root frozen XY, depth-aligned4unit/s attack, minimum1s warning and existing relative CCD/damage. Preserved original policies, controls, source frequency and production.
+- [x] Fresh actual-root search plus independent replay precedes atomic publication; old controls are proposals only. No post-lock tracking, safety relaxation or work-budget increase.
+- [x] Reference1458/1458 bounded fixtures certify/replay;2236new independent audit records and3late-collision negatives.45actual-model A/B/C games retain all proposals/rejections; Target37/48 versus43/48Fast/Diagonal.
+- [x] H1 relevance and mechanical H2 evasion supported in bounded probes (75/75fixed-point Target contacts; deliberate evasion retains hull3). No enjoyment/human/physical-device claim.
+- [ ] **Partial / H3 availability:**11/48Target omissions versus5/48references; improve bounded actual-root route proposals before promotion. No unsafe mine is published.
+- [x] Added focused tests,116-history/production preservation, matched fresh-Chrome recorded/unrecorded diagnostics and real phase/off-center/boundary/CCD/evasion media. Exact-HEAD manifest records final commands and review-package verification.
+- [ ] Owner A/B/C warning/readability/engagement and physical-phone acceptance before collectibles or further encounter patterns.
+
 ## GAMEPLAY-EXPERIMENT-003C2 — fast and diagonal motion, 2026-10-28
 
 - [x] Created requested feature branch from approved3779d32 already on main; preserved unrelated files. Extended existing linear-crossing-v1 with optional Y velocity while preserving original horizontal records.

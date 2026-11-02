@@ -1,11 +1,11 @@
 import { CONFIG, difficulty } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { buildSection } from './field-section.ts';
-import { beginValidation, beginKnownFieldValidation, beginNeutralKnownFieldValidation, beginRuntimeRootSearch, beginTrajectoryReplay, beginRuntimePublicationCheck, beginPublicationCheck } from './field-validator.ts';
+import { beginValidation, beginKnownFieldValidation, beginNeutralKnownFieldValidation, beginRuntimeRootSearch, beginResolvedRuntimeSearch, beginTrajectoryReplay, beginRuntimePublicationCheck, beginPublicationCheck } from './field-validator.ts';
 import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { DIRECTOR_SETTINGS as S } from './field-director-settings.ts';
 import type { ValidationJob } from './field-validator.ts';
-import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationGeometry, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
+import type { ControlRun, ControlHint, TrajectoryResult, ValidationBudget, ValidationGeometry, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
 import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
@@ -17,7 +17,10 @@ import { visibleAt } from './field-scheduler.ts';
 export interface RuntimeCandidate {
   readonly transaction: FieldTransaction;
   readonly geometry: ValidationGeometry;
-  readonly publicationPolicy?: 'root-aware-v1';
+  readonly publicationPolicy?: 'root-aware-v1' | 'resolve-at-publication-v1';
+  readonly publicationDelayTicks?: number;
+  readonly resolveAtPublication?: (root: SchedulerRoot) => FieldTransaction;
+  readonly previewPose?: Readonly<{x:number;y:number;passDistance:number}>;
   /** A whole independently proposed source span, never a partial primary. */
   readonly fallback?: FieldTransaction;
   readonly generationReason?: string;
@@ -61,12 +64,17 @@ export class RuntimePlanningSession {
   private result?: PlanningOutcome;
   private failure?: string;
   private readonly publicationChecks: PublicationObservation[] = [];
-  private get rootAware(): boolean { return this.custom?.publicationPolicy === 'root-aware-v1'; }
+  private resolution?: PlanningOutcome['resolution'];
+  private get rootAware(): boolean { return this.custom?.publicationPolicy === 'root-aware-v1' || this.custom?.publicationPolicy === 'resolve-at-publication-v1'; }
+  get sectionTemplate(): ScheduledSection { return this.section; }
+  get previewPose(): RuntimeCandidate['previewPose'] { return this.custom?.previewPose; }
+  get resolvingTarget(): boolean { return this.custom?.publicationPolicy === 'resolve-at-publication-v1' && this.attempts.at(-1)?.kind === 'primary'; }
   get phase(): PlanningPhase { return this.currentPhase; }
   get metrics(): Readonly<ValidationMetrics> { return { ...this.counts, planningTicks: this.tick }; }
   getResult(): PlanningOutcome | undefined { return this.result; }
   get preparedWitness(): ValidationWitness | undefined { return this.witness; }
-  publicationDue(tick: number): boolean { return tick === S.publicationTicks || (this.rootAware && this.currentPhase === 'ready'); }
+  publicationDue(tick: number): boolean { return tick === S.publicationTicks || (this.rootAware && this.currentPhase === 'ready'
+    && (!this.resolvingTarget || tick >= (this.custom?.publicationDelayTicks ?? 1))); }
   cancel(): PlanningOutcome {
     if (this.result) return this.result;
     if (this.token) this.ledger.cancel(this.token);
@@ -79,13 +87,17 @@ export class RuntimePlanningSession {
     this.section = Object.freeze({ ...section }); this.ledger = ledger;
     this.replayMode = replayMode;
     this.field = new FieldGenerator(section.seed);
+    if (custom?.publicationPolicy === 'resolve-at-publication-v1' && (!custom.resolveAtPublication
+      || !Number.isSafeInteger(custom.publicationDelayTicks) || custom.publicationDelayTicks! < 1 || custom.publicationDelayTicks! > S.publicationTicks)) {
+      this.finish('blocked', 'INVALID_RESOLUTION_POLICY'); return;
+    }
     if (committed.length > L.maxHazards) { this.finish('blocked', 'CAPACITY'); return; }
     if (!this.completeKnownField(committed, root.distance)) { this.finish('blocked', 'INCOMPLETE_KNOWN_FIELD'); return; }
     this.startAttempt('primary', root, committed);
   }
 
   advance(current: SchedulerRoot, committed: readonly PlannedHazard[], tick: number,
-    budget: ValidationBudget = { propagations: L.defaultPropagationsPerTick, narrowQueries: L.defaultQueriesPerTick }): PlanningOutcome | undefined {
+    budget: ValidationBudget = { propagations: L.defaultPropagationsPerTick, narrowQueries: L.defaultQueriesPerTick }, hint?: ControlHint): PlanningOutcome | undefined {
     if (this.result) return this.result;
     if (!Number.isInteger(tick) || tick <= this.tick || tick < 1) throw new RangeError('Planning ticks must increase');
     // One job only per call: all phases/fallbacks share this budget and deadline.
@@ -98,14 +110,17 @@ export class RuntimePlanningSession {
     // The fixed publication call has its own unchanged per-tick budget. Never
     // spend a preparation chunk AND a final replay in the same tick.
     if (this.publicationDue(tick)) {
-      if (this.currentPhase !== 'ready' || !this.witness) return this.finish('omitted-uncertified', this.failure ?? 'PLANNING_DEADLINE');
+      if (this.currentPhase !== 'ready' || (!this.witness && !this.resolvingTarget)) return this.finish('omitted-uncertified', this.failure ?? 'PLANNING_DEADLINE');
+      const resolving = this.resolvingTarget;
+      if (resolving && !this.resolve(current, committed, hint)) return this.result;
       const transaction = this.attempts.at(-1)!.transaction!;
       const context = { ...rootCopy(current), committed: visibleAt(committed, current.distance), candidate: transaction,
         ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
       const options = this.custom ? { geometry: this.custom.geometry } : {};
-      const job = this.rootAware && transaction.hazards.some(h => this.custom!.geometry.validHazard(h))
-        ? beginRuntimeRootSearch(this.witness, context, options)
-        : this.replayMode === 'full' ? beginPublicationCheck(this.witness, context, options) : beginRuntimePublicationCheck(this.witness, context, options);
+      const job = resolving ? beginResolvedRuntimeSearch(context, options, hint)
+        : this.rootAware && this.custom?.publicationPolicy !== 'resolve-at-publication-v1' && transaction.hazards.some(h => this.custom!.geometry.validHazard(h))
+        ? beginRuntimeRootSearch(this.witness!, context, options)
+        : this.replayMode === 'full' ? beginPublicationCheck(this.witness!, context, options) : beginRuntimePublicationCheck(this.witness!, context, options);
       this.setJob(job, 'publication');
       const checked = this.work(budget, 1);
       if (this.rootAware) this.publicationChecks.push(Object.freeze({ tick, context, witness: this.witness,
@@ -127,6 +142,43 @@ export class RuntimePlanningSession {
     }
     if (this.counts.searches > L.maxSearches || this.counts.replays > L.maxReplays) this.fail('TRANSACTION_WORK_LIMIT');
     return undefined;
+  }
+
+  /** Only a pending reservation changes. No active hazard or prepared proof is reused. */
+  private resolve(current: SchedulerRoot, committed: readonly PlannedHazard[], hint?:ControlHint): boolean {
+    const record = this.attempts.at(-1)!, template = record.transaction!, root = rootCopy(current), started = performance.now();
+    let transaction: FieldTransaction;
+    try { transaction = this.custom!.resolveAtPublication!(root); }
+    catch (error) {
+      const reason = error instanceof Error ? error.message : 'TARGET_RESOLUTION_FAILED';
+      this.resolution = Object.freeze({ root, template, ms: performance.now() - started, reason, ...(this.custom?.previewPose?{previewPose:this.custom.previewPose}:{}) });
+      record.reason = `resolution:${reason}`;
+      if (this.token) this.ledger.cancel(this.token); this.token = undefined;
+      if(this.tick>=S.publicationTicks){this.finish('omitted-uncertified',record.reason);return false;}
+      this.startAttempt('ambient-fallback', current, committed); return false;
+    }
+    this.resolution = Object.freeze({ root, template, transaction, ms: performance.now() - started,
+      ...(this.custom?.previewPose?{previewPose:this.custom.previewPose}:{}),
+      ...(hint?{hint:Object.freeze({elapsed:hint.elapsed,controls:Object.freeze(hint.controls.map(r=>Object.freeze({ticks:r.ticks,input:Object.freeze({...r.input})})) )})}:{}) });
+    let structure: ReturnType<ValidationGeometry['inspect']>;
+    const sameSpan=transaction.firstCell===this.section.firstCell&&transaction.cellCount===this.section.cellCount
+      &&transaction.startDistance===this.section.startDistance&&transaction.endDistance===this.section.endDistance;
+    try{structure=sameSpan?this.custom!.geometry.inspect(transaction, committed):{status:'invalid',reason:'ownership'};}
+    catch{structure={status:'invalid',reason:'metadata'};}
+    if (transaction.firstCell !== this.section.firstCell || transaction.cellCount !== this.section.cellCount
+      || transaction.startDistance !== this.section.startDistance || transaction.endDistance !== this.section.endDistance || structure.status === 'invalid') {
+      record.reason = `resolution:STRUCTURAL_INVALID:${structure.status === 'invalid' ? structure.reason : 'span'}`;
+      if (this.token) this.ledger.cancel(this.token); this.token = undefined;
+      if(this.tick>=S.publicationTicks){this.finish('omitted-uncertified',record.reason);return false;}
+      this.startAttempt('ambient-fallback', current, committed); return false;
+    }
+    if (!this.token || !this.ledger.cancel(this.token)) { this.finish('blocked', 'STALE_OWNERSHIP'); return false; }
+    this.token = undefined;
+    const reservation = this.ledger.reserve(record.identity, this.section.firstCell, this.section.cellCount, transaction.hazards.map(h => h.id), transaction.hazards);
+    if (reservation.status === 'rejected') { this.finish('blocked', reservation.reason); return false; }
+    this.token = reservation.token;
+    this.attempts[this.attempts.length - 1] = { ...record, transaction, context: { ...root, committed, candidate: transaction, reservedUntilDistance: transaction.endDistance } };
+    return true;
   }
 
   private work(budget: ValidationBudget, tick: number): TrajectoryResult | undefined {
@@ -186,6 +238,7 @@ export class RuntimePlanningSession {
       record.reason = reservation.reason; this.finish('blocked', reservation.reason); return;
     }
     this.token = reservation.token;
+    if (this.resolvingTarget) { this.currentPhase = 'ready'; return; }
     if (kind === 'empty-fallback') {
       const controls = neutralControls(context);
       if (!controls) this.fail('FALLBACK_HORIZON');
@@ -232,6 +285,7 @@ export class RuntimePlanningSession {
     this.result = Object.freeze({ status, section: this.section, ...(reason ? { reason } : {}),
       ...(witness ? { transaction: witness.context.candidate, witness } : {}),
       attempts: Object.freeze(this.attempts.map(a => Object.freeze({ ...a }))), metrics: Object.freeze(this.metrics), jobs: Object.freeze([...this.jobRecords]),
+      ...(this.resolution ? { resolution: this.resolution } : {}),
       ...(this.rootAware ? { publicationChecks: Object.freeze([...this.publicationChecks]),
         ...(this.custom?.generationReason ? { generationReason: this.custom.generationReason } : {}) } : {}) });
     return this.result;

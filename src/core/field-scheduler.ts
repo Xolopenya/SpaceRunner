@@ -7,7 +7,7 @@ import { VALIDATION_LIMITS as L } from './field-validator-types.ts';
 import { DIRECTOR_SETTINGS as S } from './field-director-settings.ts';
 import { sameHazard } from './field-ownership.ts';
 import type { ValidationJob } from './field-validator.ts';
-import type { ControlRun, TrajectoryResult, ValidationBudget, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
+import type { ControlRun, ControlHint, TrajectoryResult, ValidationBudget, ValidationMetrics, ValidationWitness } from './field-validator-types.ts';
 import type { FieldTransaction, FieldValidationContext, PlannedHazard } from './field-types.ts';
 import type { ScheduledSection } from './field-director.ts';
 import type { OwnershipLedger } from './field-ownership.ts';
@@ -32,11 +32,12 @@ export interface PlanningOutcome {
   readonly jobs: readonly { phase: PlanningPhase; attempt: number; metrics: Readonly<ValidationMetrics>; decision: string; reason?: string }[];
   readonly publicationChecks?: readonly PublicationObservation[];
   readonly generationReason?: string;
+  readonly resolution?: Readonly<{ root: SchedulerRoot; template: FieldTransaction; transaction?: FieldTransaction; ms: number; reason?: string; hint?: ControlHint; previewPose?: Readonly<{x:number;y:number;passDistance:number}> }>;
 }
 export interface PublicationObservation {
   readonly tick: number;
   readonly context: FieldValidationContext;
-  readonly witness: ValidationWitness;
+  readonly witness?: ValidationWitness;
   readonly result: TrajectoryResult | { readonly decision: 'unfinished'; readonly reason: 'ACTUAL_REPLAY_BUDGET' };
   readonly metrics: Readonly<ValidationMetrics>;
 }

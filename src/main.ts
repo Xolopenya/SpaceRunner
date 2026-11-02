@@ -59,7 +59,7 @@ async function boot(): Promise<void> {
           await mineAssets.loadMine();
           if (disposed) return;
           developerModel = new MovingMineGameModel(configuration, params.get('firstMine') === '1', motion);
-          debugFactory = scene => { structureView = new MovingMineView(scene, mineAssets, params.get('colliders') === '1'); return structureView; };
+          debugFactory = scene => { structureView = new MovingMineView(scene, mineAssets, params.get('colliders') === '1', motion); return structureView; };
         } catch (error) {
           console.warn('Moving mine asset unavailable; using certified mixed field', error);
           const { MixedFlowGameModel } = await import('./experiments/mixed-flow/model.ts');

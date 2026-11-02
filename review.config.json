@@ -1,49 +1,52 @@
 {
-  "taskId": "GAMEPLAY-EXPERIMENT-003C2",
-  "baseline": "3779d3247a65e27046180f8f0541a467ea0eb75c",
+  "taskId": "GAMEPLAY-EXPERIMENT-003C3",
+  "baseline": "bad0a5498e41a262da224308deefae5bee8bd28e",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/ARCHITECTURE.md",
-    "MOTION_VARIANTS.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/MOTION_VARIANTS.md",
-    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/FAIRNESS.md",
-    "GAMEPLAY_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/GAMEPLAY_COMPARISON.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/PERFORMANCE.md",
-    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C2/ARCHITECTURE.md"
+    "ARCHITECTURE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/ARCHITECTURE.md",
+    "TARGET_LOCK_DESIGN.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/TARGET_LOCK_DESIGN.md",
+    "MOTION_AND_COLLISION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/MOTION_AND_COLLISION.md",
+    "FAIRNESS.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/FAIRNESS.md",
+    "GAMEPLAY_COMPARISON.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/GAMEPLAY_COMPARISON.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/PERFORMANCE.md",
+    "PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-EXPERIMENT-003C3/ARCHITECTURE.md"
   },
   "screenshots": [
-    "mine-motion-baseline-desktop-live.png",
-    "mine-motion-baseline-desktop-distant.png",
-    "mine-motion-baseline-desktop-mid.png",
-    "mine-motion-baseline-desktop-path.png",
-    "mine-motion-baseline-desktop-avoidance.png",
-    "mine-motion-fast-desktop-live.png",
-    "mine-motion-fast-desktop-distant.png",
-    "mine-motion-fast-desktop-mid.png",
-    "mine-motion-fast-desktop-path.png",
-    "mine-motion-fast-desktop-avoidance.png",
-    "mine-motion-diagonal-desktop-live.png",
-    "mine-motion-diagonal-desktop-distant.png",
-    "mine-motion-diagonal-desktop-mid.png",
-    "mine-motion-diagonal-desktop-path.png",
-    "mine-motion-diagonal-desktop-avoidance.png",
-    "mine-motion-diagonal-portrait-live.png",
-    "mine-motion-diagonal-portrait-distant.png",
-    "mine-motion-diagonal-portrait-mid.png",
-    "mine-motion-diagonal-portrait-path.png",
-    "mine-motion-diagonal-portrait-avoidance.png",
-    "mine-motion-diagonal-landscape-live.png",
-    "mine-motion-diagonal-landscape-distant.png",
-    "mine-motion-diagonal-landscape-mid.png",
-    "mine-motion-diagonal-landscape-path.png",
-    "mine-motion-diagonal-landscape-avoidance.png"
+    "target-lock-fast-desktop-live.png",
+    "target-lock-diagonal-desktop-live.png",
+    "target-lock-target-desktop-live.png",
+    "target-lock-target-portrait-live.png",
+    "target-lock-target-landscape-live.png",
+    "target-lock-fast-unrecorded-desktop-live.png",
+    "target-lock-target-unrecorded-desktop-live.png",
+    "target-lock-desktop-acquisition.png",
+    "target-lock-desktop-lock.png",
+    "target-lock-desktop-warning.png",
+    "target-lock-desktop-attack.png",
+    "target-lock-desktop-evasion.png",
+    "target-lock-portrait-acquisition.png",
+    "target-lock-portrait-lock.png",
+    "target-lock-portrait-warning.png",
+    "target-lock-portrait-attack.png",
+    "target-lock-portrait-evasion.png",
+    "target-lock-landscape-acquisition.png",
+    "target-lock-landscape-lock.png",
+    "target-lock-landscape-warning.png",
+    "target-lock-landscape-attack.png",
+    "target-lock-landscape-evasion.png",
+    "target-lock-desktop-collision.png",
+    "target-lock-desktop-off-center.png",
+    "target-lock-desktop-colliders.png",
+    "target-lock-desktop-boundary.png"
   ],
   "videoPreviews": [
-    "mine-motion-baseline-desktop.webm",
-    "mine-motion-fast-desktop.webm",
-    "mine-motion-diagonal-desktop.webm",
-    "mine-motion-diagonal-portrait.webm",
-    "mine-motion-diagonal-landscape.webm"
+    "target-lock-fast-desktop.webm",
+    "target-lock-diagonal-desktop.webm",
+    "target-lock-target-desktop.webm",
+    "target-lock-target-portrait.webm",
+    "target-lock-target-landscape.webm",
+    "target-lock-no-retarget.webm"
   ],
   "additionalAssets": [
     {
@@ -106,6 +109,21 @@
       "script": "scripts/mine-motion-browser.mjs",
       "stripTypes": false,
       "name": "mine-motion-browser"
+    },
+    {
+      "script": "scripts/target-lock-preservation.mjs",
+      "stripTypes": true,
+      "name": "target-lock-preservation"
+    },
+    {
+      "script": "scripts/target-lock-benchmark.mjs",
+      "stripTypes": true,
+      "name": "target-lock-benchmark"
+    },
+    {
+      "script": "scripts/target-lock-browser.mjs",
+      "stripTypes": false,
+      "name": "target-lock-browser"
     }
   ],
   "preservedUntracked": [
@@ -116,16 +134,19 @@
   ],
   "intermediateEvidence": [],
   "evidenceNotes": [
-    "A/B/C uses unchanged mine frequency and source spans, legacy records and fixed120Hz vector pose. XY relative CCD is shared by actual model and independent trajectory replay.",
-    "45 normal three-hull runs use the same seeds and input histories; geometry-only grid and response probes are explicitly separate.",
-    "Matched serial45s real Three.js profiles record all policies with equal CPU sampling and VP8 capture; historical003C frame anomalies remain in baseline evidence.",
-    "92 approved model history comparisons include original mine mode; production bytes, model/material/light and protected gameplay remain unchanged."
+    "Target frozen from actual root in the same synchronous full-field search and independent replay event; no old certificate authorizes the changed target.",
+    "Historical moving/mixed audits remain required;116 approved histories and production byte comparisons preserve old behavior.",
+    "Bounded1458 fixture matrix and45 normal three-hull A/B/C games distinguish relevance, evasion, safety and omission availability.",
+    "Fresh-process matched real Three.js recorded/unrecorded profiles and prior anomalous CPU/frame records are retained; no ungrounded frame-gap attribution."
   ],
   "limitations": [
-    "A finite safe witness does not prove arbitrary-input safety or search completeness.",
-    "Centered crossings still leave permanent boundary bypasses; increased speed alone is not measured increased maneuver demand.",
-    "Emulated mobile and finite heap retention do not establish physical-device or long-session behavior.",
-    "Human preference for new variants has not yet been tested."
+    "Partial: H3 availability is not accepted; Target11/48 omissions versus5/48 Fast/Diagonal in the matched reference.",
+    "A finite safe witness is not arbitrary-input safety or search completeness. Proposal hints can still miss committed-field exits.",
+    "Actual lock-to-launch delay can exceed the minimum1s; distant warning recognition needs owner playtesting.",
+    "Emulated mobile and finite forced-GC restart samples do not establish physical-device or long-session behavior.",
+    "No new human feedback, enjoyment or production-readiness claim."
   ],
-  "knownBlockers": []
+  "knownBlockers": [
+    "Regular-flow promotion awaits bounded publication reliability improvement and owner acceptance."
+  ]
 }

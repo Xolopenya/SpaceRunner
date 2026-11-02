@@ -26,11 +26,15 @@ export interface ValidationGeometry {
   /** Conservative axial half-extent of the actual static profile. */
   axialExtent(hazard: PlannedHazard): number;
   prediction(): FlightPrediction;
+  /** Opt-in actual-root binding for a newly resolved, fully specified transaction. */
+  resolvedAt?(context: FieldValidationContext): boolean;
   goals(hazard: PlannedHazard): readonly { x: number; y: number }[];
   /** Optional ranking-only lookahead for a composed encounter; never acceptance. */
   goalsAt?(hazards: readonly PlannedHazard[], distance: number): readonly { x: number; y: number }[] | undefined;
 }
 export interface ControlRun { readonly ticks: number; readonly input: { readonly x: number; readonly y: number } }
+/** Previously proposed controls, never authority for a changed transaction. */
+export interface ControlHint { readonly elapsed: number; readonly controls: readonly ControlRun[] }
 export interface ValidationWitness {
   readonly version: string;
   readonly geometryVersion?: string;
