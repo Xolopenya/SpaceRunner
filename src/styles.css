@@ -1,5 +1,5 @@
-@font-face { font-family: Oxanium; src: url('../public/assets/fonts/oxanium-medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'IBM Plex Mono'; src: url('../public/assets/fonts/ibm-plex-mono-regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Oxanium; src: url('/assets/fonts/oxanium-medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url('/assets/fonts/ibm-plex-mono-regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
 :root { color: #edf4f5; background: #050a14; font: 400 13px 'IBM Plex Mono', monospace; font-synthesis: none; --cyan: #8cdeeb; --ink: #07131c; --muted: #acb9c9; --warm: #ffb17b; --edge: clamp(24px, 4.5vw, 68px); --left: max(var(--edge), env(safe-area-inset-left)); --right: max(var(--edge), env(safe-area-inset-right)); --top: max(30px, env(safe-area-inset-top)); --bottom: max(30px, env(safe-area-inset-bottom)); }
 * { box-sizing: border-box; }
 body { margin: 0; height: 100dvh; overflow: hidden; display: grid; place-items: center; overscroll-behavior: none; }

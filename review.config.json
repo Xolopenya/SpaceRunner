@@ -16,22 +16,7 @@
     "assignment-settings.png"
   ],
   "videoPreviews": [],
-  "additionalAssets": [
-    {
-      "id": "space-mine",
-      "name": "Space mine (Modular Spaceships and Space Fleet)",
-      "author": "3D Assets (@3dassets)",
-      "file": "src/experiments/moving-mine/space-mine.glb",
-      "source": "https://3dassets.dev/assets/interstellar-fleet-modular-starships-space-mine-4cafd369",
-      "download": "https://cdn.3dassets.dev/assets/19217/v1/model.glb",
-      "license": "CC0 1.0 Universal",
-      "downloadDate": "2026-10-28",
-      "originalSha256": "c64b8bfa0146ffc7d819f46ab74887326828b2b8266604b516a3cdc570189c77",
-      "originalFormat": "GLB",
-      "conversion": "None; original binary unchanged",
-      "transform": "Runtime centered pivot, unit vertex radius times1.35, material adjustments; DEV only"
-    }
-  ],
+  "additionalAssets": [],
   "extraChecks": [
     {
       "script": "scripts/collision-audit.mjs",
@@ -66,7 +51,5 @@
     "Physical phones untested. Finite witnesses do not guarantee survival for arbitrary input.",
     "Bounded planner omissions and frame spikes remain possible."
   ],
-  "knownBlockers": [
-    "Public Pages deployment must be confirmed separately after push."
-  ]
+  "knownBlockers": []
 }
