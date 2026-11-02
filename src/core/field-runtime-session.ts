@@ -1,4 +1,5 @@
-import { CONFIG, difficulty } from '../config.ts';
+import { flightSpeed } from '../release/settings.ts';
+import { CONFIG } from '../config.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { buildSection } from './field-section.ts';
 import { beginValidation, beginKnownFieldValidation, beginNeutralKnownFieldValidation, beginRuntimeRootSearch, beginResolvedRuntimeSearch, beginTrajectoryReplay, beginRuntimePublicationCheck, beginPublicationCheck } from './field-validator.ts';
@@ -36,7 +37,7 @@ function neutralControls(c: FieldValidationContext): readonly ControlRun[] | und
   let elapsed = c.elapsed, distance = c.distance, end = 0;
   const exit = Math.max(c.distance, ...c.committed.map(h => h.passDistance + h.radius + CONFIG.ship.radius + L.margin));
   for (let tick = 1; tick <= L.horizonTicks; tick++) {
-    elapsed += CONFIG.step; distance += difficulty(elapsed).speed * CONFIG.step;
+    elapsed += CONFIG.step; distance += flightSpeed(elapsed,distance,c.release) * CONFIG.step;
     if (!end && tick >= L.reactionTicks && distance > exit) end = tick + L.brakingTicks;
     if (end && tick === end) return [{ ticks: L.reactionTicks, input: c.input }, { ticks: end - L.reactionTicks, input: { x: 0, y: 0 } }];
   }
