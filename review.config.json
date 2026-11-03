@@ -1,31 +1,32 @@
 {
-  "taskId": "GAMEPLAY-004",
-  "baseline": "bbfb48ccf390b8feceb82ada4f01e86b912b4779",
+  "taskId": "GAMEPLAY-004B",
+  "baseline": "05d075415a6e813c28134d37d8f74afdb50af7bb",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "COLLECTIBLE_DESIGN.md": "docs/review/GAMEPLAY-004/COLLECTIBLE_DESIGN.md",
-    "PLACEMENT_POLICY.md": "docs/review/GAMEPLAY-004/PLACEMENT_POLICY.md",
-    "COLLISION_AND_LIFECYCLE.md": "docs/review/GAMEPLAY-004/COLLISION_AND_LIFECYCLE.md",
-    "GAMEPLAY_EVIDENCE.md": "docs/review/GAMEPLAY-004/GAMEPLAY_EVIDENCE.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-004/PERFORMANCE.md",
-    "KNOWN_LIMITATIONS.md": "docs/review/GAMEPLAY-004/KNOWN_LIMITATIONS.md"
+    "COLLIDER_PROFILE.md": "docs/review/GAMEPLAY-004B/COLLIDER_PROFILE.md",
+    "PICKUP_ASSIST.md": "docs/review/GAMEPLAY-004B/PICKUP_ASSIST.md",
+    "FAIRNESS_IMPACT.md": "docs/review/GAMEPLAY-004B/FAIRNESS_IMPACT.md",
+    "GAMEPLAY_EVIDENCE.md": "docs/review/GAMEPLAY-004B/GAMEPLAY_EVIDENCE.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-004B/PERFORMANCE.md",
+    "REMAINING_RISKS.md": "docs/review/GAMEPLAY-004B/REMAINING_RISKS.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-004B/COLLIDER_PROFILE.md"
   },
   "screenshots": [
-    "collectible-pickup-approach.png",
-    "collectible-pickup-near.png",
-    "collectible-pickup-after.png",
-    "collectible-ignore-approach.png",
-    "collectible-ignore-near.png",
-    "collectible-ignore-after.png",
-    "collectible-station-approach.png",
-    "collectible-station-near.png",
-    "collectible-station-after.png",
-    "collectible-game-over.png"
+    "004b-before-near.png",
+    "004b-before-after.png",
+    "004b-after-near.png",
+    "004b-after-after.png",
+    "004b-station-near.png",
+    "004b-station-after.png",
+    "004b-wing-left-contact.png",
+    "004b-wing-right-contact.png"
   ],
   "videoPreviews": [
-    "collectible-pickup.webm",
-    "collectible-ignore.webm",
-    "collectible-station.webm"
+    "004b-before.webm",
+    "004b-after.webm",
+    "004b-wing-left.webm",
+    "004b-wing-right.webm",
+    "004b-station.webm"
   ],
   "extraChecks": [
     {
@@ -39,14 +40,14 @@
       "name": "phase2-audit"
     },
     {
-      "script": "scripts/collectible-audit.mjs",
+      "script": "scripts/ship-collider-audit.mjs",
       "stripTypes": true,
-      "name": "collectible-audit"
+      "name": "ship-collider-audit"
     },
     {
-      "script": "scripts/collectible-browser.mjs",
+      "script": "scripts/ship-collider-browser.mjs",
       "stripTypes": false,
-      "name": "collectible-browser"
+      "name": "ship-collider-browser"
     },
     {
       "script": "scripts/collectible-package-check.mjs",
@@ -61,15 +62,16 @@
     "docs/game-design/consilium/"
   ],
   "evidenceNotes": [
-    "Normal Play includes fragments on this feature branch; no production deployment.",
-    "Three real-time silent Chrome WebM recordings after actual simulated prefixes; no synthetic gameplay frames.",
-    "Pickup-route placement is a local heuristic; hazard witnesses remain independent.",
-    "Final raw measurements may differ from explicitly labeled precommit samples."
+    "Normal Play enables actual wing damage and compound validation on this feature branch; no public deployment.",
+    "Real before/after Vite baseline005 at5273 and current build; native Chrome captures with actual input histories.",
+    "DEV impact ghost is an explicitly recorded visual clone, not active geometry.",
+    "Fixed-input admissions fall26\u219223/29; no hazard-volume or budget compensation."
   ],
   "limitations": [
-    "No owner human playtest approval or physical-phone performance claim.",
-    "Local placement does not certify an entire pickup route.",
-    "Existing bounded-planner omissions and frame spikes remain possible."
+    "Stable colliders do not follow cosmetic banking.",
+    "Local pickup approach/line of sight is not a certified complete pickup route.",
+    "Historical DEV moving experiments retain their explicit old contracts; no moving source in normal Play.",
+    "No owner approval, physical-phone FPS or indefinite leak guarantee."
   ],
   "knownBlockers": []
 }

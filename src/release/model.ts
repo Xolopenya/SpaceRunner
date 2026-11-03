@@ -2,20 +2,26 @@ import { RuntimeGameModel } from '../debug/runtime-game-model.ts';
 import type { RuntimeEncounterSource } from '../debug/runtime-field.ts';
 import { mixedFlowSource,FLOW_GEOMETRY } from '../experiments/mixed-flow/source.ts';
 import { StructureVariantsView } from '../experiments/structure-variants/view.ts';
-import { WreckCollision } from '../experiments/structure-variants/profile.ts';
-import type { FieldTransaction } from '../core/field-types.ts';
+import { ShipHazardCollision } from '../core/ship-hazard-collision.ts';
+import { ShipPrediction } from '../core/ship-prediction.ts';
+import { SHIP_COLLIDER } from '../core/ship-collider.ts';
+import type { FieldTransaction, PlannedHazard } from '../core/field-types.ts';
 import { RELEASE,flightSpeed } from './settings.ts';
 import { placePassivePressure } from './placement.ts';
 import { FragmentRun } from '../collectibles/run.ts';
 import type { Axis } from '../core/ship.ts';
-export const RELEASE_GEOMETRY={...FLOW_GEOMETRY,version:'assignment-002-v1',inspect:(c:FieldTransaction,k:Parameters<typeof FLOW_GEOMETRY.inspect>[1])=>{
+import { FRAGMENT } from '../collectibles/settings.ts';
+export const RELEASE_GEOMETRY={...FLOW_GEOMETRY,version:`release-${SHIP_COLLIDER.version}`,shipProfile:SHIP_COLLIDER,prediction:()=>new ShipPrediction(),queryCost:(h:PlannedHazard)=>FLOW_GEOMETRY.queryCost(h)*SHIP_COLLIDER.parts.length,inspect:(c:FieldTransaction,k:Parameters<typeof FLOW_GEOMETRY.inspect>[1])=>{
    const first=FLOW_GEOMETRY.inspect(c,k);if(first.status!=='invalid')return first;
    return FLOW_GEOMETRY.inspect({...c,cellCount:c.cellCount-RELEASE.phase1ExtraCells,endDistance:c.endDistance-RELEASE.phase1ExtraCells*24},k);
   }};
 
 export class ReleaseModel extends RuntimeGameModel {
- readonly fragments = new FragmentRun();
- protected override readonly collisions=new WreckCollision();
+ readonly fragments = new FragmentRun(SHIP_COLLIDER,FRAGMENT.pickupAssist);
+ readonly shipColliderProfile = SHIP_COLLIDER;
+ protected override readonly collisions=new ShipHazardCollision(SHIP_COLLIDER,true);
+ get lastShipContact(){return this.collisions.contact;}
+ get shipCollisionMetrics(){return{narrowQueries:this.collisions.narrowQueries,broadSkips:this.collisions.broadSkips};}
  constructor(){
   let owner: ReleaseModel;
   const base=mixedFlowSource();let distance=0,original:Parameters<RuntimeEncounterSource['candidate']>[0],extra=0;
@@ -31,14 +37,14 @@ export class ReleaseModel extends RuntimeGameModel {
  override get speed():number{return flightSpeed(this.elapsed,this.distance,true);}
  override start(seed:number):void{
   const allowed=this.state==='MENU'||this.state==='GAME_OVER';
-  super.start(seed);if(allowed)this.fragments.reset();
+  super.start(seed);if(allowed){this.fragments.reset();this.collisions.reset();}
  }
  override step(dt:number,axis:Axis):void{
   const playing=this.state==='PLAYING',x=this.ship.x,y=this.ship.y,distance=this.distance;
   super.step(dt,axis);
-  if(playing&&this.distance>distance)this.fragments.step(x,y,distance,this.ship.x,this.ship.y,this.distance,this.elapsed);
+  if(playing&&this.distance>distance)this.fragments.step(x,y,distance,this.ship.x,this.ship.y,this.distance,this.elapsed,this.field.slots);
  }
- override dispose():void{this.fragments.reset();super.dispose();}
+ override dispose():void{this.fragments.reset();this.collisions.reset();super.dispose();}
 }
 /** Production visuals reuse the real wreck renderer, without diagnostic panels. */
 export const releaseView=(scene:ConstructorParameters<typeof StructureVariantsView>[0])=>{

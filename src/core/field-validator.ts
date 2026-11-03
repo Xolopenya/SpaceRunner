@@ -1,5 +1,6 @@
 import { flightSpeed } from '../release/settings.ts';
 import { CONFIG } from '../config.ts';
+import { SHIP_COLLIDER } from './ship-collider.ts';
 import { FieldGenerator } from './field-generator.ts';
 import { FlightPrediction } from './field-prediction.ts';
 import { frozenMotion } from './field-motion.ts';
@@ -16,11 +17,13 @@ type Work<T> = Generator<Operation, T, void>;
 /** Outward numerical guard only: never shrink either collision envelope.
  * Static-center conservative axial bounds and monotonic forward travel are required.
  */
-export function runtimeAxialDisjoint(h: Pick<PlannedHazard, 'passDistance' | 'radius'>, from: number, to: number, margin: number): boolean {
+export function runtimeAxialDisjoint(h: Pick<PlannedHazard, 'passDistance' | 'radius'>, from: number, to: number, margin: number, playerExtent: number = CONFIG.ship.radius): boolean {
   const guard = 1e-9 + 8 * Number.EPSILON * Math.max(1, Math.abs(h.passDistance), Math.abs(from), Math.abs(to));
-  const extent = h.radius + CONFIG.ship.radius + margin + guard;
+  const extent = h.radius + playerExtent + margin + guard;
   return h.passDistance + extent < from || h.passDistance - extent > to;
 }
+const shipAxial = (geometry?: ValidationGeometry): number => geometry?.shipProfile?.axialExtent ?? CONFIG.ship.radius;
+const shipRadial = (geometry?: ValidationGeometry): number => geometry?.shipProfile?.radialExtent ?? CONFIG.ship.radius;
 interface Prepared {
   geometry?: ValidationGeometry;
   context: FieldValidationContext; hazards: readonly PlannedHazard[]; margin: number;
@@ -56,6 +59,8 @@ function snapshot(context: FieldValidationContext): FieldValidationContext {
 function prepare(raw: FieldValidationContext, options: ValidationOptions, metrics: ValidationMetrics): Prepared | Rejection {
   if (!raw || !raw.player || !raw.input || !raw.candidate || !raw.candidate.provenance
     || !Array.isArray(raw.committed) || !Array.isArray(raw.candidate.hazards)) return reject('STRUCTURAL_INVALID', 'missing context data');
+  if ((options.geometry?.shipProfile && options.geometry.shipProfile !== SHIP_COLLIDER)
+    || (raw.release && options.geometry?.shipProfile !== SHIP_COLLIDER)) return reject('UNKNOWN_PROFILE', 'release requires shared compound ship');
   const margin = options.margin ?? L.margin, policy = options.structuralPolicy ?? 'generator';
   const root = initial(raw);
   if (![root.x, root.y, root.vx, root.vy, root.elapsed, root.distance].every(Number.isFinite) || root.elapsed < 0 || root.elapsed > 1e9 || root.distance < 0 || root.distance > 1e11
@@ -65,6 +70,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
     || raw.committed.length + raw.candidate.hazards.length > L.maxHazards) return reject('STRUCTURAL_INVALID', 'root/settings/count');
   const all = [...raw.committed, ...raw.candidate.hazards], ids = new Set<string>();
   for (const h of all) {
+    if(options.geometry?.shipProfile&&h?.motion)return reject('UNKNOWN_PROFILE','moving experiments require their explicit motion contract');
     const extended = !!h && !!options.geometry?.validHazard(h);
     if (h?.motion && (!extended || h.collisionProfile !== 'moving-mine-sphere-v1')) return reject('UNKNOWN_PROFILE', 'uncertified motion');
     if (!h || !h.provenance || ![h.x, h.y, h.passDistance, h.radius, h.phase, h.spin].every(Number.isFinite)
@@ -76,7 +82,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
     if (!extended && (h.orientation !== 'euler-xyz-v1' || h.visualVariant !== hazardVariant(h.kind, h.phase)
       || h.collisionProfile !== PROFILES[h.visualVariant])) return reject('UNKNOWN_PROFILE', h.id);
     const cost = options.geometry?.queryCost(h) ?? 1;
-    if (!Number.isInteger(cost) || cost < 1 || cost > 4) return reject('UNKNOWN_PROFILE', 'primitive accounting');
+    if (!Number.isInteger(cost) || cost < 1 || cost > (options.geometry?.shipProfile ? 12 : 4)) return reject('UNKNOWN_PROFILE', 'primitive accounting');
     const axial = options.geometry?.axialExtent(h) ?? h.radius;
     if (!Number.isFinite(axial) || axial <= 0 || axial > h.radius) return reject('UNKNOWN_PROFILE', 'axial bound');
     ids.add(h.id);
@@ -94,7 +100,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
   if (options.geometry?.validRoot && !options.geometry.validRoot(raw)) return reject('STRUCTURAL_INVALID','coupled root');
   const context = snapshot(raw), hazards = [...context.committed, ...context.candidate.hazards];
   let time = context.elapsed, distance = context.distance, lastCenter = distance, lastExit = distance;
-  for (const h of hazards) { lastCenter = Math.max(lastCenter, h.passDistance); lastExit = Math.max(lastExit, h.passDistance + (options.geometry?.axialExtent(h) ?? h.radius) + CONFIG.ship.radius + margin); }
+  for (const h of hazards) { lastCenter = Math.max(lastCenter, h.passDistance); lastExit = Math.max(lastExit, h.passDistance + (options.geometry?.axialExtent(h) ?? h.radius) + shipAxial(options.geometry) + margin); }
   let reserved = 0, targetTick = 0, controlEndTick = 0;
   const times = new Float64Array(L.horizonTicks + 1), distances = new Float64Array(L.horizonTicks + 1);
   times[0] = time; distances[0] = distance;
@@ -113,7 +119,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
     if (targetTick && tick === targetTick) break;
   }
   if (!targetTick || !controlEndTick || controlEndTick > targetTick) return reject('HORIZON_EXCEEDED');
-  if (distance + CONFIG.hazards.maxRadius + CONFIG.ship.radius + margin > reserved) return reject('INVALID_TERMINAL_STATE', 'tail boundary clearance');
+  if (distance + CONFIG.hazards.maxRadius + shipAxial(options.geometry) + margin > reserved) return reject('INVALID_TERMINAL_STATE', 'tail boundary clearance');
   return { context, hazards, margin, policy, targetTick, controlEndTick, reserved, times, distances, geometry: options.geometry };
 }
 
@@ -132,8 +138,8 @@ function* simulate(state: FlightState, input: ControlRun['input'], ticks: number
     if (broadPhase) metrics.searchPropagations++; else metrics.replayPropagations++;
     for (const h of p.hazards) {
       const radius = p.geometry?.axialExtent(h) ?? h.radius;
-      const extent = radius + CONFIG.ship.radius + p.margin;
-      if (replayAxialCull ? runtimeAxialDisjoint(p.geometry ? { passDistance: h.passDistance, radius } : h, previous.distance, state.distance, p.margin)
+      const extent = radius + shipAxial(p.geometry) + p.margin;
+      if (replayAxialCull ? runtimeAxialDisjoint(p.geometry ? { passDistance: h.passDistance, radius } : h, previous.distance, state.distance, p.margin, shipAxial(p.geometry))
         : broadPhase && (h.passDistance + extent < previous.distance || h.passDistance - extent > state.distance)) {
         metrics.broadPhaseSkips++; continue;
       }
@@ -165,7 +171,7 @@ function compact(runs: readonly ControlRun[]): readonly ControlRun[] {
 function goalsFor(p: Prepared, distance: number, state?: Readonly<FlightState>): readonly { x: number; y: number }[] {
   const override = p.geometry?.goalsAt?.(p.hazards, distance, state);
   if (override) return override;
-  const future = p.hazards.filter(h => h.passDistance + h.radius + CONFIG.ship.radius + p.margin >= distance);
+  const future = p.hazards.filter(h => h.passDistance + h.radius + shipAxial(p.geometry) + p.margin >= distance);
   if (!future.length) return [{ x: 0, y: 0 }];
   const depth = Math.min(...future.map(h => h.passDistance));
   const near = future.filter(h => h.passDistance <= depth + L.goalDepthSpan);
@@ -173,7 +179,7 @@ function goalsFor(p: Prepared, distance: number, state?: Readonly<FlightState>):
   for (let column = 0; column < L.goalColumns; column++) for (let row = 0; row < L.goalRows; row++) {
     const x = -CONFIG.bounds.x + column * 2 * CONFIG.bounds.x / (L.goalColumns - 1);
     const y = -CONFIG.bounds.y + row * 2 * CONFIG.bounds.y / (L.goalRows - 1);
-    if (near.every(h => Math.hypot(x - h.x, y - h.y) > h.radius + CONFIG.ship.radius + p.margin + L.goalClearance)) goals.push({ x, y });
+    if (near.every(h => Math.hypot(x - h.x, y - h.y) > h.radius + shipRadial(p.geometry) + p.margin + L.goalClearance)) goals.push({ x, y });
   }
   return goals;
 }
@@ -267,7 +273,7 @@ function* replay(p: Prepared, controls: readonly ControlRun[], metrics: Validati
     tick += run.ticks;
   }
   if (state.vx !== 0 || state.vy !== 0 || Math.abs(state.x) > CONFIG.bounds.x || Math.abs(state.y) > CONFIG.bounds.y
-    || state.distance + CONFIG.hazards.maxRadius + CONFIG.ship.radius + p.margin > p.reserved) return reject('INVALID_TERMINAL_STATE');
+    || state.distance + CONFIG.hazards.maxRadius + shipAxial(p.geometry) + p.margin > p.reserved) return reject('INVALID_TERMINAL_STATE');
   const record = { version: L.version, context: p.context, margin: p.margin, structuralPolicy: p.policy,
     ...(p.geometry ? { geometryVersion: p.geometry.version } : {}),
     reservedUntilDistance: p.reserved, controls: compact(controls), terminal: Object.freeze({ ...state }) };
@@ -399,14 +405,14 @@ function runtimeRootSearch(previous: ValidationWitness | undefined, current: Fie
       || witness.geometryVersion !== p.geometry?.version || p.context.elapsed < witness.context.elapsed
       || p.context.elapsed - witness.context.elapsed > L.deadlineTicks * CONFIG.step + 1e-9 || p.context.distance < witness.context.distance
       || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate) : p.geometry?.resolvedAt?.(p.context) !== true)
-      || p.context.candidate.hazards.some(h => h.passDistance - h.radius - CONFIG.ship.radius - p.margin <= p.context.distance)) return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
+      || p.context.candidate.hazards.some(h => h.passDistance - h.radius - shipAxial(p.geometry) - p.margin <= p.context.distance)) return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
     metrics.searches++; metrics.peakFrontier = 1; metrics.peakExpansion = 1;
     const state = initial(p.context,p.geometry), prediction = p.geometry?.prediction(p.context) ?? new FlightPrediction();
     const runs: ControlRun[] = [{ ticks: L.reactionTicks, input: p.context.input }];
     const prefix = yield* simulate(state, p.context.input, L.reactionTicks, p, metrics, true, prediction);
     if (prefix) return reject('INSUFFICIENT_REACTION_DISTANCE', `${prefix.id}@${prefix.step}`);
     let tick = L.reactionTicks;
-    const committedExit=Math.max(p.context.distance,...p.context.committed.map(h=>h.passDistance+(p.geometry?.axialExtent(h)??h.radius)+CONFIG.ship.radius+p.margin));
+    const committedExit=Math.max(p.context.distance,...p.context.committed.map(h=>h.passDistance+(p.geometry?.axialExtent(h)??h.radius)+shipAxial(p.geometry)+p.margin));
     let hintRun=0,hintStart=0;
     while (tick < p.controlEndTick) {
       const goals = goalsFor(p, state.distance,state), goal = [...goals].sort((a, b) =>
@@ -466,7 +472,7 @@ function publicationCheck(witness: ValidationWitness, current: FieldValidationCo
       || p.context.elapsed < witness.context.elapsed || p.context.elapsed - witness.context.elapsed > L.deadlineTicks * CONFIG.step + 1e-9
       || p.context.distance < witness.context.distance
       || JSON.stringify(p.context.candidate) !== JSON.stringify(witness.context.candidate)
-      || p.context.candidate.hazards.some(h => h.passDistance - h.radius - CONFIG.ship.radius - p.margin <= p.context.distance)) {
+      || p.context.candidate.hazards.some(h => h.passDistance - h.radius - shipAxial(p.geometry) - p.margin <= p.context.distance)) {
       return reject('STALE_PUBLICATION_STATE', 'identity/deadline/warning');
     }
     const runs: ControlRun[] = [];

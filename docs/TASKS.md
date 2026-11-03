@@ -468,3 +468,14 @@ Final design consistency review corrected the research proposal's scheduling ari
 - [x] Three actual Chrome video scenarios and screenshots: debris collection, deliberate bypass, lower-station aperture collection; genuine damage-ended game-over screenshot. No human approval claimed. Twenty browser restarts retain graphics resource counts; fifty Node resets and disposal tests retain bounded pools.
 - [x] Added six review reports, focused collision/lifecycle/determinism/audio/browser tests and reproducible diagnostics. Initial full unit run242/242 passed; one further recorded-input replay test added. Exact-HEAD verification counts/logs, patch checks, ZIP inventory, SHA256 and remote receipt are delivery artifacts, not public-release claims.
 - [ ] Owner review, merge approval and deployment remain outside this task's authorization. No main merge/push or Pages deployment.
+
+
+## GAMEPLAY-004B — pickup assistance and real wing damage, 2026-11-03
+
+- [x] Branched `feature/gameplay-004b-pickup-wing-colliders` directly from05d075415a6e813c28134d37d8f74afdb50af7bb, preserving existing user files and experiments.
+- [x] Measured actual normalized GLB2.8×1.12×2.94 and authored one frozen body/left/right sphere profile. Enabled actual wing damage in normal ReleaseModel alongside identical prediction, clearance, replay, broad-phase and publication bounds. Original asteroid/box volumes, movement, hull and immunity rules remain.
+- [x] Body pickup distance1.00; wing pickup.86; deterministic140ms cosmetic attraction reuses pooled meshes. Expanded coasting rejection, locally checked wing/body approach poses and solid-occlusion checks preserve optional rewards without increased frequency.
+- [x] New geometry tests cover both wing-only hits, misses, multiple-part single damage, fast/diagonal sweeps, mechanical/station solids, independent replay rejection, old-witness rejection and unchanged numerical guards. Original assertions retained. First full unit run256/256 passed; further edge/Phase2 tests added before final verification.
+- [x] Actual Chrome evidence: baseline .90 near-miss fails; new .90 pickup succeeds; real left/right wing-only asteroid hits reduce hull3→2; right-wing pickup through a station opening preserves hull3. No fake frames, inserted obstacles or human approval claim.
+- [x] Precommit audit24 genuine runs,214 independent witness replays (101 compound), deterministic repeats, matched-prefix publication26→23/29, and20 restart GPU/resource samples. Six reports record costs, limitations and actual shape dimensions. Exact-HEAD checks/ZIP/patch SHA inventory are final delivery receipts.
+- [ ] Owner review/merge and production deployment remain unauthorized; no public release change.

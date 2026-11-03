@@ -1,0 +1,13 @@
+# Measurements
+
+Same movement, generator, assets, margins and planner budgets. New query accounting charges3 ordinary sphere pairs /12 station sphere-box pairs, versus historical1/4. Actual runtime expensive sweep counters and broad skips are separate from this deliberately conservative planner charge.
+
+Precommit24-run Node audit (24 real before/after runs plus three deterministic repeats): charged queries in the three1500m own-witness runs rise from539554/633389/483423 to1870680/2178042/1980078. Propagation totals remain comparable:1907783/1932154/1731198 →1911421/1931606/1990350. The controls differ between shape-specific witnesses. Default3072/6144 and hard4096/8192 per advance remain unchanged; no planner budget was raised. Final raw per-job metrics and rejection reasons are included.
+
+Compound runtime counters in this finite corpus:0–131 actual narrow sweeps per run, with roughly7k–41k enclosing/box broad skips. Broad phase avoids expensive three-part tests when distant. Across the three own-witness runs the precommit planner-chunk p95 was3.23–3.63ms, with maxima5.09–7.67ms. This is not a device/frame guarantee or proof of an improvement over baseline: order, JIT warmup and concurrent capture affected wall-clock samples. Six fixed-input matched prefixes retain23/29 publications versus26/29 before; ordinary sections22→21. Details are in FAIRNESS_IMPACT.md.
+
+Eight-active pickup stress:100 batches×1000 updates, p50~.00190ms and p95~.00291ms/update in the quoted precommit sample. The final audit also measures preallocated body/compound collision microbenchmarks with actual wing-contact geometry and records query counts. Production code has no timing instrumentation or per-tick vector/array allocation; a small bounded contact record is allocated on a real damage event only.
+
+Real-time Chrome156 precommit video frame intervals: before/after pickup median16.7ms, p9517.9/18.1ms; wing-left/right p9527.0/17.4ms; station p9521.4ms. These are finite local capture samples, not physical-phone FPS. Final raw measurements may vary. Existing planner/frame spikes and Vite's >500kB advisory remain.
+
+Magnet reuses a collected slot's existing meshes for140ms; no additional production geometry/material/texture. Three fragment draws remain briefly visible before the existing one-draw pulse. DEV visualization has its own shared wire resources and bounded borrowed impact clone. Twenty DEV collection/restart cycles retain32 geometries/1 texture,8 state slots; reset count and visible fragment objects both become zero. All private resources dispose once; borrowed asteroid asset resources remain owned by AssetManager. These finite checks are not an indefinite leak proof.

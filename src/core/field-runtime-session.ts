@@ -33,9 +33,9 @@ const rootCopy = (r: SchedulerRoot): SchedulerRoot => Object.freeze({
   ...(r.release?{release:true as const}:{}), ...(r.homing?{homing:Object.freeze({...r.homing})}:{}) });
 const zeroMetrics = (): ValidationMetrics => ({ propagations: 0, narrowQueries: 0, broadPhaseSkips: 0, clockSteps: 0,
   searchPropagations: 0, replayPropagations: 0, replayQueries: 0, peakFrontier: 0, peakExpansion: 0, searches: 0, replays: 0, planningTicks: 0 });
-function neutralControls(c: FieldValidationContext): readonly ControlRun[] | undefined {
+function neutralControls(c: FieldValidationContext, geometry?: ValidationGeometry): readonly ControlRun[] | undefined {
   let elapsed = c.elapsed, distance = c.distance, end = 0;
-  const exit = Math.max(c.distance, ...c.committed.map(h => h.passDistance + h.radius + CONFIG.ship.radius + L.margin));
+  const exit = Math.max(c.distance, ...c.committed.map(h => h.passDistance + (geometry?.axialExtent(h) ?? h.radius) + (geometry?.shipProfile?.axialExtent ?? CONFIG.ship.radius) + L.margin));
   for (let tick = 1; tick <= L.horizonTicks; tick++) {
     elapsed += CONFIG.step; distance += flightSpeed(elapsed,distance,c.release) * CONFIG.step;
     if (!end && tick >= L.reactionTicks && distance > exit) end = tick + L.brakingTicks;
@@ -244,7 +244,7 @@ export class RuntimePlanningSession {
     this.token = reservation.token;
     if (this.resolvingTarget) { this.currentPhase = 'ready'; return; }
     if (kind === 'empty-fallback') {
-      const controls = neutralControls(context);
+      const controls = neutralControls(context, this.custom?.geometry);
       if (!controls) this.fail('FALLBACK_HORIZON');
       else this.setJob(beginTrajectoryReplay(context, controls, this.custom ? { geometry: this.custom.geometry } : {}), 'validation');
     } else this.setJob(this.rootAware ? (this.counts.searches >= L.maxSearches ? beginNeutralKnownFieldValidation : beginKnownFieldValidation)(context, { geometry: this.custom!.geometry })

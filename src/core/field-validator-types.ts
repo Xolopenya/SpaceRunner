@@ -1,5 +1,6 @@
 import type { AdaptiveMineState, FieldValidationContext, FieldTransaction, PlannedHazard, StructuralResult } from './field-types.ts';
 import type { FlightPrediction, FlightState } from './field-prediction.ts';
+import type { ShipColliderProfile } from './ship-collider.ts';
 
 export const VALIDATION_LIMITS = Object.freeze({
   version: 'trajectory-v1', step: 1 / 120, macroTicks: 24, reactionTicks: 54,
@@ -20,6 +21,7 @@ export interface ValidationOptions {
 }
 export interface ValidationGeometry {
   readonly version: string;
+  readonly shipProfile?: ShipColliderProfile;
   validHazard(hazard: PlannedHazard): boolean;
   inspect(candidate: FieldTransaction, committed: readonly PlannedHazard[]): StructuralResult;
   queryCost(hazard: PlannedHazard): number;

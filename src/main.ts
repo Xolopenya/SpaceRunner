@@ -46,6 +46,11 @@ async function boot(): Promise<void> {
     debugFactory = scene => { structureView = releaseView(scene); return structureView; };
     if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
+    if(import.meta.env.DEV&&new URLSearchParams(location.search).get('debug')==='collectibles'&&new URLSearchParams(location.search).get('colliders')==='1'){
+      const {ColliderDebugger}=await import('./debug/collider-debugger.ts');
+      const {SHIP_COLLIDER}=await import('./core/ship-collider.ts');
+      debugFactory=scene=>{const release=releaseView(scene),debug=new ColliderDebugger(scene,SHIP_COLLIDER);structureView={bind:slots=>{release.bind(slots);debug.bind(slots);},update:model=>{release.update(model);debug.update(model);},dispose:()=>{debug.dispose();release.dispose();}};return structureView;};
+    }
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const params = new URLSearchParams(location.search), experiment = params.get('experiment');
       if (experiment === 'moving-mine') {

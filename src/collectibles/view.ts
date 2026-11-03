@@ -42,7 +42,16 @@ export class FragmentView {
     if (!run) return;
     for (let i = 0; i < this.meshes.length; i++) {
       const mesh = this.meshes[i]!, slot = run.slots[i]!, p = slot.proposal;
-      mesh.visible = slot.state === 'active' && !!p;
+      const age=model.elapsed-run.lastPickup.elapsed;
+      const attracting=slot.state==='collected'&&run.lastPickup.assisted&&run.lastPickup.slot===i&&age>=0&&age<S.magnetSeconds;
+      mesh.visible = (slot.state === 'active' && !!p)||!!attracting;
+      if(attracting){
+        const t=reducedMotion?1:1-(1-age/S.magnetSeconds)**2;
+        mesh.position.set(THREE.MathUtils.lerp(run.lastPickup.x,model.ship.x,t),THREE.MathUtils.lerp(run.lastPickup.y,model.ship.y,t),
+          ((run.lastPickup.z??0)+model.distance-run.lastPickup.distance)*(1-t));
+        mesh.scale.setScalar(1-t*.65);continue;
+      }
+      mesh.scale.setScalar(1);
       if (!mesh.visible || !p) continue;
       mesh.position.set(p.x, p.y, model.distance - p.passDistance);
       const time = reducedMotion ? 0 : model.elapsed;
@@ -52,11 +61,12 @@ export class FragmentView {
     }
     if (run.count < this.serial) this.reset();
     if (run.count > this.serial) {
-      this.burstAt = run.lastPickup.elapsed;
+      this.burstAt = run.lastPickup.elapsed+(run.lastPickup.assisted?S.magnetSeconds:0);
       this.burst.position.set(run.lastPickup.x, run.lastPickup.y, 0);
     }
     this.serial = run.count;
     const age = model.elapsed - this.burstAt;
+    if(run.lastPickup.assisted&&age>=-S.magnetSeconds&&age<S.burstSeconds)this.burst.position.set(model.ship.x,model.ship.y,0);
     this.burst.visible = this.burstAt >= 0 && age >= 0 && age < S.burstSeconds;
     if (this.burst.visible) {
       this.burst.scale.setScalar(1 + age * (reducedMotion ? 1 : 5));

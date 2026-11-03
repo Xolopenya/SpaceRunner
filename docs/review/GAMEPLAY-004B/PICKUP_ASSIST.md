@@ -1,0 +1,13 @@
+# Forgiving pickup
+
+Confirmed cause: GAMEPLAY-004 used only the ship's .42 central sphere plus fragment .32 collider: combined .74. The visible fragment reaches radius.54 and the ship has substantial wings. A .90 vertical miss can visibly overlap the ship/halo yet fail the old test. Actual Chrome before/after runs reproduce count0→count1 for that same .90 approach, hull3 in both.
+
+The fragment remains r=.32. ReleaseModel supplies the shared three-part ship profile and **.26 world-unit assistance**. Combined distances: body1.00, each wing.86. Each part uses continuous3D closest-approach sweeps at120Hz; there is no screen-space magnet or arbitrary long-distance collection. A3-unit miss remains a miss. The standalone legacy FragmentRun default retains the old body contract for historical diagnostics; ordinary Play explicitly uses the new policy.
+
+Collection is authoritative first: one slot changes active→collected, count increments once, HUD/+1 and existing chime react immediately. The already pooled mesh then travels toward the fuselage for.14 simulation seconds, shrinks and disappears in the existing pulse. No new mesh/geometry/material is allocated for attraction. Neither fragment physics nor ship trajectory moves. Pause freezes attraction; restart/dispose clears it. Multiple contacts cannot duplicate the count.
+
+Before accepting pickup, a thin line-of-sight sweep from the contacting part to the fragment checks the complete logical hazard field, including station boxes and damaged-but-still-owned hazards. It cannot pull a reward through a solid wall or an asteroid. This is a local occlusion check, not a guarantee that pursuing the object is safe.
+
+Cadence and seeded IDs are unchanged. Placement rejects the entire expanded coasting pickup footprint, with .28 additional clearance. The same bounded8 candidate points are used; no increased frequency compensates for rejections. A valid local approach may align the body, left wing or right wing with a reward, while every other ship part clears known geometry by the existing .28 placement margin. This preserves rewards beside apertures that should be collected by a wing with the fuselage nearer the passage center. Reach-time and boundary checks apply to that approach pose. Optional `approach` metadata is for deterministic engineering pilots, not an automatic in-game steering aid.
+
+The heuristic does not certify the complete approach route. An early greedy chase can hit an intervening asteroid; the diagnostic pilot follows the existing safe witness until a nearby maneuver is appropriate. No health, invulnerability, speed, distance score, best record or persistent economy effect was added.
