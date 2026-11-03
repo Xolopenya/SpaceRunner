@@ -9,6 +9,8 @@ export const HOMING_PRESETS = Object.freeze({
   aggressive: Object.freeze({ maxSpeed: 6, maxAcceleration: 8, responsiveness: 3.2 }),
 });
 export type HomingPreset = keyof typeof HOMING_PRESETS;
+/** Proposal scoring only; does not tune live mine or Ship motion. */
+export const HOMING_ROUTE_PROPOSAL=Object.freeze({halfX:5.2,halfY:2.8,mineLeadSeconds:.6,travelWeight:.08,reversalWeight:.05});
 export function homingPreset(value: string | null): HomingPreset {
   if (value === null) return 'balanced';
   if (Object.hasOwn(HOMING_PRESETS, value)) return value as HomingPreset;

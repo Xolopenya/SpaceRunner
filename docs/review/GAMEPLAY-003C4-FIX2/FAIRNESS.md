@@ -1,0 +1,17 @@
+# Fairness and regression contract
+
+All authoritative algorithms remain unchanged: Ship.update,120Hz clock, adaptive mine dynamics, relative swept CCD, margin0.15,54held-input ticks,39neutral braking ticks, complete known-field checks, terminal clearance and atomic ownership/pool admission. Original propagation/query ceilings3072/6144 per call,6144/12288 per render, beam16, deadline144 and two searches/four replays/two attempts remain fixed.
+
+The new helper chooses one proposal. It never runs an unbilled rollout or collision query. `beginResolvedRuntimeSearch` still advances the actual captured root with its actual input prefix through the entire committed+candidate union and independently reintegrates the result before publication. No unfinished gate can be reused at a later root. All three archived reaction-prefix failures remain exact rejections.
+
+Frozen tests reproduce all eighteen original failures using the original proposal functions, then test current routes within one original allowance. Each new accept has a separately created full-query replay, its own clock/controller state and matching witness hash. Neither the previous full-beam control tapes nor archived fixture inputs are imported by `src/`; they exist only in test/review tools. The old beam miss becoming accepted is another example of bounded-search incompleteness, not evidence that the old validator was unsafe.
+
+The broader isolated972-state matrix covers all three presets, three seeds, two forward-speed regimes, nine positions and six velocities. The final scope preserves all old decisions/work counts:781accept/191reject; all781current witnesses are independently replayed. The rejected unconditional variant with73lost accepts is preserved separately. No fixture is removed or relabeled.
+
+Current counterexample/runtime corpus, three independent3000m current-certificate flights, four render cadences, pause/resume and restart during active preparation are checked separately. Saved baseline witness inputs may collide in the newly admitted field: only a witness certified for the new field is a safety statement. The new own-witness flights retain hull3 without invulnerability or field deletion.
+
+One extra30Hz preparation deadline is retained as a negative finding (seed42/witness, vertical-weave section11, tick144). It fails closed under the unchanged allowance. This remaining availability constraint gives the task Partial status despite all newly accepted witnesses passing replay; it is not hidden by reporting only the recovered gates.
+
+Production regression, native keyboard/touch, actual bait-and-reverse/late damage, menu music, persisted settings, Phase2 and standard Mixed Flow use the full existing browser suite. Source guards protect all old tests and unaffected source/assets/workflows. Final executed counts and exit codes are recorded in verify/checks.json and the review manifest. Independent model execution is not an independent architecture review or a guarantee for arbitrary player input.
+
+All28accepted live browser publication witnesses also passed independent full-query Node replay with matching hashes. Fresh before/after bait and late videos decode to distinct real frames; authoritative body states match through passTick+30. Bait keeps hull3 and the1.2583s delayed heading correction; late input loses one hull. Two current screenshots were visually inspected. No subjective listening or physical-device test is claimed.

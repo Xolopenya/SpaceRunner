@@ -33,6 +33,7 @@ export class AdaptiveSource implements RuntimeEncounterSource {
   if(section.encounter!=='moving-mine')return{...this.base.candidate(section,committed,root),geometry:ADAPTIVE_GEOMETRY};
   const ambient=new FieldGenerator(section.seed).propose(section.firstCell,section.cellCount-1),template=Object.freeze({...ambient,cellCount:section.cellCount,endDistance:section.endDistance});
   return{transaction:template,fallback:template,geometry:ADAPTIVE_GEOMETRY,publicationPolicy:'resolve-at-publication-v1' as const,publicationDelayTicks:1,
+   preferCurrentFieldGoals:true as const,
    resolveAtPublication:(current:SchedulerRoot)=>adaptiveTransaction(section.seed,section.firstCell,current,this.preset)};
  }
  advance(root:SchedulerRoot):void{

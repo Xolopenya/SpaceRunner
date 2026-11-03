@@ -22,6 +22,8 @@ export interface RuntimeCandidate {
   readonly publicationDelayTicks?: number;
   readonly resolveAtPublication?: (root: SchedulerRoot) => FieldTransaction;
   readonly previewPose?: Readonly<{x:number;y:number;passDistance:number}>;
+  /** DEV proposal preference only; all actual-root simulation/replay remains. */
+  readonly preferCurrentFieldGoals?: true;
   /** A whole independently proposed source span, never a partial primary. */
   readonly fallback?: FieldTransaction;
   readonly generationReason?: string;
@@ -114,12 +116,13 @@ export class RuntimePlanningSession {
     if (this.publicationDue(tick)) {
       if (this.currentPhase !== 'ready' || (!this.witness && !this.resolvingTarget)) return this.finish('omitted-uncertified', this.failure ?? 'PLANNING_DEADLINE');
       const resolving = this.resolvingTarget;
-      if (resolving && !this.resolve(current, committed, hint)) return this.result;
+      const proposalHint = import.meta.env?.PROD ? hint : this.custom?.preferCurrentFieldGoals ? undefined : hint;
+      if (resolving && !this.resolve(current, committed, proposalHint)) return this.result;
       const transaction = this.attempts.at(-1)!.transaction!;
       const context = { ...rootCopy(current), committed: visibleAt(committed, current.distance), candidate: transaction,
         ...(this.custom ? { reservedUntilDistance: transaction.endDistance } : {}) };
       const options = this.custom ? { geometry: this.custom.geometry } : {};
-      const job = resolving ? beginResolvedRuntimeSearch(context, options, hint)
+      const job = resolving ? beginResolvedRuntimeSearch(context, options, proposalHint)
         : this.rootAware && this.custom?.publicationPolicy !== 'resolve-at-publication-v1' && transaction.hazards.some(h => this.custom!.geometry.validHazard(h))
         ? beginRuntimeRootSearch(this.witness!, context, options)
         : this.replayMode === 'full' ? beginPublicationCheck(this.witness!, context, options) : beginRuntimePublicationCheck(this.witness!, context, options);

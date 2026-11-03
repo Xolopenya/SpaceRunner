@@ -14,6 +14,7 @@ import { HOMING as H,HOMING_PRESETS } from './settings.ts';
 import type { HomingPreset } from './settings.ts';
 import { adaptivePhase,initialAdaptiveState } from './controller.ts';
 import { AdaptivePrediction } from './prediction.ts';
+import { homingEscapeGoal } from './route-policy.ts';
 
 function hash(s:string):string{let n=2166136261;for(const c of s)n=Math.imul(n^c.charCodeAt(0),16777619);return(n>>>0).toString(16).padStart(8,'0');}
 export function isAdaptive(h:PlannedHazard):boolean{return h.motion?.version===H.version;}
@@ -45,11 +46,6 @@ export function validAdaptiveState(s:Readonly<AdaptiveMineState>,h:PlannedHazard
   &&Math.abs(s.x-h.x)<=m.maxSpeed*age+1e-8&&Math.abs(s.y-h.y)<=m.maxSpeed*age+1e-8
   &&Math.abs(s.targetX)<=CONFIG.bounds.x&&Math.abs(s.targetY)<=CONFIG.bounds.y;
 }
-function proposedGoal(hazards:readonly PlannedHazard[],distance:number,elapsed:number):{x:number;y:number}|undefined{
- const h=hazards.find(isAdaptive),m=h?.motion;if(!h||m?.version!==H.version||distance>h.passDistance+h.radius+.57)return undefined;
- if(hazards.some(other=>other!==h&&other.passDistance<h.passDistance&&other.passDistance+other.radius+.57>=distance))return undefined;
- const bait=-Math.sign(h.x)*4.8;return{x:simulationTick(elapsed)<m.passTick-H.escapeProposalTicks?bait:-bait,y:0};
-}
 export const ADAPTIVE_GEOMETRY:ValidationGeometry=Object.freeze({...MINE_GEOMETRY,version:H.geometry,
  validHazard:(h:PlannedHazard)=>isAdaptive(h)?canonical(h):MINE_GEOMETRY.validHazard(h),
  prediction:(context?:FieldValidationContext)=>new AdaptivePrediction([...context?.committed??[],...context?.candidate.hazards??[]].find(isAdaptive)),
@@ -58,8 +54,8 @@ export const ADAPTIVE_GEOMETRY:ValidationGeometry=Object.freeze({...MINE_GEOMETR
   if(committed[0])return !!context.homing&&validAdaptiveState(context.homing,committed[0],context.elapsed);
   if(context.homing)return false;const h=fresh[0];return !h||(h.motion?.version===H.version&&JSON.stringify(h.motion.capture)===JSON.stringify(targetCapture(context)));},
  resolvedAt(context:FieldValidationContext){const h=context.candidate.hazards.find(isAdaptive);return h?.motion?.version===H.version&&JSON.stringify(h.motion.capture)===JSON.stringify(targetCapture(context));},
- goalsAt(hazards:readonly PlannedHazard[],distance:number,state?:Readonly<FlightState>){const goal=state?proposedGoal(hazards,distance,state.elapsed):undefined;return goal?[goal]:MINE_GEOMETRY.goalsAt?.(hazards,distance,state);},
- steering(hazards:readonly PlannedHazard[],state:Readonly<FlightState>){const goal=proposedGoal(hazards,state.distance,state.elapsed);if(!goal)return undefined;
+ goalsAt(hazards:readonly PlannedHazard[],distance:number,state?:Readonly<FlightState>){const goal=state?homingEscapeGoal(hazards,state):undefined;return goal?[goal]:MINE_GEOMETRY.goalsAt?.(hazards,distance,state);},
+ steering(hazards:readonly PlannedHazard[],state:Readonly<FlightState>){const goal=homingEscapeGoal(hazards,state);if(!goal)return undefined;
   const axis=(error:number,velocity:number)=>Math.abs(error)<=velocity*velocity/(2*CONFIG.ship.braking)+.08&&error*velocity>=0?0:Math.sign(error);
   return{x:axis(goal.x-state.x,state.vx),y:axis(goal.y-state.y,state.vy)};},
  inspect(candidate:FieldTransaction,committed:readonly PlannedHazard[]):StructuralResult{
