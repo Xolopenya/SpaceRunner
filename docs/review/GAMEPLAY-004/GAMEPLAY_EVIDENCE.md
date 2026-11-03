@@ -1,0 +1,20 @@
+# Actual gameplay evidence
+
+Normal feature play: `http://127.0.0.1:5173/` → Launch run. Production preview: `http://127.0.0.1:4173/`. Neither requires parameters. The production browser test overrides entropy to seed42 **inside its isolated test context**, then replays real keyboard events through InputManager with a controlled clock; it collects a fragment, pauses and restarts without window.spaceRunner or a query.
+
+Repeatable inspection URL: `http://127.0.0.1:5173/?debug=collectibles&seed=42`. This optional DEV seam selects the same ReleaseModel as normal Play, adds no content and is absent from production. Run `node --experimental-strip-types --expose-gc scripts/collectible-audit.mjs` for six deterministic histories. With both servers running and Chrome/Playwright ffmpeg available, run `node scripts/collectible-browser.mjs` for real-time evidence. If ffmpeg is installed locally, set PLAYWRIGHT_BROWSERS_PATH to that cache directory first.
+
+The automated pilot in `tests/fixtures/fragment-flight.ts` uses ordinary X/Y input and unchanged Ship acceleration/braking. It follows the existing certified controls when ignoring rewards. The collecting pilot steers with a damped target controller when a fragment is active. It does not teleport, insert geometry, change hull, grant invulnerability or force publication. Videos are actual Chrome captures with real-time simulation after an unrendered simulated prefix. They are silent Playwright WebMs; live chime counts and OfflineAudioContext output are checked separately. No generated frames or synthesized gameplay recording.
+
+| Scenario | Actual seed42 result | Evidence in ZIP |
+| --- | --- | --- |
+| Collect beside ordinary debris | ID `energy-fragment-v1/42/10`, position (-2.3465026969090106, 1.8443099133903162), pass285.6627569999546; pickup at284.9552430555557, ENERGY01, hull3 | `collectible-pickup.webm`, `collectible-pickup-{approach,near,after}.png` |
+| Deliberately ignore reward | Same first opportunity, certificate-following route passes without contact; ENERGY00, hull3; object retires behind ship | `collectible-ignore.webm`, `collectible-ignore-{approach,near,after}.png` |
+| Collect in station opening | ID `energy-fragment-v1/42/21`, lower aperture, position (1.55,-1.9), pass564; pickup at563.3611585185179, ENERGY02, hull3, Phase2 | `collectible-station.webm`, `collectible-station-{approach,near,after}.png` |
+| Genuine end of flight | Greedy pilot eventually loses three hull points at3068.5450935185945m; final ENERGY09. The continuation uses real damage, not a forced game-over state | `collectible-game-over.png` and browser JSON `death` |
+
+Visual inspection: the cyan core/halo is distinct from debris and station plating; screenshots show it clearly at about28 units before contact and near the approach. ENERGY occupies a small area beneath hull. Near the lower aperture the player chooses the right side of the opening, closer to station machinery than the central bypass. The ignored run shows the reward remaining away from the ship. The game still uses forward endless flight and ordinary obstacle encounters. These observations are engineering review, not human approval of fun or visibility.
+
+Six 1500m runs contain28 published fragments (18 debris,10 aperture),13 collected by the three greedy pilots. Three ignore runs retain hull3 and count0. Greedy pilots finish with hull1/2/2: local placement does not certify a complete approach or immunity to later hazards. Acceptance/rejection, exact proposals, pickup ticks, SHA256 history identities and independent witness replays are in `logs/collectible-audit.json`. All78 admitted hazard witnesses replay independently.
+
+Initial development failures are retained in attempt logs: an initial base GameModel edit violated two unchanged source guards and was removed; an entry-chunk collider-marker regression was corrected by separating the presentation state helper; a live test was invalidated by a DEV hot reload while source was being edited. Final verification runs against stable sources. No original assertion was relaxed.

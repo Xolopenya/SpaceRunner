@@ -48,6 +48,17 @@ const storage = () => new AudioSettingsStorage(() => ({ getItem: () => null, set
 const frame = () => ({ state: 'PLAYING', speed: 20, ship: { vx: 0, vy: 0 }, hitSerial: 0, hull: 3 });
 const graph = (manager: AudioManager) => (manager as unknown as { graph: import('../src/audio/graph.ts').AudioGraph }).graph;
 
+test('pickup chime consumes each counter change once and respects independent Master/SFX/mute', async () => {
+  const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
+  await audio.unlock(); const submit = (count: number) => audio.update({ ...frame(), fragments: { count } } as Parameters<AudioManager['update']>[0]);
+  submit(0); submit(1); submit(1); assert.equal(graph(audio).counts.pickup, 1);
+  audio.setSettings({ master: .3, sfx: .4, music: .8 });
+  assert.equal(graph(audio).master.gain.value, .3 * AUDIO.headroom); assert.equal(graph(audio).sfxBus.gain.value, .4);
+  audio.setSettings({ muted: true }); submit(2); audio.setSettings({ muted: false }); submit(2);
+  assert.equal(graph(audio).counts.pickup, 1); assert.equal(graph(audio).musicBus.gain.value, .8);
+  audio.resetRun(); submit(0); submit(1); assert.equal(graph(audio).counts.pickup, 2); audio.dispose();
+});
+
 test('audio defaults, clamping, mute and gain headroom are safe', () => {
   assert.deepEqual(normalizeSettings(null), AUDIO.defaults);
   assert.deepEqual(normalizeSettings({ master: -1, music: 3, sfx: NaN, muted: 'yes' }), { master: 0, music: 1, sfx: 0.75, muted: false });

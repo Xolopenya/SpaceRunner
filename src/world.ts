@@ -10,6 +10,7 @@ import { SpaceBackground } from './visuals/space-background.ts';
 import { EngineVFX } from './visuals/engine-vfx.ts';
 import { ImpactVFX } from './visuals/impact-vfx.ts';
 import { visualDelta, visualQuality } from './visuals/settings.ts';
+import { FragmentView } from './collectibles/view.ts';
 
 function cornerGuide(): THREE.LineSegments {
   const points: THREE.Vector3[] = [];
@@ -32,6 +33,7 @@ export class World {
   private readonly background: SpaceBackground;
   private readonly engines: EngineVFX;
   private readonly impacts: ImpactVFX;
+  private readonly fragments: FragmentView;
   private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   private readonly coarsePointer = window.matchMedia('(pointer: coarse)');
   private quality = visualQuality(1280, 800, false, false);
@@ -78,6 +80,7 @@ export class World {
     this.background = new SpaceBackground(this.scene);
     this.engines = new EngineVFX(this.scene, this.ship);
     this.impacts = new ImpactVFX(this.scene);
+    this.fragments = new FragmentView(this.scene);
     this.collisionDebug = debugFactory?.(this.scene);
   }
 
@@ -97,6 +100,7 @@ export class World {
   reset(): void {
     this.engines.reset();
     this.impacts.reset();
+    this.fragments.reset();
     this.ship.rotation.set(0, 0, 0);
     this.camera.position.set(0, 2.4, this.cameraZ);
   }
@@ -125,6 +129,7 @@ export class World {
     }
     for (let i = 0; i < this.frames.length; i++) this.frames[i]!.position.z = -i * 18 + model.distance % 18 - 5;
     this.background.update(model.distance, model.speed, this.quality);
+    this.fragments.update(model, this.quality.reducedMotion);
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);
     this.impacts.update(model.hitSerial, this.ship.position, model.ship.vx, model.ship.vy, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, dt, true), this.quality);
     const shake = model.state === 'PLAYING' ? this.impacts.remaining * 0.08 : 0;
@@ -143,6 +148,7 @@ export class World {
     this.background.dispose();
     this.engines.dispose();
     this.impacts.dispose();
+    this.fragments.dispose();
     this.resources.dispose();
     this.renderer.dispose();
   }

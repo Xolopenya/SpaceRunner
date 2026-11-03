@@ -1,22 +1,32 @@
 {
-  "taskId": "ASSIGNMENT-002",
-  "baseline": "b7d9dd6c70baa4eb5d5a55780b07aae2b0bd2134",
+  "taskId": "GAMEPLAY-004",
+  "baseline": "bbfb48ccf390b8feceb82ada4f01e86b912b4779",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ARCHITECTURE.md": "docs/assignment-002/ARCHITECTURE_NOTES.md",
-    "REFLECTION.md": "docs/assignment-002/REFLECTION.md",
-    "IMPLEMENTATION.md": "docs/assignment-002/DELIVERY_CHECKLIST.md",
-    "DEMO_GUIDE.md": "docs/assignment-002/DEMO_GUIDE.md",
-    "README.md": "README.md",
-    "CHANGELOG.md": "CHANGELOG.md"
+    "COLLECTIBLE_DESIGN.md": "docs/review/GAMEPLAY-004/COLLECTIBLE_DESIGN.md",
+    "PLACEMENT_POLICY.md": "docs/review/GAMEPLAY-004/PLACEMENT_POLICY.md",
+    "COLLISION_AND_LIFECYCLE.md": "docs/review/GAMEPLAY-004/COLLISION_AND_LIFECYCLE.md",
+    "GAMEPLAY_EVIDENCE.md": "docs/review/GAMEPLAY-004/GAMEPLAY_EVIDENCE.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-004/PERFORMANCE.md",
+    "KNOWN_LIMITATIONS.md": "docs/review/GAMEPLAY-004/KNOWN_LIMITATIONS.md"
   },
   "screenshots": [
-    "assignment-menu.png",
-    "assignment-phase2.png",
-    "assignment-settings.png"
+    "collectible-pickup-approach.png",
+    "collectible-pickup-near.png",
+    "collectible-pickup-after.png",
+    "collectible-ignore-approach.png",
+    "collectible-ignore-near.png",
+    "collectible-ignore-after.png",
+    "collectible-station-approach.png",
+    "collectible-station-near.png",
+    "collectible-station-after.png",
+    "collectible-game-over.png"
   ],
-  "videoPreviews": [],
-  "additionalAssets": [],
+  "videoPreviews": [
+    "collectible-pickup.webm",
+    "collectible-ignore.webm",
+    "collectible-station.webm"
+  ],
   "extraChecks": [
     {
       "script": "scripts/collision-audit.mjs",
@@ -26,12 +36,22 @@
     {
       "script": "scripts/assignment-audit.mjs",
       "stripTypes": true,
-      "name": "assignment-audit"
+      "name": "phase2-audit"
     },
     {
-      "script": "scripts/assignment-browser.mjs",
+      "script": "scripts/collectible-audit.mjs",
+      "stripTypes": true,
+      "name": "collectible-audit"
+    },
+    {
+      "script": "scripts/collectible-browser.mjs",
       "stripTypes": false,
-      "name": "assignment-browser"
+      "name": "collectible-browser"
+    },
+    {
+      "script": "scripts/collectible-package-check.mjs",
+      "stripTypes": false,
+      "name": "patch-applicability"
     }
   ],
   "preservedUntracked": [
@@ -40,16 +60,16 @@
     "docs/game-design/GAMEPLAY_CONSILIUM.md",
     "docs/game-design/consilium/"
   ],
-  "intermediateEvidence": [],
   "evidenceNotes": [
-    "Production integration is authorized; historical byte-identity assertions are not release gates.",
-    "Adaptive homing remains DEV-only and is not shipped.",
-    "Release speed is shared by live simulation, search and independent replay.",
-    "Raw assignment evidence is retained under logs/baseline in the ZIP."
+    "Normal Play includes fragments on this feature branch; no production deployment.",
+    "Three real-time silent Chrome WebM recordings after actual simulated prefixes; no synthetic gameplay frames.",
+    "Pickup-route placement is a local heuristic; hazard witnesses remain independent.",
+    "Final raw measurements may differ from explicitly labeled precommit samples."
   ],
   "limitations": [
-    "Physical phones untested. Finite witnesses do not guarantee survival for arbitrary input.",
-    "Bounded planner omissions and frame spikes remain possible."
+    "No owner human playtest approval or physical-phone performance claim.",
+    "Local placement does not certify an entire pickup route.",
+    "Existing bounded-planner omissions and frame spikes remain possible."
   ],
   "knownBlockers": []
 }

@@ -1,7 +1,7 @@
 import { AUDIO } from './settings.ts';
 
-export type Sound = 'launch' | 'resume' | 'pause' | 'click' | 'impact' | 'destruction' | 'gameOver';
-export const SOUNDS: readonly Sound[] = ['launch', 'resume', 'pause', 'click', 'impact', 'destruction', 'gameOver'];
+export type Sound = 'launch' | 'resume' | 'pause' | 'click' | 'impact' | 'destruction' | 'gameOver' | 'pickup';
+export const SOUNDS: readonly Sound[] = ['launch', 'resume', 'pause', 'click', 'impact', 'destruction', 'gameOver', 'pickup'];
 const TAU = Math.PI * 2;
 const frequency = (midi: number) => 440 * 2 ** ((midi - 69) / 12);
 
@@ -42,6 +42,9 @@ export function soundSamples(kind: Sound, sampleRate: number = AUDIO.sampleRate)
         const age = t - note * 0.19;
         if (age >= 0) value += Math.sin(TAU * frequency([62, 57, 50][note]!) * age) * Math.min(1, age / 0.018) * Math.exp(-age * 8) * 0.055;
       }
+    } else if (kind === 'pickup') {
+      const phase = TAU * (660 * t + 1200 * t * t);
+      value = attack * (Math.sin(phase) * .075 + Math.sin(phase * 1.5) * .025) * Math.exp(-t * 19);
     } else if (kind === 'click') value = attack * (low * 0.11 + Math.sin(TAU * 310 * t) * 0.018) * Math.exp(-t * 42);
     else {
       const upward = kind !== 'pause';

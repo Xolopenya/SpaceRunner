@@ -44,7 +44,7 @@ async function boot(): Promise<void> {
     }
     let developerModel: GameModel | undefined = new ReleaseModel();
     debugFactory = scene => { structureView = releaseView(scene); return structureView; };
-    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && new URLSearchParams(location.search).get('debug')!=='field'){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
+    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'field') {
       const params = new URLSearchParams(location.search), experiment = params.get('experiment');

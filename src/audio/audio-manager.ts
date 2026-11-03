@@ -8,6 +8,7 @@ export interface AudioFrame {
   readonly state: GameState; readonly speed: number;
   readonly ship: { readonly vx: number; readonly vy: number };
   readonly hitSerial: number; readonly hull: number;
+  readonly fragments?: { readonly count: number };
 }
 export type AudioStatus = 'locked' | 'running' | 'muted' | 'blocked' | 'unavailable' | 'suspended' | 'disposed';
 type ContextFactory = () => AudioContext;
@@ -25,6 +26,7 @@ export class AudioManager {
   private blocked = false;
   private generation = 0;
   private serial = 0;
+  private pickupSerial = 0;
   private frame?: AudioFrame;
 
   constructor(preferences = new AudioSettingsStorage(), createContext: ContextFactory = () => new AudioContext({ latencyHint: 'interactive' })) {
@@ -88,12 +90,15 @@ export class AudioManager {
     const hit = frame.hitSerial > this.serial;
     const restart = frame.hitSerial < this.serial;
     this.serial = frame.hitSerial; // Consume while locked/muted; never replay stale hits.
+    const count = frame.fragments?.count ?? 0, pickup = count > this.pickupSerial;
+    this.pickupSerial = count;
     const graph = this.graph;
     try {
       if (restart) graph?.clearVoices();
       graph?.setState(frame.state);
       if (!graph || this.status !== 'running') return;
       graph.update(frame.speed, frame.ship.vx, frame.ship.vy);
+      if (pickup) graph.play('pickup');
       if (hit) {
         if (frame.hull <= 0) { graph.play('destruction'); graph.play('gameOver', 0.55); }
         else graph.play('impact');
@@ -115,6 +120,7 @@ export class AudioManager {
 
   resetRun(): void {
     this.serial = 0;
+    this.pickupSerial = 0;
     try { this.graph?.clearVoices(); } catch { this.disable(); }
   }
 

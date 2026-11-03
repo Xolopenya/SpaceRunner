@@ -457,3 +457,14 @@ Final design consistency review corrected the research proposal's scheduling ari
 | `node --experimental-strip-types scripts/field-foundation-benchmark.mjs` | Exit0 in nested approved B-1 cwd; original guards/assertions unchanged |
 | `node --experimental-strip-types scripts/director-benchmark.mjs` | Exit0 after final coverage change;1588 schedules/48 Chrome/240 long policies/288 short counterfactuals/256 structural seeds/four director-only day schedules |
 | `npm run review:verify` | Exit0; full10 checks before coverage revision; exact-HEAD full repeat is part of `npm run review:pack` |
+
+
+## GAMEPLAY-004 — Collectibles & Risk/Reward, 2026-11-03
+
+- [x] Created `feature/gameplay-004-collectibles` from verified `origin/main` bbfb48ccf390b8feceb82ada4f01e86b912b4779. Preserved all existing untracked user files. Experimental mine branches were not merged/cherry-picked.
+- [x] One procedural cyan Energy Fragment in normal ReleaseModel Play. Separate per-run ENERGY count, game-over total, swept pickup, original chime, pooled halo feedback, pause and restart behavior. No economy, distance bonus, hull effects or new hazards.
+- [x] Deterministic bounded placement only after whole-section ledger commitment, using known hazard spheres and exact station solids, reach-time allowances, inward bounds, coasting-route offset and separation. This is a local heuristic, not a certified pickup route. Existing hazard validator and base simulation remain unchanged.
+- [x] Six 1500m runs: 28 rewards /63 ordinary admitted sections, two skipped opportunities /30; 13 greedy-pilot pickups. Three ignore routes retain hull3/count0; all78 hazard witnesses replay independently. Exact placements/pickup histories and counterfactual admission are tested.
+- [x] Three actual Chrome video scenarios and screenshots: debris collection, deliberate bypass, lower-station aperture collection; genuine damage-ended game-over screenshot. No human approval claimed. Twenty browser restarts retain graphics resource counts; fifty Node resets and disposal tests retain bounded pools.
+- [x] Added six review reports, focused collision/lifecycle/determinism/audio/browser tests and reproducible diagnostics. Initial full unit run242/242 passed; one further recorded-input replay test added. Exact-HEAD verification counts/logs, patch checks, ZIP inventory, SHA256 and remote receipt are delivery artifacts, not public-release claims.
+- [ ] Owner review, merge approval and deployment remain outside this task's authorization. No main merge/push or Pages deployment.

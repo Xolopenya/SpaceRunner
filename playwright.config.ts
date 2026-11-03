@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'collectibles', testMatch: 'collectibles.spec.ts', timeout: 90_000 },
     { name: 'adaptive-homing', testMatch: 'adaptive-homing.spec.ts', timeout: 120_000 },
     { name: 'target-lock', testMatch: 'target-lock.spec.ts', timeout: 120_000 },
     { name: 'mine-motion', testMatch: 'mine-motion.spec.ts', timeout: 120_000 },

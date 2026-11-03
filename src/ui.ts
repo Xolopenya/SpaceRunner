@@ -1,5 +1,6 @@
 import { RELEASE } from './release/settings.ts';
 import { GameModel } from './core/game-model.ts';
+import { fragmentsOf } from './collectibles/state.ts';
 
 export function element<T extends HTMLElement = HTMLElement>(id: string): T {
   const node = document.getElementById(id);
@@ -21,6 +22,8 @@ function score(node: HTMLElement, value: number): void {
 export class HUD {
   private readonly game = element('game');
   private readonly distance = element('distance');
+  private readonly energy = element('energy-count');
+  private readonly energyBlock = element('energy-block');
   private readonly pausedScore = element('paused-score');
   private readonly hull = element('hull');
   private readonly hullPips = Array.from(this.hull.children);
@@ -51,6 +54,7 @@ export class HUD {
     score(element('menu-best'), best);
     score(element('final-score'), model.score);
     score(element('final-best'), best);
+    text(element('final-energy'), String(fragmentsOf(model)?.count ?? 0).padStart(2, '0'));
     text(element('pause-reason'), pauseReason);
     text(element('seed'), `Route ${model.seed}`);
     const focusId = { MENU: 'launch', PLAYING: 'flight', PAUSED: 'resume', GAME_OVER: 'replay', LOADING: 'loading' }[state];
@@ -58,6 +62,9 @@ export class HUD {
   }
 
   update(model: GameModel): void {
+    const fragments = fragmentsOf(model), pickupAt = fragments?.lastPickup.elapsed ?? -1;
+    text(this.energy, String(fragments?.count ?? 0).padStart(2, '0'));
+    this.energyBlock.dataset.pulse = String(pickupAt >= 0 && model.elapsed - pickupAt < .42);
     const phase='phase' in model ? Number(model.phase) : 1;
     if(phase===1){this.phaseShown=1;this.phaseAt=0;}
     if(phase===2&&this.phaseShown===1){this.phaseShown=2;this.phaseAt=model.elapsed;}

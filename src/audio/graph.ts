@@ -74,7 +74,7 @@ export class AudioGraph {
   readonly musicBus: GainNode;
   readonly sfxBus: GainNode;
   readonly engine: EngineAudio;
-  readonly counts: Record<Sound, number> = { launch: 0, resume: 0, pause: 0, click: 0, impact: 0, destruction: 0, gameOver: 0 };
+  readonly counts: Record<Sound, number> = { launch: 0, resume: 0, pause: 0, click: 0, impact: 0, destruction: 0, gameOver: 0, pickup: 0 };
   readonly voices = new Set<Voice>();
   private readonly context: BaseAudioContext;
   private readonly buffers = new Map<Sound, AudioBuffer>();
