@@ -10,6 +10,8 @@ export class HomingPresentation {
  private readonly lamp:MeshBasicMaterial;private readonly color:Color;
  constructor(root:Group,lamp:Mesh){this.lamp=lamp.material as MeshBasicMaterial;this.color=this.lamp.color.clone();this.trail.name='adaptive-mine-trail';this.trail.frustumCulled=false;this.trail.visible=false;root.add(this.trail);}
  update(model:AdaptiveHomingGameModel,mine:Group,h?:PlannedHazard):string{
+  const f=model.homing.planningFrame,work=f.latest;
+  const diagnostics=`\nPlanner/RAF ${work.chunks} chunks · ${work.ms.toFixed(1)}ms · ${work.propagations}/${work.queries} work · deferred ${work.deferred}\nMax planner ${f.maxMs.toFixed(1)}ms · frame ${f.maxFrameMs.toFixed(1)}ms · spikes ${f.spikes} · active ${model.field.slots.filter(s=>s.active).length}`;
   this.trail.visible=false;const source=model.homing,s=source.current,m=h?.motion;
   if(s&&m?.version==='adaptive-homing-v1'){
    if(s.phase==='waiting')mine.visible=false;
@@ -23,8 +25,8 @@ export class HomingPresentation {
     +`Acceleration ${s.ax.toFixed(2)},${s.ay.toFixed(2)} · target ${s.targetX.toFixed(2)},${s.targetY.toFixed(2)}\n`
     +`Ship ${model.ship.x.toFixed(2)},${model.ship.y.toFixed(2)} · relative ${relative.toFixed(1)}\n`
     +`Warning/launch ${(Math.max(0,m.startTick-s.tick)/120).toFixed(2)}s · plane ${(Math.max(0,m.passTick-s.tick)/120).toFixed(2)}s\n`
-    +`Admission ${model.field.lastOutcome?.status??'pending'} · reject ${model.field.lastRejection??'none'}`;
+    +`Admission ${model.field.lastOutcome?.status??'pending'} · reject ${model.field.lastRejection??'none'}`+diagnostics;
   }
-  return `Phase ${source.encounters.length?'PASSED / CONTACT':'PREPARING'}\nLast rejection ${model.field.lastRejection??'none'}`;
+  return `Phase ${source.encounters.length?'PASSED / CONTACT':'PREPARING'}\nLast rejection ${model.field.lastRejection??'none'}`+diagnostics;
  }
 }
