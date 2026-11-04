@@ -70,7 +70,7 @@ function prepare(raw: FieldValidationContext, options: ValidationOptions, metric
     || raw.committed.length + raw.candidate.hazards.length > L.maxHazards) return reject('STRUCTURAL_INVALID', 'root/settings/count');
   const all = [...raw.committed, ...raw.candidate.hazards], ids = new Set<string>();
   for (const h of all) {
-    if(options.geometry?.shipProfile&&h?.motion)return reject('UNKNOWN_PROFILE','moving experiments require their explicit motion contract');
+    if(options.geometry?.shipProfile&&h?.motion&&!(options.geometry.compoundMotion==='adaptive-homing-v1'&&h.motion.version==='adaptive-homing-v1'))return reject('UNKNOWN_PROFILE','moving experiments require their explicit motion contract');
     const extended = !!h && !!options.geometry?.validHazard(h);
     if (h?.motion && (!extended || h.collisionProfile !== 'moving-mine-sphere-v1')) return reject('UNKNOWN_PROFILE', 'uncertified motion');
     if (!h || !h.provenance || ![h.x, h.y, h.passDistance, h.radius, h.phase, h.spin].every(Number.isFinite)

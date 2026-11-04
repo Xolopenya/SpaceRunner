@@ -71,9 +71,9 @@ test('forced aperture is visibly labeled as a test override and survives restart
   expect(await page.evaluate(() => (window.spaceRunner!.model as MixedFlowGameModel).forcedAperture)).toBe('lower');
 });
 
-test('mixed flow, root search and trace exporter are stripped from production', async ({ page }) => {
+test('integrated Mixed Flow keeps certified publication and excludes the DEV trace exporter', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/?debug=field&experiment=mixed-flow&seed=42'); await page.locator('#launch').click();
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); await expect(page.locator('#mixed-flow-debug-info')).toHaveCount(0);
   const source = await page.locator('script[type=module]').getAttribute('src'), js = await (await page.request.get(new URL(source!, 'http://127.0.0.1:4173').href)).text();
-  for (const marker of ['mixed-flow-v1', 'root-aware-v1', 'Export recent trace', 'beginRuntimeRootSearch']) expect(js).not.toContain(marker);
+  expect(js).toContain('integrated-playable-v1'); expect(js).toContain('root-aware-v1'); expect(js).not.toContain('Export recent trace');
 });

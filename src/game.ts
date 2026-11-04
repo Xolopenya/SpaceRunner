@@ -84,7 +84,14 @@ export class Game {
     const rect = canvas.getBoundingClientRect();
     this.world.resize(rect.width, rect.height);
     this.world.reset();
-    this.loop = new GameLoop(dt => this.model.step(dt, this.input.axis), dt => {
+    let planningFrameStarted=false;
+    this.loop = new GameLoop(dt => {
+      if(!planningFrameStarted){
+        (this.model as GameModel & {beginPlanningFrame?:()=>void}).beginPlanningFrame?.();planningFrameStarted=true;
+      }
+      this.model.step(dt,this.input.axis);
+    }, dt => {
+      (this.model as GameModel & {finishPlanningFrame?:(dt:number)=>void}).finishPlanningFrame?.(dt);planningFrameStarted=false;
       this.syncState();
       this.audio.update(this.model);
       this.soundPanel.update();

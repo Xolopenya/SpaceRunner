@@ -30,16 +30,18 @@ test('normal flight has no safe-lane rectangles or collider geometry while logic
   const sceneState = await page.evaluate(() => {
     const game = window.spaceRunner!;
     const scene = (game.world as unknown as { scene: import('three').Scene }).scene;
-    let loops = 0, cornerGuides = 0, greenGuides = 0;
+    let loops = 0, cornerGuides = 0, greenGuides = 0, boundaryEdges = 0;
     scene.traverse(node => {
       if (node.type === 'LineLoop') loops++;
       if (node.name.startsWith('environment-corner-guide-')) cornerGuides++;
+      if (node.name.startsWith('arena-edge-')) boundaryEdges++;
       if ((node.type === 'LineSegments' || node.type === 'LineLoop') && ((node as import('three').Line).material as import('three').LineBasicMaterial).color.getHex() === 0x69f4d3) greenGuides++;
     });
-    return { loops, cornerGuides, greenGuides, debug: !!scene.getObjectByName('collision-debug-root'), logicalWaves: game.model.field.waves.filter(wave => wave.active).length };
+    return { loops, cornerGuides, boundaryEdges, greenGuides, debug: !!scene.getObjectByName('collision-debug-root'), logicalWaves: game.model.field.waves.filter(wave => wave.active).length };
   });
   expect(sceneState.loops).toBe(0);
-  expect(sceneState.cornerGuides).toBe(9);
+  expect(sceneState.cornerGuides).toBe(0);
+  expect(sceneState.boundaryEdges).toBe(4);
   expect(sceneState.greenGuides).toBe(0);
   expect(sceneState.debug).toBe(false);
   expect(sceneState.logicalWaves).toBeGreaterThan(0);

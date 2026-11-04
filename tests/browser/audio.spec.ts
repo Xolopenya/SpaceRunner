@@ -52,11 +52,11 @@ test('hotfix production menu music, passive flight, Phase 2 and restart', async 
   await expect(page.locator('#phase-label')).toContainText('PHASE 1');
   await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', '3');
   expect(await page.locator('#phase-label').getAttribute('data-gap')).toBe('48');
-  expect(downloads).toHaveLength(6); expect(await page.evaluate(() => [window.hotfixAudio.contexts, window.hotfixAudio.loops])).toEqual([1, 2]);
+  expect(downloads).toHaveLength(7); expect(await page.evaluate(() => [window.hotfixAudio.contexts, window.hotfixAudio.loops])).toEqual([1, 2]);
   await page.reload(); await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
   await page.locator('#menu [data-sound-open]').click(); await expect(page.locator('#sound-music')).toHaveValue('80');
   await expect.poll(rms).toBeGreaterThan(.001);
-  console.log('Hotfix production smoke:', JSON.stringify({ url: page.url(), passiveDistance: distance, phase2Speed: speed, modelsPerLoad: 6, contextsPerPage: 1, music: await rms() }));
+  console.log('Hotfix production smoke:', JSON.stringify({ url: page.url(), passiveDistance: distance, phase2Speed: speed, modelsPerLoad: 7, contextsPerPage: 1, music: await rms() }));
 });
 
 async function inspect(page: Page) {

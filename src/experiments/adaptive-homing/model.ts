@@ -24,5 +24,7 @@ export class AdaptiveHomingGameModel extends RuntimeGameModel {
   const source=new AdaptiveSource(first,preset);super('baseline',source);this.homing=source;this.collisions=new AdaptiveCollision(source);
  }
  get collisionQueries():number{return this.collisions.primitiveQueries;}
+ beginPlanningFrame():void{this.homing.planningFrame.begin();}
+ finishPlanningFrame(dt:number):void{this.homing.planningFrame.finish(dt);}
  override dispose():void{super.dispose();this.homing.reset();}
 }

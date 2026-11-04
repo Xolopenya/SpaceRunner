@@ -38,7 +38,7 @@ test('experimental URL and source are excluded from the production build', async
   await page.goto('http://127.0.0.1:4173/?debug=field&experiment=large-structure-v1&seed=42'); await page.locator('#launch').click();
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); await expect(page.locator('#large-structure-debug-info')).toHaveCount(0);
   const src = await page.locator('script[type=module]').getAttribute('src'), js = await (await page.request.get(new URL(src!, 'http://127.0.0.1:4173').href)).text();
-  for (const marker of ['bulkhead-compound-v1', 'bulkhead-size-contract-v1', 'large-structure-v1', 'large-structure-dev-root']) expect(js).not.toContain(marker);
+  expect(js).toContain('integrated-playable-v1'); expect(js).not.toContain('large-structure-dev-root');
 });
 
 test('ordinary keyboard steering traverses the right aperture in the real RAF loop', async ({ page }) => {

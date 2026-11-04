@@ -30,7 +30,7 @@ test('DEV camera selector switches live without simulation or resource changes; 
   await page.locator('#restart-pause').click();expect(await page.evaluate(()=>({mode:window.spaceRunner!.world.flightCamera.mode,distance:window.spaceRunner!.model.distance,hull:window.spaceRunner!.model.hull}))).toEqual({mode:'full-chase',distance:0,hull:3});
 });
 
-test('camera research URL and controls are absent in production; baseline remains default',async({page})=>{
+test('camera research URL and controls are absent in production; historical collectible diagnostics retain baseline',async({page})=>{
   await page.goto('http://127.0.0.1:4173/?debug=camera&camera=full-chase&seed=42');await expect(page.locator('#launch')).toBeVisible();await expect(page.locator('#camera-research')).toHaveCount(0);expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();
   await page.goto('/?debug=collectibles&seed=42');await expect(page.locator('#launch')).toBeVisible();expect(await page.evaluate(()=>window.spaceRunner!.world.flightCamera.mode)).toBe('baseline');await expect(page.locator('#camera-research')).toHaveCount(0);
 });

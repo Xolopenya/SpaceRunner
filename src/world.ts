@@ -11,16 +11,8 @@ import { EngineVFX } from './visuals/engine-vfx.ts';
 import { ImpactVFX } from './visuals/impact-vfx.ts';
 import { visualDelta, visualQuality } from './visuals/settings.ts';
 import { FragmentView } from './collectibles/view.ts';
+import { ArenaBoundaries } from './visuals/arena-boundaries.ts';
 import { CAMERA, FlightCamera } from './camera/flight-camera.ts';
-
-function cornerGuide(): THREE.LineSegments {
-  const points: THREE.Vector3[] = [];
-  for (const x of [-7.1, 7.1]) for (const y of [-4.6, 4.6]) {
-    points.push(new THREE.Vector3(x, y, 0), new THREE.Vector3(x - Math.sign(x) * 1.2, y, 0));
-    points.push(new THREE.Vector3(x, y, 0), new THREE.Vector3(x, y - Math.sign(y) * 1.2, 0));
-  }
-  return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x376583, transparent: true, opacity: 0.055 }));
-}
 
 export class World {
   readonly renderer: THREE.WebGLRenderer;
@@ -29,7 +21,7 @@ export class World {
   readonly flightCamera = new FlightCamera(this.camera);
   private readonly ship = new THREE.Group();
   readonly hazards: THREE.Group[] = [];
-  private readonly frames: THREE.LineSegments[] = [];
+  readonly boundaries: ArenaBoundaries;
   private readonly angles = { x: 0, y: 0, z: 0 };
   private readonly collisionDebug?: ColliderDebugView;
   private readonly background: SpaceBackground;
@@ -68,16 +60,11 @@ export class World {
       this.hazards.push(group);
       this.scene.add(group);
     }
-    for (let i = 0; i < 9; i++) {
-      const frame = cornerGuide();
-      frame.name = `environment-corner-guide-${i}`;
-      this.frames.push(frame);
-      this.scene.add(frame);
-    }
-
     // Track only World-owned resources BEFORE attaching independently owned VFX
     // and debugger roots. Imported models are borrowed from AssetManager.
     this.resources.track(this.scene, assets.resources);
+    this.boundaries = new ArenaBoundaries(this.scene);
+    this.flightCamera.setMode('hybrid-chase');
     this.background = new SpaceBackground(this.scene);
     this.engines = new EngineVFX(this.scene, this.ship);
     this.impacts = new ImpactVFX(this.scene);
@@ -97,6 +84,7 @@ export class World {
   }
 
   reset(): void {
+    this.boundaries.reset();
     this.engines.reset();
     this.impacts.reset();
     this.fragments.reset();
@@ -126,7 +114,7 @@ export class World {
       const variant = hazardVariant(hazard.kind, hazard.phase);
       for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
     }
-    for (let i = 0; i < this.frames.length; i++) this.frames[i]!.position.z = -i * 18 + model.distance % 18 - 5;
+    this.boundaries.update(model.ship.x, model.ship.y, model.distance);
     this.background.update(model.distance, model.speed, this.quality);
     this.fragments.update(model, this.quality.reducedMotion);
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);
@@ -141,6 +129,7 @@ export class World {
     if (this.disposed) return;
     this.disposed = true;
     this.collisionDebug?.dispose();
+    this.boundaries.dispose();
     this.background.dispose();
     this.engines.dispose();
     this.impacts.dispose();

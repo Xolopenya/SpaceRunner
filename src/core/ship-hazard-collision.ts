@@ -55,9 +55,9 @@ export class ShipHazardCollision extends HazardCollision {
       }
       return false;
     }
-    // Kind3 is the existing sphere-only moving mine; caller supplies its
-    // relative endpoints. It is not admitted by the production release source.
-    const bounds = h.kind === 3 ? undefined : HAZARD_BOXES[hazardVariant(h.kind,h.phase)];
+    // Integrated moving mines retain their sphere proxy; caller supplies the
+    // authoritative relative endpoints for every compound ship part.
+    const bounds = h.planned?.motion || h.kind === 9 ? undefined : HAZARD_BOXES[hazardVariant(h.kind,h.phase)];
     if (!bounds) { this.narrowQueries++; return sweptSphereHit(this.a,this.b,h.radius+radius); }
     if (!sweptSphereInterval(this.a,this.b,h.radius+radius,this.interval)) { this.broadSkips++; return false; }
     hazardOrientation(h,elapsed-dt/2,this.orientation);

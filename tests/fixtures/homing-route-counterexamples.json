@@ -1,0 +1,6031 @@
+{
+  "baseline": "c51da9d2859c43765f83a29ca12c06aa54cf7284",
+  "sourceZipSha256": "58f953530be8920935f469f82765f7d83aa8d96f95f64cb16b30bfc3bb4c961a",
+  "cases": [
+    {
+      "id": 0,
+      "seed": 0,
+      "history": "witness",
+      "section": "adaptive-homing-v1/0/18",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -3.1583719621561395,
+          "y": -0.022771469799776685,
+          "vx": -5.390187582825713,
+          "vy": 5.448520916159047
+        },
+        "input": {
+          "x": 1,
+          "y": 0
+        },
+        "elapsed": 77.0750000000074,
+        "distance": 1888.069878472217,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/0/78/left",
+            "ownerCell": 80,
+            "anchorCell": 80,
+            "localIndex": 0,
+            "passDistance": 1932,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 5,
+            "visualVariant": 7,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/79/0",
+            "ownerCell": 79,
+            "localIndex": 0,
+            "anchorCell": 79,
+            "passDistance": 1900.6144257327542,
+            "x": 2.7510140187107037,
+            "y": -0.6072333522140978,
+            "radius": 0.8386881469632499,
+            "kind": 0,
+            "spin": 0.6216778248082846,
+            "phase": 2.297106392181603,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/81/1",
+            "ownerCell": 81,
+            "localIndex": 1,
+            "anchorCell": 82,
+            "passDistance": 1964.8641122002155,
+            "x": 0.6294254986569285,
+            "y": -0.10051648209337127,
+            "radius": 0.7599908399861306,
+            "kind": 0,
+            "spin": -0.04214246114715936,
+            "phase": 3.816380665036148,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 84,
+          "cellCount": 6,
+          "startDistance": 2016,
+          "endDistance": 2160,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 0,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/84/0",
+              "ownerCell": 84,
+              "localIndex": 0,
+              "anchorCell": 84,
+              "passDistance": 2017.1547568347305,
+              "x": -3.574954319279641,
+              "y": -2.035112821916118,
+              "radius": 1.0690948787261734,
+              "kind": 2,
+              "spin": 0.22624365598894658,
+              "phase": 2.0284822291926967,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/84/1",
+              "ownerCell": 84,
+              "localIndex": 1,
+              "anchorCell": 85,
+              "passDistance": 2035.9392741210759,
+              "x": -2.591564488783479,
+              "y": 2.2568243756191806,
+              "radius": 0.6593611246673391,
+              "kind": 1,
+              "spin": 0.3903778564184903,
+              "phase": 0.5921908871960215,
+              "visualVariant": 1,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/85/1",
+              "ownerCell": 85,
+              "localIndex": 1,
+              "anchorCell": 86,
+              "passDistance": 2060.3971249787137,
+              "x": -0.804606171883643,
+              "y": 1.0857463670661676,
+              "radius": 0.7077763600740582,
+              "kind": 2,
+              "spin": -0.3099297280423343,
+              "phase": 5.609652505777768,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/0/84/9249/0a7daba1",
+              "ownerCell": 87,
+              "anchorCell": 87,
+              "localIndex": 0,
+              "passDistance": 2100,
+              "x": 4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 9754,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 9634,
+                "passTick": 10114,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 9249,
+                  "elapsed": 77.0750000000074,
+                  "distance": 1888.069878472217,
+                  "x": -3.1583719621561395,
+                  "y": -0.022771469799776685,
+                  "vx": -5.390187582825713,
+                  "vy": 5.448520916159047,
+                  "inputX": 1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 2160
+      },
+      "hint": {
+        "elapsed": 72.41666666667037,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 35,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/0/78/left@170"
+      },
+      "originalMetrics": {
+        "propagations": 170,
+        "narrowQueries": 28,
+        "broadPhaseSkips": 1168,
+        "clockSteps": 912,
+        "searchPropagations": 170,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 170
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 1,
+      "seed": 0,
+      "history": "horizontal",
+      "section": "adaptive-homing-v1/0/4",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -3.966666666666666,
+          "y": 0,
+          "vx": -8,
+          "vy": 0
+        },
+        "input": {
+          "x": -1,
+          "y": 0
+        },
+        "elapsed": 17.874999999999627,
+        "distance": 376.1471006944444,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/0/15/lower",
+            "ownerCell": 17,
+            "anchorCell": 17,
+            "localIndex": 0,
+            "passDistance": 420,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 8,
+            "visualVariant": 10,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/15/1",
+            "ownerCell": 15,
+            "localIndex": 1,
+            "anchorCell": 16,
+            "passDistance": 381.4983216393739,
+            "x": -4.229284686874599,
+            "y": -3.000600069807842,
+            "radius": 0.7575736664352007,
+            "kind": 0,
+            "spin": -0.6244477388914674,
+            "phase": 5.196718635253154,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/18/1",
+            "ownerCell": 18,
+            "localIndex": 1,
+            "anchorCell": 19,
+            "passDistance": 453.53084825724363,
+            "x": 3.952271011378617,
+            "y": -0.9013963596895338,
+            "radius": 0.8829725719871931,
+            "kind": 2,
+            "spin": 0.28776900428347285,
+            "phase": 4.184377507456025,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 21,
+          "cellCount": 6,
+          "startDistance": 504,
+          "endDistance": 648,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 0,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/21/0",
+              "ownerCell": 21,
+              "localIndex": 0,
+              "anchorCell": 21,
+              "passDistance": 506.03866197075695,
+              "x": -0.991380742192268,
+              "y": -0.16354536262806496,
+              "radius": 0.8137499820673839,
+              "kind": 0,
+              "spin": 0.49187013860791917,
+              "phase": 6.161836842060361,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/22/0",
+              "ownerCell": 22,
+              "localIndex": 0,
+              "anchorCell": 22,
+              "passDistance": 531.0288867512718,
+              "x": -3.903626322001219,
+              "y": -0.8482220669975504,
+              "radius": 0.9715113665210084,
+              "kind": 2,
+              "spin": 0.49806149099022146,
+              "phase": 1.0492275904377852,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/22/1",
+              "ownerCell": 22,
+              "localIndex": 1,
+              "anchorCell": 23,
+              "passDistance": 550.2440343461931,
+              "x": -3.87446873774752,
+              "y": -1.823596299206838,
+              "radius": 1.0005207833484748,
+              "kind": 0,
+              "spin": -0.2619888722430915,
+              "phase": 0.013126158277179407,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/0/21/2145/7eebc690",
+              "ownerCell": 24,
+              "anchorCell": 24,
+              "localIndex": 0,
+              "passDistance": 588,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 2909,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 2789,
+                "passTick": 3269,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 2145,
+                  "elapsed": 17.874999999999627,
+                  "distance": 376.1471006944444,
+                  "x": -3.966666666666666,
+                  "y": 0,
+                  "vx": -8,
+                  "vy": 0,
+                  "inputX": -1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 648
+      },
+      "hint": {
+        "elapsed": 11.724999999999975,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 44,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/0/15/lower@221"
+      },
+      "originalMetrics": {
+        "propagations": 221,
+        "narrowQueries": 32,
+        "broadPhaseSkips": 1521,
+        "clockSteps": 1173,
+        "searchPropagations": 221,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 221
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 2,
+      "seed": 0,
+      "history": "horizontal",
+      "section": "adaptive-homing-v1/0/11",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 3.504444444444463,
+          "y": 0,
+          "vx": -5.8666666666666645,
+          "vy": 0
+        },
+        "input": {
+          "x": -1,
+          "y": 0
+        },
+        "elapsed": 49.93333333333114,
+        "distance": 1144.1356435185141,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/0/47/center",
+            "ownerCell": 49,
+            "anchorCell": 49,
+            "localIndex": 0,
+            "passDistance": 1188,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 4,
+            "visualVariant": 6,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/48/0",
+            "ownerCell": 48,
+            "localIndex": 0,
+            "anchorCell": 48,
+            "passDistance": 1153.4235065924004,
+            "x": -1.2853302416391674,
+            "y": -1.9663760245777666,
+            "radius": 1.0560655658482574,
+            "kind": 0,
+            "spin": -0.3157192389015108,
+            "phase": 2.9816524870741588,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/50/1",
+            "ownerCell": 50,
+            "localIndex": 1,
+            "anchorCell": 51,
+            "passDistance": 1219.5614549210295,
+            "x": -4.294473480340094,
+            "y": 2.8464747574646023,
+            "radius": 0.9809212140389718,
+            "kind": 1,
+            "spin": -0.3678602169733494,
+            "phase": 4.051925662350742,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 53,
+          "cellCount": 6,
+          "startDistance": 1272,
+          "endDistance": 1416,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 0,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/53/0",
+              "ownerCell": 53,
+              "localIndex": 0,
+              "anchorCell": 53,
+              "passDistance": 1274.660617729649,
+              "x": -3.4199572496116164,
+              "y": 1.521697526634671,
+              "radius": 1.0651964145945385,
+              "kind": 2,
+              "spin": 0.003133420087397143,
+              "phase": 1.2861058137551646,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/53/1",
+              "ownerCell": 53,
+              "localIndex": 1,
+              "anchorCell": 54,
+              "passDistance": 1292.4549549836665,
+              "x": -5.040098620299251,
+              "y": -1.8704113762825727,
+              "radius": 0.9886515342514031,
+              "kind": 1,
+              "spin": -0.32208836753852665,
+              "phase": 5.7918316705912325,
+              "visualVariant": 2,
+              "collisionProfile": "half-meteor-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/54/1",
+              "ownerCell": 54,
+              "localIndex": 1,
+              "anchorCell": 55,
+              "passDistance": 1314.1111306836829,
+              "x": -5.112268589437008,
+              "y": -2.0558408085023983,
+              "radius": 0.8225325552979484,
+              "kind": 1,
+              "spin": -0.24679491836577655,
+              "phase": 5.0220708828503895,
+              "visualVariant": 2,
+              "collisionProfile": "half-meteor-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/0/53/5992/177ac8f9",
+              "ownerCell": 56,
+              "anchorCell": 56,
+              "localIndex": 0,
+              "passDistance": 1356,
+              "x": 4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 6599,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 6479,
+                "passTick": 6959,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 5992,
+                  "elapsed": 49.93333333333114,
+                  "distance": 1144.1356435185141,
+                  "x": 3.504444444444463,
+                  "y": 0,
+                  "vx": -5.8666666666666645,
+                  "vy": 0,
+                  "inputX": -1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1416
+      },
+      "hint": {
+        "elapsed": 44.68333333333144,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 96,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 83,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/0/47/center@189"
+      },
+      "originalMetrics": {
+        "propagations": 189,
+        "narrowQueries": 28,
+        "broadPhaseSkips": 1298,
+        "clockSteps": 1015,
+        "searchPropagations": 189,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 189
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 3,
+      "seed": 0,
+      "history": "boundary",
+      "section": "adaptive-homing-v1/0/4",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 6,
+          "y": 3.6,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 1,
+          "y": 1
+        },
+        "elapsed": 17.874999999999627,
+        "distance": 376.1471006944444,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/0/15/lower",
+            "ownerCell": 17,
+            "anchorCell": 17,
+            "localIndex": 0,
+            "passDistance": 420,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 8,
+            "visualVariant": 10,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/15/1",
+            "ownerCell": 15,
+            "localIndex": 1,
+            "anchorCell": 16,
+            "passDistance": 381.4983216393739,
+            "x": -4.229284686874599,
+            "y": -3.000600069807842,
+            "radius": 0.7575736664352007,
+            "kind": 0,
+            "spin": -0.6244477388914674,
+            "phase": 5.196718635253154,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/18/1",
+            "ownerCell": 18,
+            "localIndex": 1,
+            "anchorCell": 19,
+            "passDistance": 453.53084825724363,
+            "x": 3.952271011378617,
+            "y": -0.9013963596895338,
+            "radius": 0.8829725719871931,
+            "kind": 2,
+            "spin": 0.28776900428347285,
+            "phase": 4.184377507456025,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 21,
+          "cellCount": 6,
+          "startDistance": 504,
+          "endDistance": 648,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 0,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/21/0",
+              "ownerCell": 21,
+              "localIndex": 0,
+              "anchorCell": 21,
+              "passDistance": 506.03866197075695,
+              "x": -0.991380742192268,
+              "y": -0.16354536262806496,
+              "radius": 0.8137499820673839,
+              "kind": 0,
+              "spin": 0.49187013860791917,
+              "phase": 6.161836842060361,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/22/0",
+              "ownerCell": 22,
+              "localIndex": 0,
+              "anchorCell": 22,
+              "passDistance": 531.0288867512718,
+              "x": -3.903626322001219,
+              "y": -0.8482220669975504,
+              "radius": 0.9715113665210084,
+              "kind": 2,
+              "spin": 0.49806149099022146,
+              "phase": 1.0492275904377852,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/22/1",
+              "ownerCell": 22,
+              "localIndex": 1,
+              "anchorCell": 23,
+              "passDistance": 550.2440343461931,
+              "x": -3.87446873774752,
+              "y": -1.823596299206838,
+              "radius": 1.0005207833484748,
+              "kind": 0,
+              "spin": -0.2619888722430915,
+              "phase": 0.013126158277179407,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/0/21/2145/98322b07",
+              "ownerCell": 24,
+              "anchorCell": 24,
+              "localIndex": 0,
+              "passDistance": 588,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 2909,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 2789,
+                "passTick": 3269,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 2145,
+                  "elapsed": 17.874999999999627,
+                  "distance": 376.1471006944444,
+                  "x": 6,
+                  "y": 3.6,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 1,
+                  "inputY": 1
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 648
+      },
+      "hint": {
+        "elapsed": 11.724999999999975,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 120,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 5,
+            "input": {
+              "x": -1,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/0/15/lower@222"
+      },
+      "originalMetrics": {
+        "propagations": 222,
+        "narrowQueries": 36,
+        "broadPhaseSkips": 1527,
+        "clockSteps": 1173,
+        "searchPropagations": 222,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 222
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 4,
+      "seed": 0,
+      "history": "late-reversal",
+      "section": "adaptive-homing-v1/0/7",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 1.7864583333333348,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 32.516666666665465,
+        "distance": 712.0269340277763,
+        "committed": [
+          {
+            "id": "encounter-v1/0/5.4:3.15:6:0.3:12/vertical-weave:27:4:10:0.65:1:0:4.291810661340133:2.4579222198575734/30/4",
+            "ownerCell": 30,
+            "localIndex": 4,
+            "anchorCell": 30,
+            "passDistance": 728.7346790822409,
+            "x": 5.288550284160301,
+            "y": 3.026653302423656,
+            "radius": 0.8050278323586099,
+            "kind": 0,
+            "spin": -0.5588779775425792,
+            "phase": 4.779377162254206,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "vertical-weave",
+                "firstCell": 27,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": 4.291810661340133,
+                "offsetY": 2.4579222198575734
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/0/5.4:3.15:6:0.3:12/vertical-weave:27:4:10:0.65:1:0:4.291810661340133:2.4579222198575734/30/5",
+            "ownerCell": 30,
+            "localIndex": 5,
+            "anchorCell": 30,
+            "passDistance": 731.6264623462595,
+            "x": 3.3309730373881763,
+            "y": 3.12,
+            "radius": 0.8774655397050083,
+            "kind": 0,
+            "spin": -0.30782289551571007,
+            "phase": 5.050500082949258,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "vertical-weave",
+                "firstCell": 27,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": 4.291810661340133,
+                "offsetY": 2.4579222198575734
+              }
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/32/0",
+            "ownerCell": 32,
+            "localIndex": 0,
+            "anchorCell": 32,
+            "passDistance": 772.8324302695692,
+            "x": -3.6120059036649765,
+            "y": 1.1799294278025623,
+            "radius": 0.7691458064015024,
+            "kind": 2,
+            "spin": 0.16232373858802018,
+            "phase": 6.0653759342935105,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/0/5.4:3.15:6:0.3:12/33/0",
+            "ownerCell": 33,
+            "localIndex": 0,
+            "anchorCell": 33,
+            "passDistance": 796.1669245334342,
+            "x": -1.8392751725390553,
+            "y": 1.3083953957771883,
+            "radius": 0.7845274466555566,
+            "kind": 2,
+            "spin": -0.12953573307022448,
+            "phase": 4.328246010602371,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 0,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 35,
+          "cellCount": 6,
+          "startDistance": 840,
+          "endDistance": 984,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 0,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/0/5.4:3.15:6:0.3:12/36/0",
+              "ownerCell": 36,
+              "localIndex": 0,
+              "anchorCell": 36,
+              "passDistance": 864.6716162106022,
+              "x": 1.2950501672923567,
+              "y": -0.9746062570950018,
+              "radius": 0.9683669408084825,
+              "kind": 2,
+              "spin": 0.19558959919959307,
+              "phase": 1.8315613734829204,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/0/35/3902/432835a6",
+              "ownerCell": 38,
+              "anchorCell": 38,
+              "localIndex": 0,
+              "passDistance": 924,
+              "x": 4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 0,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4589,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4469,
+                "passTick": 4949,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3902,
+                  "elapsed": 32.516666666665465,
+                  "distance": 712.0269340277763,
+                  "x": 1.7864583333333348,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 984
+      },
+      "hint": {
+        "elapsed": 29.77499999999895,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 631,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/0/35/3902/432835a6@1038"
+      },
+      "originalMetrics": {
+        "propagations": 1038,
+        "narrowQueries": 75,
+        "broadPhaseSkips": 6153,
+        "clockSteps": 1095,
+        "searchPropagations": 1038,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 1038
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 5,
+      "seed": 11,
+      "history": "witness",
+      "section": "adaptive-homing-v1/11/27",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 6,
+          "y": -3.6,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": -1
+        },
+        "elapsed": 111.89166666670178,
+        "distance": 2968.206187500081,
+        "committed": [
+          {
+            "id": "ambient-v1/11/5.4:3.15:6:0.3:12/127/0",
+            "ownerCell": 127,
+            "localIndex": 0,
+            "anchorCell": 127,
+            "passDistance": 3052.9869776638225,
+            "x": 2.034014764521271,
+            "y": 0.335678510600701,
+            "radius": 0.8578632757649758,
+            "kind": 2,
+            "spin": -0.09193227435462181,
+            "phase": 1.173721613233542,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/11/5.4:3.15:6:0.3:12/127/1",
+            "ownerCell": 127,
+            "localIndex": 1,
+            "anchorCell": 128,
+            "passDistance": 3067.7340204846114,
+            "x": 2.6526389035396285,
+            "y": 0.4202615699730812,
+            "radius": 0.730499119439628,
+            "kind": 0,
+            "spin": 0.1966556494589895,
+            "phase": 4.826432772229238,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 129,
+          "cellCount": 6,
+          "startDistance": 3096,
+          "endDistance": 3240,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 11,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/129/0",
+              "ownerCell": 129,
+              "localIndex": 0,
+              "anchorCell": 129,
+              "passDistance": 3096.5912564266473,
+              "x": -2.9190688982605937,
+              "y": 3.145133187272586,
+              "radius": 0.8182695092866198,
+              "kind": 2,
+              "spin": 0.44687475692480794,
+              "phase": 5.543858277184055,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/130/0",
+              "ownerCell": 130,
+              "localIndex": 0,
+              "anchorCell": 130,
+              "passDistance": 3124.331970060244,
+              "x": 1.491996061429382,
+              "y": -2.045350505481474,
+              "radius": 0.6633636913029477,
+              "kind": 2,
+              "spin": 0.09008380882442002,
+              "phase": 3.5113070788681764,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/130/1",
+              "ownerCell": 130,
+              "localIndex": 1,
+              "anchorCell": 131,
+              "passDistance": 3141.3177255503833,
+              "x": 0.5395508126355706,
+              "y": 1.613462859252468,
+              "radius": 0.771644674486015,
+              "kind": 0,
+              "spin": 0.48126709838397796,
+              "phase": 3.3544703511546534,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/11/129/13427/0cc72e02",
+              "ownerCell": 132,
+              "anchorCell": 132,
+              "localIndex": 0,
+              "passDistance": 3180,
+              "x": 4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 13828,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 13708,
+                "passTick": 14188,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 13427,
+                  "elapsed": 111.89166666670178,
+                  "distance": 2968.206187500081,
+                  "x": 6,
+                  "y": -3.6,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": -1
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 3240
+      },
+      "hint": {
+        "elapsed": 109.91666666670021,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 476,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/11/129/13427/0cc72e02@758"
+      },
+      "originalMetrics": {
+        "propagations": 758,
+        "narrowQueries": 59,
+        "broadPhaseSkips": 4489,
+        "clockSteps": 807,
+        "searchPropagations": 758,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 758
+      },
+      "fullBeamRecovered": false
+    },
+    {
+      "id": 6,
+      "seed": 11,
+      "history": "touch",
+      "section": "adaptive-homing-v1/11/3",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -3.9205971664364165,
+          "y": 3.073555302558182,
+          "vx": 3.0546677585700754,
+          "vy": -2.133800328124439
+        },
+        "input": {
+          "x": 0.38183346982125943,
+          "y": -0.2667250410155549
+        },
+        "elapsed": 10.1083333333334,
+        "distance": 208.1319872685186,
+        "committed": [
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/scattered:7:2:2:0.35:1:1:-2.375916941880325:-1.235609759021613/8/3",
+            "ownerCell": 8,
+            "localIndex": 3,
+            "anchorCell": 8,
+            "passDistance": 210.69692321819252,
+            "x": -5.1603536101962275,
+            "y": -2.773674902230564,
+            "radius": 0.7946038262802176,
+            "kind": 2,
+            "spin": -0.5265838292893021,
+            "phase": 4.856217313263496,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 7,
+                "cellCount": 2,
+                "variation": 2,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": -2.375916941880325,
+                "offsetY": -1.235609759021613
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/10/0",
+            "ownerCell": 10,
+            "localIndex": 0,
+            "anchorCell": 10,
+            "passDistance": 247.90891405574976,
+            "x": -5.37,
+            "y": 2.7101329730265156,
+            "radius": 0.7621838349150494,
+            "kind": 0,
+            "spin": -0.37825694778002794,
+            "phase": 3.0719911660656067,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/10/1",
+            "ownerCell": 10,
+            "localIndex": 1,
+            "anchorCell": 10,
+            "passDistance": 250.72392156671734,
+            "x": 0.4034564881399274,
+            "y": 2.538391475422741,
+            "radius": 1.039746127568651,
+            "kind": 0,
+            "spin": 0.6572406067978591,
+            "phase": 3.8216369165286923,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/11/2",
+            "ownerCell": 11,
+            "localIndex": 2,
+            "anchorCell": 11,
+            "passDistance": 264.51480934858944,
+            "x": -5.120462026925137,
+            "y": 3.12,
+            "radius": 0.9070592496078461,
+            "kind": 0,
+            "spin": 0.22030916237272324,
+            "phase": 3.316595606890958,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/11/3",
+            "ownerCell": 11,
+            "localIndex": 3,
+            "anchorCell": 11,
+            "passDistance": 267.32860694442564,
+            "x": -0.0988581775563464,
+            "y": 2.8507167360668086,
+            "radius": 0.8346215422614478,
+            "kind": 1,
+            "spin": -0.6882573849987238,
+            "phase": 3.6205964966739623,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/11/4",
+            "ownerCell": 11,
+            "localIndex": 4,
+            "anchorCell": 11,
+            "passDistance": 281.7024390190964,
+            "x": -4.925436050208907,
+            "y": 3.040572851867405,
+            "radius": 0.7019346643006429,
+            "kind": 0,
+            "spin": -0.5811247274745255,
+            "phase": 3.5612000477163086,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/11/5",
+            "ownerCell": 11,
+            "localIndex": 5,
+            "anchorCell": 11,
+            "passDistance": 284.6247821425398,
+            "x": -0.6647862131645281,
+            "y": 2.9295478144526417,
+            "radius": 0.9794969569542445,
+            "kind": 2,
+            "spin": -0.6337553767953068,
+            "phase": 3.4195560768192323,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/12/6",
+            "ownerCell": 12,
+            "localIndex": 6,
+            "anchorCell": 12,
+            "passDistance": 297.66720080638305,
+            "x": -4.605167993251234,
+            "y": 2.8273594066383736,
+            "radius": 0.8468100789934396,
+            "kind": 0,
+            "spin": 0.017441382678225592,
+            "phase": 3.8058044885416598,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/12/7",
+            "ownerCell": 12,
+            "localIndex": 7,
+            "anchorCell": 12,
+            "passDistance": 300.6060242143087,
+            "x": -1.2795575465820732,
+            "y": 2.5384027967812806,
+            "radius": 0.7743723716470413,
+            "kind": 0,
+            "spin": -0.5792533685918897,
+            "phase": 3.2185156569645024,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "narrowing",
+                "firstCell": 10,
+                "cellCount": 3,
+                "variation": 4,
+                "intensity": 0.65,
+                "mirrorX": false,
+                "mirrorY": false,
+                "offsetX": -2.718524305364117,
+                "offsetY": 2.6677488386515966
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 14,
+          "cellCount": 6,
+          "startDistance": 336,
+          "endDistance": 480,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 11,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/14/0",
+              "ownerCell": 14,
+              "localIndex": 0,
+              "anchorCell": 14,
+              "passDistance": 336.8716524168849,
+              "x": -0.9576282899826767,
+              "y": -0.04657876293640584,
+              "radius": 0.715846536285244,
+              "kind": 2,
+              "spin": -0.41605081185698506,
+              "phase": 3.827756494496535,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/15/0",
+              "ownerCell": 15,
+              "localIndex": 0,
+              "anchorCell": 15,
+              "passDistance": 361.6872307425365,
+              "x": -0.10158187458291668,
+              "y": 1.0381839869543907,
+              "radius": 0.9455795347574167,
+              "kind": 1,
+              "spin": 0.6528329964261501,
+              "phase": 1.229131967377204,
+              "visualVariant": 1,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/11/14/1213/1aea7403",
+              "ownerCell": 17,
+              "anchorCell": 17,
+              "localIndex": 0,
+              "passDistance": 420,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 2023,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 1903,
+                "passTick": 2383,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 1213,
+                  "elapsed": 10.1083333333334,
+                  "distance": 208.1319872685186,
+                  "x": -3.9205971664364165,
+                  "y": 3.073555302558182,
+                  "vx": 3.0546677585700754,
+                  "vy": -2.133800328124439,
+                  "inputX": 0.38183346982125943,
+                  "inputY": -0.2667250410155549
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 480
+      },
+      "hint": {
+        "elapsed": 5.941666666666752,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0.8333813486181906,
+              "y": 0.09154096059518395
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 987,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "encounter-v1/11/5.4:3.15:6:0.3:12/narrowing:10:3:4:0.65:0:0:-2.718524305364117:2.6677488386515966/12/7@515"
+      },
+      "originalMetrics": {
+        "propagations": 515,
+        "narrowQueries": 142,
+        "broadPhaseSkips": 6035,
+        "clockSteps": 1219,
+        "searchPropagations": 515,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 515
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 7,
+      "seed": 11,
+      "history": "late-reversal",
+      "section": "adaptive-homing-v1/11/6",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 1.6531250000000015,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 28.441666666665693,
+        "distance": 616.0346493055547,
+        "committed": [
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/26/0",
+            "ownerCell": 26,
+            "localIndex": 0,
+            "anchorCell": 26,
+            "passDistance": 632.5444714333489,
+            "x": -5.359480149708689,
+            "y": -2.9915965652279555,
+            "radius": 0.9627909759990871,
+            "kind": 0,
+            "spin": 0.4277946837712079,
+            "phase": 4.382519201950066,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/26/1",
+            "ownerCell": 26,
+            "localIndex": 1,
+            "anchorCell": 26,
+            "passDistance": 635.3593543625623,
+            "x": -5.212369489017874,
+            "y": -1.3740829428285362,
+            "radius": 0.8903532686526887,
+            "kind": 1,
+            "spin": -0.4507515722420066,
+            "phase": 1.6592502728339378,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/27/2",
+            "ownerCell": 27,
+            "localIndex": 2,
+            "anchorCell": 27,
+            "passDistance": 668.2947609147616,
+            "x": -3.7517765174992386,
+            "y": -3.12,
+            "radius": 0.8179155613062903,
+            "kind": 0,
+            "spin": -0.1707714263815433,
+            "phase": 4.137914761124715,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/27/3",
+            "ownerCell": 27,
+            "localIndex": 3,
+            "anchorCell": 27,
+            "passDistance": 671.118168517705,
+            "x": -3.767237401977182,
+            "y": -1.4212643516249956,
+            "radius": 0.7454778539598919,
+            "kind": 0,
+            "spin": -0.5052535804454237,
+            "phase": 1.8602906926886678,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/29/4",
+            "ownerCell": 29,
+            "localIndex": 4,
+            "anchorCell": 29,
+            "passDistance": 705.3166812948137,
+            "x": -5.37,
+            "y": -3.0777904195524752,
+            "radius": 1.0230401466134935,
+            "kind": 0,
+            "spin": 0.6306624634657054,
+            "phase": 3.893310320299364,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/11/5.4:3.15:6:0.3:12/alternating:26:4:10:0.65:1:0:-4.51163839833811:-2.20445299172774/29/5",
+            "ownerCell": 29,
+            "localIndex": 5,
+            "anchorCell": 29,
+            "passDistance": 708.2833894848451,
+            "x": -5.29035340083763,
+            "y": -1.3632611634209755,
+            "radius": 0.9506024392670952,
+            "kind": 2,
+            "spin": -0.5597555886488408,
+            "phase": 2.0613311125433977,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 11,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "alternating",
+                "firstCell": 26,
+                "cellCount": 4,
+                "variation": 10,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": -4.51163839833811,
+                "offsetY": -2.20445299172774
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 31,
+          "cellCount": 6,
+          "startDistance": 744,
+          "endDistance": 888,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 11,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/31/0",
+              "ownerCell": 31,
+              "localIndex": 0,
+              "anchorCell": 31,
+              "passDistance": 749.7608747379854,
+              "x": -1.08632392315194,
+              "y": 0.4791206137742847,
+              "radius": 0.805490776442457,
+              "kind": 2,
+              "spin": -0.4378452458884567,
+              "phase": 1.2233482007915388,
+              "visualVariant": 3,
+              "collisionProfile": "barrel-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/11/5.4:3.15:6:0.3:12/32/0",
+              "ownerCell": 32,
+              "localIndex": 0,
+              "anchorCell": 32,
+              "passDistance": 769.5342355063185,
+              "x": -0.3140319569036363,
+              "y": -1.3378930359380319,
+              "radius": 0.9165416768752039,
+              "kind": 0,
+              "spin": 0.40703784702345724,
+              "phase": 5.8470060545857905,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/11/31/3413/1ee8a313",
+              "ownerCell": 34,
+              "anchorCell": 34,
+              "localIndex": 0,
+              "passDistance": 828,
+              "x": 4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 11,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4121,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4001,
+                "passTick": 4481,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3413,
+                  "elapsed": 28.441666666665693,
+                  "distance": 616.0346493055547,
+                  "x": 1.6531250000000015,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 888
+      },
+      "hint": {
+        "elapsed": 23.6499999999993,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 927,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/11/31/3413/1ee8a313@1059"
+      },
+      "originalMetrics": {
+        "propagations": 1059,
+        "narrowQueries": 128,
+        "broadPhaseSkips": 9403,
+        "clockSteps": 1116,
+        "searchPropagations": 1059,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 1059
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 8,
+      "seed": 42,
+      "history": "witness",
+      "section": "adaptive-homing-v1/42/7",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -6,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": -1,
+          "y": 0
+        },
+        "elapsed": 31.508333333332185,
+        "distance": 688.0938622685172,
+        "committed": [
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/28/1",
+            "ownerCell": 28,
+            "localIndex": 1,
+            "anchorCell": 29,
+            "passDistance": 692.0199641156942,
+            "x": -0.7162697872146966,
+            "y": -1.1771838375600054,
+            "radius": 0.9292866900563241,
+            "kind": 0,
+            "spin": 0.6409625752829016,
+            "phase": 5.659884050923248,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/0",
+            "ownerCell": 31,
+            "localIndex": 0,
+            "anchorCell": 31,
+            "passDistance": 749.0463873061537,
+            "x": 3.9176917533891764,
+            "y": -0.8831099878322073,
+            "radius": 1.0119408598169684,
+            "kind": 0,
+            "spin": 0.03536467021331191,
+            "phase": 2.729514320964624,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/1",
+            "ownerCell": 31,
+            "localIndex": 1,
+            "anchorCell": 31,
+            "passDistance": 763.5605976205039,
+            "x": 3.9667364170810697,
+            "y": -2.8788511455781496,
+            "radius": 0.93950315247057,
+            "kind": 2,
+            "spin": -0.6918863338883966,
+            "phase": 5.9716271844817825,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/2",
+            "ownerCell": 32,
+            "localIndex": 2,
+            "anchorCell": 32,
+            "passDistance": 772.2233295516484,
+            "x": 1.9486430781463655,
+            "y": -1.924078509609748,
+            "radius": 0.8670654451241717,
+            "kind": 2,
+            "spin": -0.019137337990105197,
+            "phase": 2.930554740819354,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/3",
+            "ownerCell": 32,
+            "localIndex": 3,
+            "anchorCell": 32,
+            "passDistance": 786.5610066321027,
+            "x": 2.5773456432892496,
+            "y": -1.8506686819508413,
+            "radius": 0.7946277377777733,
+            "kind": 1,
+            "spin": 0.6536116579081863,
+            "phase": 6.172667604336512,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 34,
+          "cellCount": 6,
+          "startDistance": 816,
+          "endDistance": 960,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/34/1",
+              "ownerCell": 34,
+              "localIndex": 1,
+              "anchorCell": 35,
+              "passDistance": 839.575492492877,
+              "x": -1.2458094491623344,
+              "y": -1.6472358161117882,
+              "radius": 0.667172482481692,
+              "kind": 0,
+              "spin": 0.5751371853519232,
+              "phase": 0.24209594008479768,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/34/3781/33d444c0",
+              "ownerCell": 37,
+              "anchorCell": 37,
+              "localIndex": 0,
+              "passDistance": 900,
+              "x": -4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4473,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4353,
+                "passTick": 4833,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3781,
+                  "elapsed": 31.508333333332185,
+                  "distance": 688.0938622685172,
+                  "x": -6,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": -1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 960
+      },
+      "hint": {
+        "elapsed": 28.75833333333234,
+        "controls": [
+          {
+            "ticks": 831,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/42/34/3781/33d444c0@1043"
+      },
+      "originalMetrics": {
+        "propagations": 1043,
+        "narrowQueries": 94,
+        "broadPhaseSkips": 7207,
+        "clockSteps": 1100,
+        "searchPropagations": 1043,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 1043
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 9,
+      "seed": 42,
+      "history": "witness",
+      "section": "adaptive-homing-v1/42/13",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 6,
+          "y": -0.0940385955033803,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 1,
+          "y": 0
+        },
+        "elapsed": 59.92499999999724,
+        "distance": 1408.0044583333263,
+        "committed": [
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/vertical-weave:56:4:22:0.65:1:0:4.292564980844036:2.423062635883689/59/4",
+            "ownerCell": 59,
+            "localIndex": 4,
+            "anchorCell": 59,
+            "passDistance": 1424.813023181334,
+            "x": 5.37,
+            "y": 3.0681250464171175,
+            "radius": 0.9535562882665545,
+            "kind": 0,
+            "spin": 0.15340270833112302,
+            "phase": 2.12542217972503,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "vertical-weave",
+                "firstCell": 56,
+                "cellCount": 4,
+                "variation": 22,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": 4.292564980844036,
+                "offsetY": 2.423062635883689
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/vertical-weave:56:4:22:0.65:1:0:4.292564980844036:2.423062635883689/59/5",
+            "ownerCell": 59,
+            "localIndex": 5,
+            "anchorCell": 59,
+            "passDistance": 1427.6095196556673,
+            "x": 3.18360595731996,
+            "y": 3.063238641284406,
+            "radius": 0.881118580920156,
+            "kind": 1,
+            "spin": 0.4463290203828365,
+            "phase": 0.19364733512593302,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "vertical-weave",
+                "firstCell": 56,
+                "cellCount": 4,
+                "variation": 22,
+                "intensity": 0.65,
+                "mirrorX": true,
+                "mirrorY": false,
+                "offsetX": 4.292564980844036,
+                "offsetY": 2.423062635883689
+              }
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/61/0",
+            "ownerCell": 61,
+            "localIndex": 0,
+            "anchorCell": 61,
+            "passDistance": 1467.99377087038,
+            "x": -0.052098704036325216,
+            "y": -2.2433844752144068,
+            "radius": 0.835258712025825,
+            "kind": 2,
+            "spin": -0.33308899286203086,
+            "phase": 4.8230246090541335,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/62/0",
+            "ownerCell": 62,
+            "localIndex": 0,
+            "anchorCell": 62,
+            "passDistance": 1489.0236206967384,
+            "x": 1.6026488634757703,
+            "y": -1.3714101844467221,
+            "radius": 0.6571401463239454,
+            "kind": 0,
+            "spin": 0.14756417623721063,
+            "phase": 3.9985581153096237,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/62/1",
+            "ownerCell": 62,
+            "localIndex": 1,
+            "anchorCell": 63,
+            "passDistance": 1511.1144837141037,
+            "x": 0.695727035030723,
+            "y": -2.80436413816642,
+            "radius": 1.0085819120286033,
+            "kind": 2,
+            "spin": 0.2727636512368917,
+            "phase": 0.6600497350008402,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 64,
+          "cellCount": 6,
+          "startDistance": 1536,
+          "endDistance": 1680,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/64/1",
+              "ownerCell": 64,
+              "localIndex": 1,
+              "anchorCell": 65,
+              "passDistance": 1559.5964838098735,
+              "x": -4.86761287059635,
+              "y": -2.07893891420681,
+              "radius": 0.9315041527152061,
+              "kind": 1,
+              "spin": 0.09300018390640619,
+              "phase": 6.1109002435465785,
+              "visualVariant": 2,
+              "collisionProfile": "half-meteor-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/65/1",
+              "ownerCell": 65,
+              "localIndex": 1,
+              "anchorCell": 66,
+              "passDistance": 1581.7633862290531,
+              "x": 2.646670451201498,
+              "y": 1.21468683059793,
+              "radius": 0.8881378034129739,
+              "kind": 2,
+              "spin": 0.07869660323485728,
+              "phase": 4.909836565600578,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/64/7191/75917fab",
+              "ownerCell": 67,
+              "anchorCell": 67,
+              "localIndex": 0,
+              "passDistance": 1620,
+              "x": 4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 7759,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 7639,
+                "passTick": 8119,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 7191,
+                  "elapsed": 59.92499999999724,
+                  "distance": 1408.0044583333263,
+                  "x": 6,
+                  "y": -0.0940385955033803,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1680
+      },
+      "hint": {
+        "elapsed": 57.54166666666404,
+        "controls": [
+          {
+            "ticks": 78,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 574,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/42/64/7191/75917fab@925"
+      },
+      "originalMetrics": {
+        "propagations": 925,
+        "narrowQueries": 104,
+        "broadPhaseSkips": 7296,
+        "clockSteps": 975,
+        "searchPropagations": 925,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 925
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 10,
+      "seed": 42,
+      "history": "witness",
+      "section": "adaptive-homing-v1/42/23",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 3.9720626617883834,
+          "y": 3.6,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 1
+        },
+        "elapsed": 99.26666666669173,
+        "distance": 2560.190736111148,
+        "committed": [
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/106/1",
+            "ownerCell": 106,
+            "localIndex": 1,
+            "anchorCell": 107,
+            "passDistance": 2567.0076385829598,
+            "x": 3.9697335247881718,
+            "y": 1.4261812466662378,
+            "radius": 0.8912025248748251,
+            "kind": 2,
+            "spin": 0.6567426691297442,
+            "phase": 3.6883570071254925,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/110/0",
+            "ownerCell": 110,
+            "localIndex": 0,
+            "anchorCell": 110,
+            "passDistance": 2645.9906846014783,
+            "x": 1.5629941726103427,
+            "y": 0.5977406966267154,
+            "radius": 1.0978772008791566,
+            "kind": 0,
+            "spin": 0.5384520775638519,
+            "phase": 2.580154738715651,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/110/1",
+            "ownerCell": 110,
+            "localIndex": 1,
+            "anchorCell": 111,
+            "passDistance": 2659.88927449286,
+            "x": 1.3768451345153156,
+            "y": 1.923286873614415,
+            "radius": 1.0871808045660147,
+            "kind": 2,
+            "spin": 0.3633779434952884,
+            "phase": 4.047680291639725,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 112,
+          "cellCount": 6,
+          "startDistance": 2688,
+          "endDistance": 2832,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/113/0",
+              "ownerCell": 113,
+              "localIndex": 0,
+              "anchorCell": 113,
+              "passDistance": 2712.5398973599076,
+              "x": -2.949840557947755,
+              "y": -0.7030239299638197,
+              "radius": 0.902157514425926,
+              "kind": 2,
+              "spin": 0.6495885204523801,
+              "phase": 4.31969510521141,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/113/1",
+              "ownerCell": 113,
+              "localIndex": 1,
+              "anchorCell": 114,
+              "passDistance": 2734.9344977214932,
+              "x": -3.0040893509052697,
+              "y": -0.5117475339677187,
+              "radius": 0.9909464723081329,
+              "kind": 0,
+              "spin": -0.5032997764181345,
+              "phase": 1.6612417315118995,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/112/11912/e7b68e54",
+              "ownerCell": 115,
+              "anchorCell": 115,
+              "localIndex": 0,
+              "passDistance": 2772,
+              "x": 4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 12348,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 12228,
+                "passTick": 12708,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 11912,
+                  "elapsed": 99.26666666669173,
+                  "distance": 2560.190736111148,
+                  "x": 3.9720626617883834,
+                  "y": 3.6,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 1
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 2832
+      },
+      "hint": {
+        "elapsed": 97.20833333335676,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 528,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/42/112/11912/e7b68e54@791"
+      },
+      "originalMetrics": {
+        "propagations": 791,
+        "narrowQueries": 67,
+        "broadPhaseSkips": 4679,
+        "clockSteps": 842,
+        "searchPropagations": 791,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 791
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 11,
+      "seed": 42,
+      "history": "neutral",
+      "section": "adaptive-homing-v1/42/7",
+      "category": "insufficient-reaction",
+      "context": {
+        "player": {
+          "x": 0,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 31.508333333332185,
+        "distance": 688.0938622685172,
+        "committed": [
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/28/1",
+            "ownerCell": 28,
+            "localIndex": 1,
+            "anchorCell": 29,
+            "passDistance": 692.0199641156942,
+            "x": -0.7162697872146966,
+            "y": -1.1771838375600054,
+            "radius": 0.9292866900563241,
+            "kind": 0,
+            "spin": 0.6409625752829016,
+            "phase": 5.659884050923248,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/0",
+            "ownerCell": 31,
+            "localIndex": 0,
+            "anchorCell": 31,
+            "passDistance": 749.0463873061537,
+            "x": 3.9176917533891764,
+            "y": -0.8831099878322073,
+            "radius": 1.0119408598169684,
+            "kind": 0,
+            "spin": 0.03536467021331191,
+            "phase": 2.729514320964624,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/1",
+            "ownerCell": 31,
+            "localIndex": 1,
+            "anchorCell": 31,
+            "passDistance": 763.5605976205039,
+            "x": 3.9667364170810697,
+            "y": -2.8788511455781496,
+            "radius": 0.93950315247057,
+            "kind": 2,
+            "spin": -0.6918863338883966,
+            "phase": 5.9716271844817825,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/2",
+            "ownerCell": 32,
+            "localIndex": 2,
+            "anchorCell": 32,
+            "passDistance": 772.2233295516484,
+            "x": 1.9486430781463655,
+            "y": -1.924078509609748,
+            "radius": 0.8670654451241717,
+            "kind": 2,
+            "spin": -0.019137337990105197,
+            "phase": 2.930554740819354,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/3",
+            "ownerCell": 32,
+            "localIndex": 3,
+            "anchorCell": 32,
+            "passDistance": 786.5610066321027,
+            "x": 2.5773456432892496,
+            "y": -1.8506686819508413,
+            "radius": 0.7946277377777733,
+            "kind": 1,
+            "spin": 0.6536116579081863,
+            "phase": 6.172667604336512,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 34,
+          "cellCount": 6,
+          "startDistance": 816,
+          "endDistance": 960,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/34/1",
+              "ownerCell": 34,
+              "localIndex": 1,
+              "anchorCell": 35,
+              "passDistance": 839.575492492877,
+              "x": -1.2458094491623344,
+              "y": -1.6472358161117882,
+              "radius": 0.667172482481692,
+              "kind": 0,
+              "spin": 0.5751371853519232,
+              "phase": 0.24209594008479768,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/34/3781/ae21a17b",
+              "ownerCell": 37,
+              "anchorCell": 37,
+              "localIndex": 0,
+              "passDistance": 900,
+              "x": -4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4473,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4353,
+                "passTick": 4833,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3781,
+                  "elapsed": 31.508333333332185,
+                  "distance": 688.0938622685172,
+                  "x": 0,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 960
+      },
+      "hint": {
+        "elapsed": 28.766666666665675,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 680,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "INSUFFICIENT_REACTION_DISTANCE",
+        "detail": "ambient-v1/42/5.4:3.15:6:0.3:12/28/1@17"
+      },
+      "originalMetrics": {
+        "propagations": 17,
+        "narrowQueries": 5,
+        "broadPhaseSkips": 108,
+        "clockSteps": 1100,
+        "searchPropagations": 17,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 17
+      },
+      "fullBeamRecovered": false
+    },
+    {
+      "id": 12,
+      "seed": 42,
+      "history": "neutral",
+      "section": "adaptive-homing-v1/42/10",
+      "category": "insufficient-reaction",
+      "context": {
+        "player": {
+          "x": 0,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 47.12499999999797,
+        "distance": 1072.0675694444406,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/42/44/right",
+            "ownerCell": 46,
+            "anchorCell": 46,
+            "localIndex": 0,
+            "passDistance": 1116,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 6,
+            "visualVariant": 8,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1",
+            "ownerCell": 44,
+            "localIndex": 1,
+            "anchorCell": 45,
+            "passDistance": 1077.4293854087591,
+            "x": 0.14053093660622817,
+            "y": 1.520626676897518,
+            "radius": 1.0968993621878327,
+            "kind": 0,
+            "spin": 0.2879557552747428,
+            "phase": 4.416378486245165,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/47/1",
+            "ownerCell": 47,
+            "localIndex": 1,
+            "anchorCell": 48,
+            "passDistance": 1149.5969473086298,
+            "x": 4.231871891207993,
+            "y": -1.9196058633970097,
+            "radius": 0.6776755229569972,
+            "kind": 1,
+            "spin": 0.5115700135938823,
+            "phase": 0.4818867382083229,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 50,
+          "cellCount": 6,
+          "startDistance": 1200,
+          "endDistance": 1344,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/51/0",
+              "ownerCell": 51,
+              "localIndex": 0,
+              "anchorCell": 51,
+              "passDistance": 1225.8307474935427,
+              "x": 3.659357633348554,
+              "y": 1.641607105359435,
+              "radius": 0.7717340458999389,
+              "kind": 2,
+              "spin": 0.1557133622001856,
+              "phase": 3.6564163296509262,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/50/5655/edbba09f",
+              "ownerCell": 53,
+              "anchorCell": 53,
+              "localIndex": 0,
+              "passDistance": 1284,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 6275,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 6155,
+                "passTick": 6635,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 5655,
+                  "elapsed": 47.12499999999797,
+                  "distance": 1072.0675694444406,
+                  "x": 0,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1344
+      },
+      "hint": {
+        "elapsed": 41.8333333333316,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 768,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 77,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "INSUFFICIENT_REACTION_DISTANCE",
+        "detail": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1@23"
+      },
+      "originalMetrics": {
+        "propagations": 23,
+        "narrowQueries": 6,
+        "broadPhaseSkips": 106,
+        "clockSteps": 1027,
+        "searchPropagations": 23,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 23
+      },
+      "fullBeamRecovered": false
+    },
+    {
+      "id": 13,
+      "seed": 42,
+      "history": "horizontal",
+      "section": "adaptive-homing-v1/42/10",
+      "category": "insufficient-reaction",
+      "context": {
+        "player": {
+          "x": 2.0333333333333483,
+          "y": 0,
+          "vx": -8,
+          "vy": 0
+        },
+        "input": {
+          "x": -1,
+          "y": 0
+        },
+        "elapsed": 47.12499999999797,
+        "distance": 1072.0675694444406,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/42/44/right",
+            "ownerCell": 46,
+            "anchorCell": 46,
+            "localIndex": 0,
+            "passDistance": 1116,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 6,
+            "visualVariant": 8,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1",
+            "ownerCell": 44,
+            "localIndex": 1,
+            "anchorCell": 45,
+            "passDistance": 1077.4293854087591,
+            "x": 0.14053093660622817,
+            "y": 1.520626676897518,
+            "radius": 1.0968993621878327,
+            "kind": 0,
+            "spin": 0.2879557552747428,
+            "phase": 4.416378486245165,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/47/1",
+            "ownerCell": 47,
+            "localIndex": 1,
+            "anchorCell": 48,
+            "passDistance": 1149.5969473086298,
+            "x": 4.231871891207993,
+            "y": -1.9196058633970097,
+            "radius": 0.6776755229569972,
+            "kind": 1,
+            "spin": 0.5115700135938823,
+            "phase": 0.4818867382083229,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 50,
+          "cellCount": 6,
+          "startDistance": 1200,
+          "endDistance": 1344,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/51/0",
+              "ownerCell": 51,
+              "localIndex": 0,
+              "anchorCell": 51,
+              "passDistance": 1225.8307474935427,
+              "x": 3.659357633348554,
+              "y": 1.641607105359435,
+              "radius": 0.7717340458999389,
+              "kind": 2,
+              "spin": 0.1557133622001856,
+              "phase": 3.6564163296509262,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/50/5655/686a4543",
+              "ownerCell": 53,
+              "anchorCell": 53,
+              "localIndex": 0,
+              "passDistance": 1284,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 6275,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 6155,
+                "passTick": 6635,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 5655,
+                  "elapsed": 47.12499999999797,
+                  "distance": 1072.0675694444406,
+                  "x": 2.0333333333333483,
+                  "y": 0,
+                  "vx": -8,
+                  "vy": 0,
+                  "inputX": -1,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1344
+      },
+      "hint": {
+        "elapsed": 41.8333333333316,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 144,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 96,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 101,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "INSUFFICIENT_REACTION_DISTANCE",
+        "detail": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1@23"
+      },
+      "originalMetrics": {
+        "propagations": 23,
+        "narrowQueries": 6,
+        "broadPhaseSkips": 106,
+        "clockSteps": 1027,
+        "searchPropagations": 23,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 23
+      },
+      "fullBeamRecovered": false
+    },
+    {
+      "id": 14,
+      "seed": 42,
+      "history": "touch",
+      "section": "adaptive-homing-v1/42/7",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 5.620531500365423,
+          "y": 3.6,
+          "vx": 1.3212360401365915,
+          "vy": 0
+        },
+        "input": {
+          "x": 0.16515450501707393,
+          "y": 0.5849306662689201
+        },
+        "elapsed": 31.508333333332185,
+        "distance": 688.0938622685172,
+        "committed": [
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/28/1",
+            "ownerCell": 28,
+            "localIndex": 1,
+            "anchorCell": 29,
+            "passDistance": 692.0199641156942,
+            "x": -0.7162697872146966,
+            "y": -1.1771838375600054,
+            "radius": 0.9292866900563241,
+            "kind": 0,
+            "spin": 0.6409625752829016,
+            "phase": 5.659884050923248,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/0",
+            "ownerCell": 31,
+            "localIndex": 0,
+            "anchorCell": 31,
+            "passDistance": 749.0463873061537,
+            "x": 3.9176917533891764,
+            "y": -0.8831099878322073,
+            "radius": 1.0119408598169684,
+            "kind": 0,
+            "spin": 0.03536467021331191,
+            "phase": 2.729514320964624,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/1",
+            "ownerCell": 31,
+            "localIndex": 1,
+            "anchorCell": 31,
+            "passDistance": 763.5605976205039,
+            "x": 3.9667364170810697,
+            "y": -2.8788511455781496,
+            "radius": 0.93950315247057,
+            "kind": 2,
+            "spin": -0.6918863338883966,
+            "phase": 5.9716271844817825,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/2",
+            "ownerCell": 32,
+            "localIndex": 2,
+            "anchorCell": 32,
+            "passDistance": 772.2233295516484,
+            "x": 1.9486430781463655,
+            "y": -1.924078509609748,
+            "radius": 0.8670654451241717,
+            "kind": 2,
+            "spin": -0.019137337990105197,
+            "phase": 2.930554740819354,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/3",
+            "ownerCell": 32,
+            "localIndex": 3,
+            "anchorCell": 32,
+            "passDistance": 786.5610066321027,
+            "x": 2.5773456432892496,
+            "y": -1.8506686819508413,
+            "radius": 0.7946277377777733,
+            "kind": 1,
+            "spin": 0.6536116579081863,
+            "phase": 6.172667604336512,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 34,
+          "cellCount": 6,
+          "startDistance": 816,
+          "endDistance": 960,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/34/1",
+              "ownerCell": 34,
+              "localIndex": 1,
+              "anchorCell": 35,
+              "passDistance": 839.575492492877,
+              "x": -1.2458094491623344,
+              "y": -1.6472358161117882,
+              "radius": 0.667172482481692,
+              "kind": 0,
+              "spin": 0.5751371853519232,
+              "phase": 0.24209594008479768,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/34/3781/6bd819d5",
+              "ownerCell": 37,
+              "anchorCell": 37,
+              "localIndex": 0,
+              "passDistance": 900,
+              "x": -4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4473,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4353,
+                "passTick": 4833,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3781,
+                  "elapsed": 31.508333333332185,
+                  "distance": 688.0938622685172,
+                  "x": 5.620531500365423,
+                  "y": 3.6,
+                  "vx": 1.3212360401365915,
+                  "vy": 0,
+                  "inputX": 0.16515450501707393,
+                  "inputY": 0.5849306662689201
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 960
+      },
+      "hint": {
+        "elapsed": 28.75833333333234,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": -0.4815847331345935,
+              "y": -0.06469753495112021
+            }
+          },
+          {
+            "ticks": 777,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/42/34/3781/6bd819d5@1047"
+      },
+      "originalMetrics": {
+        "propagations": 1047,
+        "narrowQueries": 98,
+        "broadPhaseSkips": 7231,
+        "clockSteps": 1100,
+        "searchPropagations": 1047,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 1047
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 15,
+      "seed": 42,
+      "history": "touch",
+      "section": "adaptive-homing-v1/42/10",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": 3.027041488421732,
+          "y": 3.6,
+          "vx": -6.07689516462945,
+          "vy": 0
+        },
+        "input": {
+          "x": -0.7596118955786813,
+          "y": 0.505707221578081
+        },
+        "elapsed": 47.12499999999797,
+        "distance": 1072.0675694444406,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/42/44/right",
+            "ownerCell": 46,
+            "anchorCell": 46,
+            "localIndex": 0,
+            "passDistance": 1116,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 6,
+            "visualVariant": 8,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1",
+            "ownerCell": 44,
+            "localIndex": 1,
+            "anchorCell": 45,
+            "passDistance": 1077.4293854087591,
+            "x": 0.14053093660622817,
+            "y": 1.520626676897518,
+            "radius": 1.0968993621878327,
+            "kind": 0,
+            "spin": 0.2879557552747428,
+            "phase": 4.416378486245165,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/47/1",
+            "ownerCell": 47,
+            "localIndex": 1,
+            "anchorCell": 48,
+            "passDistance": 1149.5969473086298,
+            "x": 4.231871891207993,
+            "y": -1.9196058633970097,
+            "radius": 0.6776755229569972,
+            "kind": 1,
+            "spin": 0.5115700135938823,
+            "phase": 0.4818867382083229,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 50,
+          "cellCount": 6,
+          "startDistance": 1200,
+          "endDistance": 1344,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/51/0",
+              "ownerCell": 51,
+              "localIndex": 0,
+              "anchorCell": 51,
+              "passDistance": 1225.8307474935427,
+              "x": 3.659357633348554,
+              "y": 1.641607105359435,
+              "radius": 0.7717340458999389,
+              "kind": 2,
+              "spin": 0.1557133622001856,
+              "phase": 3.6564163296509262,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/50/5655/8d23406d",
+              "ownerCell": 53,
+              "anchorCell": 53,
+              "localIndex": 0,
+              "passDistance": 1284,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 6275,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 6155,
+                "passTick": 6635,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 5655,
+                  "elapsed": 47.12499999999797,
+                  "distance": 1072.0675694444406,
+                  "x": 3.027041488421732,
+                  "y": 3.6,
+                  "vx": -6.07689516462945,
+                  "vy": 0,
+                  "inputX": -0.7596118955786813,
+                  "inputY": 0.505707221578081
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1344
+      },
+      "hint": {
+        "elapsed": 41.8333333333316,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": -0.45198839267971264,
+              "y": -0.6406767693400734
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 0,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": -1
+            }
+          },
+          {
+            "ticks": 14,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 39,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/42/44/right@192"
+      },
+      "originalMetrics": {
+        "propagations": 192,
+        "narrowQueries": 29,
+        "broadPhaseSkips": 936,
+        "clockSteps": 1027,
+        "searchPropagations": 192,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 192
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 16,
+      "seed": 42,
+      "history": "early-reversal",
+      "section": "adaptive-homing-v1/42/7",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -6,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 31.508333333332185,
+        "distance": 688.0938622685172,
+        "committed": [
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/28/1",
+            "ownerCell": 28,
+            "localIndex": 1,
+            "anchorCell": 29,
+            "passDistance": 692.0199641156942,
+            "x": -0.7162697872146966,
+            "y": -1.1771838375600054,
+            "radius": 0.9292866900563241,
+            "kind": 0,
+            "spin": 0.6409625752829016,
+            "phase": 5.659884050923248,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/0",
+            "ownerCell": 31,
+            "localIndex": 0,
+            "anchorCell": 31,
+            "passDistance": 749.0463873061537,
+            "x": 3.9176917533891764,
+            "y": -0.8831099878322073,
+            "radius": 1.0119408598169684,
+            "kind": 0,
+            "spin": 0.03536467021331191,
+            "phase": 2.729514320964624,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/31/1",
+            "ownerCell": 31,
+            "localIndex": 1,
+            "anchorCell": 31,
+            "passDistance": 763.5605976205039,
+            "x": 3.9667364170810697,
+            "y": -2.8788511455781496,
+            "radius": 0.93950315247057,
+            "kind": 2,
+            "spin": -0.6918863338883966,
+            "phase": 5.9716271844817825,
+            "visualVariant": 4,
+            "collisionProfile": "generator-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/2",
+            "ownerCell": 32,
+            "localIndex": 2,
+            "anchorCell": 32,
+            "passDistance": 772.2233295516484,
+            "x": 1.9486430781463655,
+            "y": -1.924078509609748,
+            "radius": 0.8670654451241717,
+            "kind": 2,
+            "spin": -0.019137337990105197,
+            "phase": 2.930554740819354,
+            "visualVariant": 3,
+            "collisionProfile": "barrel-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          },
+          {
+            "id": "encounter-v1/42/5.4:3.15:6:0.3:12/scattered:31:2:12:0.35:1:1:3.1771816671396165:-1.1618539320096115/32/3",
+            "ownerCell": 32,
+            "localIndex": 3,
+            "anchorCell": 32,
+            "passDistance": 786.5610066321027,
+            "x": 2.5773456432892496,
+            "y": -1.8506686819508413,
+            "radius": 0.7946277377777733,
+            "kind": 1,
+            "spin": 0.6536116579081863,
+            "phase": 6.172667604336512,
+            "visualVariant": 2,
+            "collisionProfile": "half-meteor-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "encounter-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12",
+              "pattern": {
+                "family": "scattered",
+                "firstCell": 31,
+                "cellCount": 2,
+                "variation": 12,
+                "intensity": 0.35,
+                "mirrorX": true,
+                "mirrorY": true,
+                "offsetX": 3.1771816671396165,
+                "offsetY": -1.1618539320096115
+              }
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 34,
+          "cellCount": 6,
+          "startDistance": 816,
+          "endDistance": 960,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/34/1",
+              "ownerCell": 34,
+              "localIndex": 1,
+              "anchorCell": 35,
+              "passDistance": 839.575492492877,
+              "x": -1.2458094491623344,
+              "y": -1.6472358161117882,
+              "radius": 0.667172482481692,
+              "kind": 0,
+              "spin": 0.5751371853519232,
+              "phase": 0.24209594008479768,
+              "visualVariant": 0,
+              "collisionProfile": "sphere-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/34/3781/ba032bac",
+              "ownerCell": 37,
+              "anchorCell": 37,
+              "localIndex": 0,
+              "passDistance": 900,
+              "x": -4.5,
+              "y": 2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 4473,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 4353,
+                "passTick": 4833,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 3781,
+                  "elapsed": 31.508333333332185,
+                  "distance": 688.0938622685172,
+                  "x": -6,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 960
+      },
+      "hint": {
+        "elapsed": 28.766666666665675,
+        "controls": [
+          {
+            "ticks": 869,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "adaptive-homing-v1/42/34/3781/ba032bac@1043"
+      },
+      "originalMetrics": {
+        "propagations": 1043,
+        "narrowQueries": 94,
+        "broadPhaseSkips": 7207,
+        "clockSteps": 1100,
+        "searchPropagations": 1043,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 1043
+      },
+      "fullBeamRecovered": true
+    },
+    {
+      "id": 17,
+      "seed": 42,
+      "history": "early-reversal",
+      "section": "adaptive-homing-v1/42/10",
+      "category": "bounded-proposal-no-witness",
+      "context": {
+        "player": {
+          "x": -6,
+          "y": 0,
+          "vx": 0,
+          "vy": 0
+        },
+        "input": {
+          "x": 0,
+          "y": 0
+        },
+        "elapsed": 47.12499999999797,
+        "distance": 1072.0675694444406,
+        "committed": [
+          {
+            "id": "structure-mixed-v2/42/44/right",
+            "ownerCell": 46,
+            "anchorCell": 46,
+            "localIndex": 0,
+            "passDistance": 1116,
+            "x": 0,
+            "y": 0,
+            "radius": 13,
+            "kind": 6,
+            "visualVariant": 8,
+            "spin": 0,
+            "phase": 0,
+            "collisionProfile": "wreck-frame-compound-v2",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "structure-mixed-v2",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/44/1",
+            "ownerCell": 44,
+            "localIndex": 1,
+            "anchorCell": 45,
+            "passDistance": 1077.4293854087591,
+            "x": 0.14053093660622817,
+            "y": 1.520626676897518,
+            "radius": 1.0968993621878327,
+            "kind": 0,
+            "spin": 0.2879557552747428,
+            "phase": 4.416378486245165,
+            "visualVariant": 0,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          },
+          {
+            "id": "ambient-v1/42/5.4:3.15:6:0.3:12/47/1",
+            "ownerCell": 47,
+            "localIndex": 1,
+            "anchorCell": 48,
+            "passDistance": 1149.5969473086298,
+            "x": 4.231871891207993,
+            "y": -1.9196058633970097,
+            "radius": 0.6776755229569972,
+            "kind": 1,
+            "spin": 0.5115700135938823,
+            "phase": 0.4818867382083229,
+            "visualVariant": 1,
+            "collisionProfile": "sphere-v1",
+            "orientation": "euler-xyz-v1",
+            "provenance": {
+              "version": "ambient-v1",
+              "seed": 42,
+              "settingsKey": "5.4:3.15:6:0.3:12"
+            }
+          }
+        ],
+        "candidate": {
+          "firstCell": 50,
+          "cellCount": 6,
+          "startDistance": 1200,
+          "endDistance": 1344,
+          "provenance": {
+            "version": "adaptive-homing-v1",
+            "seed": 42,
+            "settingsKey": "5.4:3.15:6:0.3:12"
+          },
+          "hazards": [
+            {
+              "id": "ambient-v1/42/5.4:3.15:6:0.3:12/51/0",
+              "ownerCell": 51,
+              "localIndex": 0,
+              "anchorCell": 51,
+              "passDistance": 1225.8307474935427,
+              "x": 3.659357633348554,
+              "y": 1.641607105359435,
+              "radius": 0.7717340458999389,
+              "kind": 2,
+              "spin": 0.1557133622001856,
+              "phase": 3.6564163296509262,
+              "visualVariant": 4,
+              "collisionProfile": "generator-v1",
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "ambient-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              }
+            },
+            {
+              "id": "adaptive-homing-v1/42/50/5655/504e07e8",
+              "ownerCell": 53,
+              "anchorCell": 53,
+              "localIndex": 0,
+              "passDistance": 1284,
+              "x": -4.5,
+              "y": -2.4,
+              "radius": 1.35,
+              "kind": 9,
+              "visualVariant": 11,
+              "collisionProfile": "moving-mine-sphere-v1",
+              "spin": 0,
+              "phase": 0,
+              "orientation": "euler-xyz-v1",
+              "provenance": {
+                "version": "adaptive-homing-v1",
+                "seed": 42,
+                "settingsKey": "5.4:3.15:6:0.3:12"
+              },
+              "motion": {
+                "version": "adaptive-homing-v1",
+                "startTick": 6275,
+                "durationTicks": 480,
+                "velocityX": 0,
+                "velocityY": 0,
+                "warningTick": 6155,
+                "passTick": 6635,
+                "maxSpeed": 5.5,
+                "maxAcceleration": 6,
+                "responsiveness": 2.4,
+                "preset": "balanced",
+                "capture": {
+                  "tick": 5655,
+                  "elapsed": 47.12499999999797,
+                  "distance": 1072.0675694444406,
+                  "x": -6,
+                  "y": 0,
+                  "vx": 0,
+                  "vy": 0,
+                  "inputX": 0,
+                  "inputY": 0
+                }
+              }
+            }
+          ]
+        },
+        "reservedUntilDistance": 1344
+      },
+      "hint": {
+        "elapsed": 41.8333333333316,
+        "controls": [
+          {
+            "ticks": 54,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 144,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 24,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 48,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 72,
+            "input": {
+              "x": -1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 96,
+            "input": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          {
+            "ticks": 101,
+            "input": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        ]
+      },
+      "original": {
+        "decision": "reject",
+        "reason": "NO_WITNESS_FOUND",
+        "detail": "structure-mixed-v2/42/44/right@192"
+      },
+      "originalMetrics": {
+        "propagations": 192,
+        "narrowQueries": 29,
+        "broadPhaseSkips": 936,
+        "clockSteps": 1027,
+        "searchPropagations": 192,
+        "replayPropagations": 0,
+        "replayQueries": 0,
+        "peakFrontier": 1,
+        "peakExpansion": 1,
+        "searches": 1,
+        "replays": 0,
+        "planningTicks": 1,
+        "mineUpdates": 192
+      },
+      "fullBeamRecovered": true
+    }
+  ]
+}

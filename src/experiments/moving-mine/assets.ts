@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { AssetManager, normalizeModel } from '../../assets/asset-manager.ts';
 import { MODEL_ASSETS } from '../../assets/catalog.ts';
 
-/** Existing GLTF normalization, cache and one-owner resource lifetime; DEV URL only. */
+/** Existing GLTF normalization, cache and one-owner resource lifetime; Used by integrated ordinary Play and legacy DEV experiments. */
 export class MineAssetManager extends AssetManager {
   private mine?: Promise<Group>;
   private template?: Group;

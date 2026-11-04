@@ -83,7 +83,7 @@ npm run preview
 
 ## Экспериментальная камера
 
-В review-ветке CAMERA-001 доступно сравнение трёх камер: `?debug=camera&camera=baseline&seed=42`, `full-chase` и `hybrid-chase`. Переключатель работает во время полёта только на DEV-сервере. Обычная камера остаётся прежней; выбор владельца и публикация ещё не выполнены. Инструкция: [`OWNER_PLAYTEST_GUIDE.md`](docs/review/CAMERA-001/OWNER_PLAYTEST_GUIDE.md).
+В текущей review-ветке GAMEPLAY-005A обычный Play использует Hybrid Chase, Mixed Flow со станциями, Energy Fragments, редкие adaptive-homing мины и визуальные подсказки границ. Воспроизводимый DEV-забег: `?debug=integrated&seed=42`; коллайдеры: `&colliders=1`. Историческое сравнение CAMERA-001 остаётся в `?debug=camera&camera=baseline&seed=42` (`full-chase` / `hybrid-chase`), только в DEV. Изменения не слиты в main и не опубликованы. Инструкция: [`OWNER_PLAYTEST_GUIDE.md`](docs/review/GAMEPLAY-005A/OWNER_PLAYTEST_GUIDE.md).
 
 ## Модели и лицензии
 

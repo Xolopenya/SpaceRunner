@@ -73,3 +73,7 @@ Production font bytes total **157,232**; the two notices total **8,840**. `.gita
 # DEV moving space mine — 2026-10-28
 
 Space mine (Modular Spaceships and Space Fleet), publisher3D Assets, [exact source](https://3dassets.dev/assets/interstellar-fleet-modular-starships-space-mine-4cafd369), CC0 1.0 Universal verified against the asset page and publisher license policy. Original56,912-byte GLB is preserved at `src/experiments/moving-mine/space-mine.glb`; SHA-256 `c64b8bfa0146ffc7d819f46ab74887326828b2b8266604b516a3cdc570189c77`. Runtime pivot/radius/material adjustments; no required attribution. DEV-only local loading, excluded from production. Full provenance: [003C asset record](review/GAMEPLAY-EXPERIMENT-003C/ASSET_PROVENANCE.md).
+
+## GAMEPLAY-005A integrated mine — 2026-11-04
+
+This feature branch also loads the existing Space Mine GLB in ordinary Play and the local static feature build. The original56,912-byte file and SHA256 above are unchanged; source, author3D Assets and CC0 license remain documented in the003C provenance record. No asset download or conversion occurred. Runtime normalization and materials reuse MineAssetManager; the model is loaded once and borrowed by one pooled mine presentation. New boundary edging is repository-authored Three.js line geometry with no external texture. Main was not merged or deployed.

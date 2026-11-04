@@ -54,5 +54,5 @@ test('pressure URL is ignored in production and without the field debug selector
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();
   const source = await page.locator('script[type=module]').getAttribute('src');
   const js = await (await page.request.get(new URL(source!, 'http://127.0.0.1:4173').href)).text();
-  for (const sentinel of ['pressure-v1', 'director-v1', 'ACTUAL_REPLAY_BUDGET', 'Unknown development field policy']) expect(js).not.toContain(sentinel);
+  expect(js).toContain('integrated-playable-v1'); expect(js).toContain('ACTUAL_REPLAY_BUDGET'); expect(js).not.toContain('Export recent trace');
 });

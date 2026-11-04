@@ -5,7 +5,7 @@ test('static production output loads locally and plays with no debug seam or run
   page.on('request', request => requests.push(request.url()));
   await page.goto('/?debug=colliders&seed=42');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
-  expect(requests.filter(url => url.endsWith('.glb'))).toHaveLength(6);
+  expect(requests.filter(url => url.endsWith('.glb'))).toHaveLength(7);
   await page.screenshot({ path: 'test-results/production-menu.png' });
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();
   await expect(page.locator('#collider-debug-info')).toHaveCount(0);

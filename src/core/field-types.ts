@@ -28,6 +28,7 @@ export interface TargetLockMotion {
 }
 /** Feedback controller metadata is immutable; its future pose is NOT stored here. */
 export interface AdaptiveHomingMotion {
+  readonly release?: true;
   readonly version: 'adaptive-homing-v1';
   readonly startTick: number; readonly durationTicks: number;
   readonly velocityX: number; readonly velocityY: number;

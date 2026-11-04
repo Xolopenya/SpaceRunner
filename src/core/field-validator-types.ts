@@ -22,6 +22,8 @@ export interface ValidationOptions {
 export interface ValidationGeometry {
   readonly version: string;
   readonly shipProfile?: ShipColliderProfile;
+  /** Explicit compound feedback contract; all motion still needs canonical metadata and coupled roots. */
+  readonly compoundMotion?: 'adaptive-homing-v1';
   validHazard(hazard: PlannedHazard): boolean;
   inspect(candidate: FieldTransaction, committed: readonly PlannedHazard[]): StructuralResult;
   queryCost(hazard: PlannedHazard): number;

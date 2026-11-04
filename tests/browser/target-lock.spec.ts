@@ -40,8 +40,8 @@ test('unavoided target makes one real hull contact without changing existing dam
  });expect(r.hull).toBe(2);expect(r.hits).toBe(1);expect(r.state).toBe('PLAYING');expect(r.invulnerability).toBeGreaterThan(0);expect(r.fault).toBeUndefined();
 });
 
-test('production strips target selector, diagnostics and experimental asset',async({page})=>{
+test('production strips target selector, diagnostics while the integrated mine stays available',async({page})=>{
  const requests:string[]=[];page.on('request',r=>{if(r.url().includes('.glb'))requests.push(r.url());});
  await page.goto('http://127.0.0.1:4173'+url);await expect(page.locator('#game')).toHaveAttribute('data-state','MENU');expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();
- expect(requests.length).toBe(6);expect(requests.some(r=>r.includes('space-mine'))).toBe(false);await expect(page.locator('#moving-mine-info')).toHaveCount(0);
+ expect(requests.length).toBe(7);expect(requests.some(r=>r.includes('space-mine'))).toBe(true);await expect(page.locator('#moving-mine-info')).toHaveCount(0);
 });

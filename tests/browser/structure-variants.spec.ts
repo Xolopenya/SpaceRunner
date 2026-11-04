@@ -21,11 +21,11 @@ for (const mode of ['isolated', 'mixed']) for (const aperture of ['center', 'lef
   await page.evaluate(() => window.spaceRunner!.model.step(1 / 120, { x: 1, y: 0 })); expect(await page.evaluate(() => window.spaceRunner!.model.distance)).toBe(before);
 });
 
-test('v2 mixed experiment is absent from production and cannot change the default game', async ({ page }) => {
+test('v2 debug selector is absent while integrated stations remain in the feature build', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/?debug=field&experiment=large-structure&mode=mixed&aperture=lower&seed=42'); await page.locator('#launch').click();
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); await expect(page.locator('#structure-variants-debug-info')).toHaveCount(0);
   const source = await page.locator('script[type=module]').getAttribute('src'), js = await (await page.request.get(new URL(source!, 'http://127.0.0.1:4173').href)).text();
-  for (const marker of ['structure-mixed-v2', 'wreck-frame-compound-v2', 'station-wreck-v2']) expect(js).not.toContain(marker);
+  expect(js).toContain('integrated-playable-v1'); expect(js).toContain('station-wreck-v2'); expect(js).not.toContain('Export recent trace');
 });
 
 test('a player can steer through the right internal opening with the normal keyboard controls', async ({ page }) => {

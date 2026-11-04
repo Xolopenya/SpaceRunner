@@ -9,11 +9,13 @@ import { initialAdaptiveState,stepAdaptiveMine } from './controller.ts';
 import { adaptiveTransaction,ADAPTIVE_GEOMETRY,isAdaptive,validAdaptiveState } from './transaction.ts';
 import { HOMING as H } from './settings.ts';
 import type { HomingPreset } from './settings.ts';
+import { HomingPlanningFrame } from './planning-frame.ts';
 
 export interface PursuitSample {readonly tick:number;readonly elapsed:number;readonly distance:number;readonly ship:Readonly<SchedulerRoot['player']>;readonly input:Readonly<SchedulerRoot['input']>;readonly mine:Readonly<AdaptiveMineState>}
 /** One authoritative controller, no renderer mutation and no precomputed pursuit tape. */
 export class AdaptiveSource implements RuntimeEncounterSource {
  readonly version=H.version;readonly diagnostics=true;
+ readonly planningFrame=new HomingPlanningFrame();
  private readonly base=movingMineSource();
  private readonly first:boolean;private readonly preset:HomingPreset;
  private descriptor?:PlannedHazard;
@@ -31,6 +33,7 @@ export class AdaptiveSource implements RuntimeEncounterSource {
   if(section.encounter!=='moving-mine')return{...this.base.candidate(section,committed,root),geometry:ADAPTIVE_GEOMETRY};
   const ambient=new FieldGenerator(section.seed).propose(section.firstCell,section.cellCount-1),template=Object.freeze({...ambient,cellCount:section.cellCount,endDistance:section.endDistance});
   return{transaction:template,fallback:template,geometry:ADAPTIVE_GEOMETRY,publicationPolicy:'resolve-at-publication-v1' as const,publicationDelayTicks:1,
+   preferCurrentFieldGoals:true as const,
    resolveAtPublication:(current:SchedulerRoot)=>adaptiveTransaction(section.seed,section.firstCell,current,this.preset)};
  }
  advance(root:SchedulerRoot):void{
@@ -58,8 +61,10 @@ export class AdaptiveSource implements RuntimeEncounterSource {
   const tick=simulationTick(elapsed),s=this.currentState?.id===h.id&&this.currentState.tick===tick?this.currentState:this.previousState?.id===h.id&&this.previousState.tick===tick?this.previousState:undefined;
   if(!s)throw new Error('Feedback pose has no authoritative interval state');return s;
  }
- reset():void{this.descriptor=undefined;this.currentState=this.previousState=undefined;this.samples.length=this.encounters.length=0;this.liveUpdates=0;}
- trace():unknown{return{version:H.version,encounters:this.encounters,samples:this.samples,liveUpdates:this.liveUpdates,maximumSamples:H.traceTicks,note:'Actual post-Ship controller states; depth=distance-passDistance. Inputs are recorded, never forecast.'};}
+ reset():void{this.planningFrame.reset();this.descriptor=undefined;this.currentState=this.previousState=undefined;this.samples.length=this.encounters.length=0;this.liveUpdates=0;}
+ trace():unknown{return{version:H.version,encounters:this.encounters,samples:this.samples,liveUpdates:this.liveUpdates,maximumSamples:H.traceTicks,
+  planningFrame:{limit:this.planningFrame.limit,latest:this.planningFrame.latest,maxMs:this.planningFrame.maxMs,spikes:this.planningFrame.spikes},
+  note:'Actual post-Ship controller states; depth=distance-passDistance. Inputs are recorded, never forecast. Render-frame budget applies between explicit begin/finish hooks; frameless diagnostics retain per-step defaults.'};}
  interval(h:PlannedHazard):Readonly<{from:Readonly<AdaptiveMineState>;to:Readonly<AdaptiveMineState>}>|undefined{
   return this.previousState?.id===h.id&&this.currentState?.id===h.id?{from:this.previousState,to:this.currentState}:undefined;
  }

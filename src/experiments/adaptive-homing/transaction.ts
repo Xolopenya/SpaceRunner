@@ -14,6 +14,7 @@ import { HOMING as H,HOMING_PRESETS } from './settings.ts';
 import type { HomingPreset } from './settings.ts';
 import { adaptivePhase,initialAdaptiveState } from './controller.ts';
 import { AdaptivePrediction } from './prediction.ts';
+import { homingEscapeGoal } from './route-policy.ts';
 
 function hash(s:string):string{let n=2166136261;for(const c of s)n=Math.imul(n^c.charCodeAt(0),16777619);return(n>>>0).toString(16).padStart(8,'0');}
 export function isAdaptive(h:PlannedHazard):boolean{return h.motion?.version===H.version;}
@@ -23,7 +24,7 @@ export function adaptiveTransaction(seed:number,firstCell:number,root:SchedulerR
   ||Math.hypot(capture.vx,capture.vy)>CONFIG.ship.maxSpeed+1e-12||Math.abs(capture.inputX)>1||Math.abs(capture.inputY)>1)throw new RangeError('INVALID_HOMING_CAPTURE');
  const passDistance=firstCell*24+MINE.offset,plane=passTick(root,passDistance),startTick=plane-H.pursuitLeadTicks,warningTick=startTick-H.warningTicks;
  if(warningTick<capture.tick)throw new RangeError('INSUFFICIENT_HOMING_WARNING');
- const motion:Readonly<AdaptiveHomingMotion>=Object.freeze({version:H.version,startTick,durationTicks:H.maximumPursuitTicks,velocityX:H.initialVelocityX,velocityY:H.initialVelocityY,
+ const motion:Readonly<AdaptiveHomingMotion>=Object.freeze({version:H.version,...(root.release?{release:true as const}:{}),startTick,durationTicks:H.maximumPursuitTicks,velocityX:H.initialVelocityX,velocityY:H.initialVelocityY,
   warningTick,passTick:plane,...tuning,preset,capture});
  const n=parseInt(hash(`${H.version}/${seed}/${firstCell}/origin`),16),provenance=Object.freeze({version:H.version,seed,settingsKey:fieldSettingsKey(DEFAULT_FIELD_SETTINGS)}),ownerCell=Math.floor(passDistance/24);
  const mine:PlannedHazard=Object.freeze({id:`${H.version}/${seed}/${firstCell}/${capture.tick}/${hash(JSON.stringify(motion))}`,ownerCell,anchorCell:ownerCell,localIndex:0,passDistance,
@@ -31,7 +32,7 @@ export function adaptiveTransaction(seed:number,firstCell:number,root:SchedulerR
  const ambient=new FieldGenerator(seed).propose(firstCell,2);
  return Object.freeze({firstCell,cellCount:MINE.cellCount,startDistance:firstCell*24,endDistance:(firstCell+MINE.cellCount)*24,provenance,hazards:Object.freeze([...ambient.hazards,mine])});
 }
-function capturedRoot(m:AdaptiveHomingMotion):SchedulerRoot{const c=m.capture;return{player:{x:c.x,y:c.y,vx:c.vx,vy:c.vy},input:{x:c.inputX,y:c.inputY},elapsed:c.elapsed,distance:c.distance};}
+function capturedRoot(m:AdaptiveHomingMotion):SchedulerRoot{const c=m.capture;return{player:{x:c.x,y:c.y,vx:c.vx,vy:c.vy},input:{x:c.inputX,y:c.inputY},elapsed:c.elapsed,distance:c.distance,...(m.release?{release:true as const}:{})};}
 function canonical(h:PlannedHazard):boolean{
  if(h.motion?.version!==H.version)return false;
  try{const m=h.motion,cell=Number(h.id.split('/')[2]),expected=adaptiveTransaction(h.provenance.seed,cell,capturedRoot(m),m.preset).hazards.at(-1);return JSON.stringify(h)===JSON.stringify(expected);}catch{return false;}
@@ -45,21 +46,17 @@ export function validAdaptiveState(s:Readonly<AdaptiveMineState>,h:PlannedHazard
   &&Math.abs(s.x-h.x)<=m.maxSpeed*age+1e-8&&Math.abs(s.y-h.y)<=m.maxSpeed*age+1e-8
   &&Math.abs(s.targetX)<=CONFIG.bounds.x&&Math.abs(s.targetY)<=CONFIG.bounds.y;
 }
-function proposedGoal(hazards:readonly PlannedHazard[],distance:number,elapsed:number):{x:number;y:number}|undefined{
- const h=hazards.find(isAdaptive),m=h?.motion;if(!h||m?.version!==H.version||distance>h.passDistance+h.radius+.57)return undefined;
- if(hazards.some(other=>other!==h&&other.passDistance<h.passDistance&&other.passDistance+other.radius+.57>=distance))return undefined;
- const bait=-Math.sign(h.x)*4.8;return{x:simulationTick(elapsed)<m.passTick-H.escapeProposalTicks?bait:-bait,y:0};
-}
 export const ADAPTIVE_GEOMETRY:ValidationGeometry=Object.freeze({...MINE_GEOMETRY,version:H.geometry,
  validHazard:(h:PlannedHazard)=>isAdaptive(h)?canonical(h):MINE_GEOMETRY.validHazard(h),
  prediction:(context?:FieldValidationContext)=>new AdaptivePrediction([...context?.committed??[],...context?.candidate.hazards??[]].find(isAdaptive)),
  initialMine(context:FieldValidationContext){const existing=context.committed.find(isAdaptive);if(existing)return context.homing?Object.freeze({...context.homing}):undefined;const h=context.candidate.hazards.find(isAdaptive);return h?initialAdaptiveState(h):undefined;},
  validRoot(context:FieldValidationContext){const committed=context.committed.filter(isAdaptive),fresh=context.candidate.hazards.filter(isAdaptive);if(committed.length+fresh.length>1)return false;
+  if([...committed,...fresh].some(h=>h.motion?.version===H.version&&h.motion.release!==context.release))return false;
   if(committed[0])return !!context.homing&&validAdaptiveState(context.homing,committed[0],context.elapsed);
   if(context.homing)return false;const h=fresh[0];return !h||(h.motion?.version===H.version&&JSON.stringify(h.motion.capture)===JSON.stringify(targetCapture(context)));},
  resolvedAt(context:FieldValidationContext){const h=context.candidate.hazards.find(isAdaptive);return h?.motion?.version===H.version&&JSON.stringify(h.motion.capture)===JSON.stringify(targetCapture(context));},
- goalsAt(hazards:readonly PlannedHazard[],distance:number,state?:Readonly<FlightState>){const goal=state?proposedGoal(hazards,distance,state.elapsed):undefined;return goal?[goal]:MINE_GEOMETRY.goalsAt?.(hazards,distance,state);},
- steering(hazards:readonly PlannedHazard[],state:Readonly<FlightState>){const goal=proposedGoal(hazards,state.distance,state.elapsed);if(!goal)return undefined;
+ goalsAt(hazards:readonly PlannedHazard[],distance:number,state?:Readonly<FlightState>){const goal=state?homingEscapeGoal(hazards,state):undefined;return goal?[goal]:MINE_GEOMETRY.goalsAt?.(hazards,distance,state);},
+ steering(hazards:readonly PlannedHazard[],state:Readonly<FlightState>){const goal=homingEscapeGoal(hazards,state);if(!goal)return undefined;
   const axis=(error:number,velocity:number)=>Math.abs(error)<=velocity*velocity/(2*CONFIG.ship.braking)+.08&&error*velocity>=0?0:Math.sign(error);
   return{x:axis(goal.x-state.x,state.vx),y:axis(goal.y-state.y,state.vy)};},
  inspect(candidate:FieldTransaction,committed:readonly PlannedHazard[]):StructuralResult{

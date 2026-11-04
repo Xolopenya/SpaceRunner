@@ -38,6 +38,6 @@ for(const viewport of [{width:390,height:844},{width:844,height:390}])test(`adap
  const r=await page.evaluate(()=>{const m=window.spaceRunner!.model as any;return{x:m.ship.x,target:m.homing.current.targetX,inputs:m.homing.samples.slice(-40).map((s:any)=>s.input.x),fault:m.field.fault};});
  expect(r.x).toBeGreaterThan(.5);expect(r.target).toBe(r.x);expect(r.inputs.some((x:number)=>x>0)).toBe(true);expect(r.fault).toBeUndefined();await context.close();
 });
-test('production excludes adaptive selector, diagnostics and experimental asset',async({page})=>{
- const requests:string[]=[];page.on('request',r=>{if(r.url().includes('.glb'))requests.push(r.url());});await page.goto('http://127.0.0.1:4173'+url+'&homing=aggressive');await expect(page.locator('#game')).toHaveAttribute('data-state','MENU');expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();expect(requests.length).toBe(6);expect(requests.some(r=>r.includes('space-mine'))).toBe(false);await expect(page.locator('#moving-mine-info')).toHaveCount(0);
+test('production excludes adaptive selector, diagnostics while the integrated mine stays available',async({page})=>{
+ const requests:string[]=[];page.on('request',r=>{if(r.url().includes('.glb'))requests.push(r.url());});await page.goto('http://127.0.0.1:4173'+url+'&homing=aggressive');await expect(page.locator('#game')).toHaveAttribute('data-state','MENU');expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();expect(requests.length).toBe(7);expect(requests.some(r=>r.includes('space-mine'))).toBe(true);await expect(page.locator('#moving-mine-info')).toHaveCount(0);
 });

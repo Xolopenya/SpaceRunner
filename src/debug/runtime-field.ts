@@ -13,6 +13,7 @@ import { FIELD_POLICIES } from '../core/field-policy.ts';
 import type { FieldPolicy } from '../core/field-policy.ts';
 import type { RuntimeCandidate } from '../core/field-runtime-session.ts';
 import type { ScheduledSection } from '../core/field-director.ts';
+import type { ValidationBudget } from '../core/field-validator-types.ts';
 
 export interface RuntimeEncounterSource {
   readonly version: string;
@@ -27,6 +28,12 @@ export interface RuntimeEncounterSource {
   published?(transaction: FieldTransaction, root: SchedulerRoot): void;
   reset?(): void;
   trace?(): unknown;
+  /** Optional DEV homing render-interval accounting. Other sources omit it. */
+  readonly planningFrame?: {
+    budget(publication: boolean): ValidationBudget;
+    spent(propagations: number, queries: number, ms: number): void;
+    defer(): void;
+  };
 }
 
 export const RUNTIME_SETTINGS = Object.freeze({ firstCell: 4, eventLimit: 64, sampleLimit: 2048 });
@@ -133,6 +140,13 @@ export class RuntimeObstacleField extends ObstacleField {
     }
     const pending = this.pending;
     if (!pending) return;
+    // Age always follows SIMULATION time, including render-budget deferrals.
+    // The original deadline still executes, even with no remaining allowance.
+    const frame = this.experiment?.planningFrame;
+    const budget = frame?.budget(pending.publicationDue(this.age + 1));
+    if (budget && budget.propagations === 0 && budget.narrowQueries === 0 && this.age + 1 < S.publicationTicks) {
+      this.age++; frame!.defer(); return;
+    }
     // Preflight ALL slots before a session may finalize source ownership. With
     // <=32 logical records and72 slots this always has >=12 spare unless corrupt.
     const publicationDue = pending.publicationDue(this.age + 1);
@@ -140,7 +154,8 @@ export class RuntimeObstacleField extends ObstacleField {
     if (publicationDue && free.length < 12) { this.fault = 'POOL_CAPACITY'; pending.cancel(); this.pending = undefined; return; }
     const phase = publicationDue ? 'actual-gate' : pending.phase, before = pending.metrics, start = performance.now();
     const hint = publicationDue && pending.resolvingTarget && this.certificate ? { elapsed:this.certificate.context.elapsed, controls:this.certificate.controls } : undefined;
-    const outcome = pending.advance(root, known, ++this.age, undefined, hint), ms = performance.now() - start, after = pending.metrics;
+    const outcome = pending.advance(root, known, ++this.age, budget, hint), ms = performance.now() - start, after = pending.metrics;
+    frame?.spent(after.propagations - before.propagations, after.narrowQueries - before.narrowQueries, ms);
     this.schedulerMs += ms; this.maxChunkMs = Math.max(this.maxChunkMs, ms); this.planningTicks++;
     if (this.samples.length === RUNTIME_SETTINGS.sampleLimit) this.samples.shift();
     this.samples.push({ phase, ms, propagations: after.propagations - before.propagations, queries: after.narrowQueries - before.narrowQueries });

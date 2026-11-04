@@ -22,7 +22,7 @@ export class ReleaseModel extends RuntimeGameModel {
  protected override readonly collisions=new ShipHazardCollision(SHIP_COLLIDER,true);
  get lastShipContact(){return this.collisions.contact;}
  get shipCollisionMetrics(){return{narrowQueries:this.collisions.narrowQueries,broadSkips:this.collisions.broadSkips};}
- constructor(){
+ constructor(encounterSource?:RuntimeEncounterSource){
   let owner: ReleaseModel;
   const base=mixedFlowSource();let distance=0,original:Parameters<RuntimeEncounterSource['candidate']>[0],extra=0;
   const source:RuntimeEncounterSource={version:'mixed-flow-v1',advance:r=>{distance=r.distance;},next(seed,cursor){
@@ -30,7 +30,8 @@ export class ReleaseModel extends RuntimeGameModel {
    return{section:{...original,cellCount:original.cellCount+extra,endDistance:original.endDistance+extra*24},next:{...d.next,firstCell:d.next.firstCell+extra}};
   },candidate(_s,known,root){const c=base.candidate(original,known,root),extend=(t:FieldTransaction)=>({...t,cellCount:t.cellCount+extra,endDistance:t.endDistance+extra*24});return{...c,geometry:RELEASE_GEOMETRY,transaction:extend(placePassivePressure(c.transaction,root,known)),...(c.fallback?{fallback:extend(c.fallback)}:{})};},
   published(transaction,root){owner.fragments.published(transaction,root,owner.field.ledger.knownHazards(root.distance));}};
-  super('baseline',source,true);
+  const selected=encounterSource??source;
+  super('baseline',{...selected,published(transaction,root){selected.published?.(transaction,root);if(encounterSource&&!transaction.hazards.some(h=>h.motion))owner.fragments.published(transaction,root,owner.field.ledger.knownHazards(root.distance));}},true);
   owner=this;
  }
  get phase():1|2{return this.distance>=RELEASE.phase2Distance?2:1;}

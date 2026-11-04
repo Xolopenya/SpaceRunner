@@ -1,4 +1,5 @@
-import { CONFIG, difficulty } from '../../config.ts';
+import { flightSpeed } from '../../release/settings.ts';
+import { CONFIG } from '../../config.ts';
 import { Random } from '../../core/random.ts';
 import { FieldGenerator } from '../../core/field-generator.ts';
 import { DEFAULT_FIELD_SETTINGS, fieldSettingsKey } from '../../core/field-settings.ts';
@@ -24,7 +25,7 @@ export function passTick(root: SchedulerRoot, passDistance: number): number {
   let elapsed = root.elapsed, distance = root.distance;
   for (let t = 0; t <= 1800; t++) {
     if (distance >= passDistance) return simulationTick(root.elapsed) + t;
-    elapsed += CONFIG.step; distance += difficulty(elapsed).speed * CONFIG.step;
+    elapsed += CONFIG.step; distance += flightSpeed(elapsed,distance,root.release) * CONFIG.step;
   }
   throw new RangeError('Mine outside prediction horizon');
 }

@@ -2,6 +2,10 @@ import './styles.css';
 import { Game } from './game.ts';
 import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
+import { MineAssetManager } from './experiments/moving-mine/assets.ts';
+import { ReleaseModel, releaseView } from './release/model.ts';
+import { IntegratedModel } from './integrated/model.ts';
+import { IntegratedView } from './integrated/view.ts';
 import { GameModel } from './core/game-model.ts';
 import type { LargeStructureView } from './experiments/large-structure/view.ts';
 import type { CameraSelector } from './debug/camera-selector.ts';
@@ -23,8 +27,8 @@ async function boot(): Promise<void> {
   if (loading || disposed || game) return;
   loading = true;
   retry.hidden = true;
-  const { ReleaseModel, releaseView } = await import('./release/model.ts');
-  assets = new AssetManager(import.meta.env.BASE_URL);
+  const integrated = !import.meta.env.DEV || !new URLSearchParams(location.search).has('debug') || new URLSearchParams(location.search).get('debug') === 'integrated';
+  assets = integrated ? new MineAssetManager(import.meta.env.BASE_URL) : new AssetManager(import.meta.env.BASE_URL);
   try {
     if (import.meta.env.DEV) {
       const params = new URLSearchParams(location.search);
@@ -37,6 +41,7 @@ async function boot(): Promise<void> {
     await assets.preload((completed, total, label) => {
       if (!disposed) message.textContent = `LOADING FLIGHT MODELS ${completed}/${total} · ${label}`;
     });
+    if (integrated) await (assets as MineAssetManager).loadMine();
     if (disposed) return;
     let debugFactory: ColliderDebugFactory | undefined;
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'colliders') {
@@ -46,7 +51,7 @@ async function boot(): Promise<void> {
     }
     let developerModel: GameModel | undefined = new ReleaseModel();
     debugFactory = scene => { structureView = releaseView(scene); return structureView; };
-    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles','camera'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
+    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles','camera','integrated'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
     if(import.meta.env.DEV&&['collectibles','camera'].includes(new URLSearchParams(location.search).get('debug')!)&&new URLSearchParams(location.search).get('colliders')==='1'){
       const {ColliderDebugger}=await import('./debug/collider-debugger.ts');
@@ -114,8 +119,23 @@ async function boot(): Promise<void> {
         developerModel = new RuntimeGameModel(fieldPolicy(params.get('policy')));
       }
     }
+    if (integrated) {
+      developerModel = new IntegratedModel();
+      const mineAssets = assets as MineAssetManager;
+      debugFactory = scene => { structureView = new IntegratedView(scene, mineAssets); return structureView; };
+      if (import.meta.env.DEV && new URLSearchParams(location.search).get('colliders') === '1') {
+        const { ColliderDebugger } = await import('./debug/collider-debugger.ts');
+        const { SHIP_COLLIDER } = await import('./core/ship-collider.ts');
+        debugFactory = scene => {
+          const view = new IntegratedView(scene, mineAssets), wires = new ColliderDebugger(scene, SHIP_COLLIDER);
+          structureView = { bind(slots) { view.bind(slots); wires.bind(slots); }, update(model) { view.update(model); wires.update(model); }, dispose() { wires.dispose(); view.dispose(); } };
+          return structureView;
+        };
+      }
+    }
     game = new Game(assets, undefined, debugFactory, developerModel);
     structureView?.bind(game.world.hazards);
+    if (!integrated) game.world.flightCamera.setMode('baseline');
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'camera') {
       const { CameraSelector } = await import('./debug/camera-selector.ts');
       if (disposed) return;

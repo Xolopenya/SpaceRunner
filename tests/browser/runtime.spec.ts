@@ -60,11 +60,11 @@ test.describe('mobile runtime',()=>{
  });
 });
 
-test('production ignores the experimental selector and contains no runtime planning implementation',async({page})=>{
+test('feature build ignores the experimental selector and retains runtime safety gates',async({page})=>{
  const requests:string[]=[];page.on('request',r=>requests.push(r.url()));
  await page.goto('http://127.0.0.1:4173/?debug=field&seed=42');await page.locator('#launch').click();
  expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();
  const src=await page.locator('script[type=module]').getAttribute('src');const response=await page.request.get(new URL(src!,'http://127.0.0.1:4173/').href);expect(response.ok()).toBe(true);const js=await response.text();
- for(const sentinel of ['ACTUAL_REPLAY_BUDGET','CHANGED_POOL_GEOMETRY','runtime requires normal policy'])expect(js).not.toContain(sentinel);
+ for(const sentinel of ['integrated-playable-v1','ACTUAL_REPLAY_BUDGET','CHANGED_POOL_GEOMETRY'])expect(js).toContain(sentinel);
  expect(requests.some(u=>/field-runtime|runtime-game-model|field-validator/.test(u))).toBe(false);
 });

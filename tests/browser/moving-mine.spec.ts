@@ -24,11 +24,11 @@ test('moving mine GLB loads once, actual poses move, pause/focus/restart retain 
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PAUSED');
 });
-test('production ignores the moving selector and makes no experimental asset request', async ({ page }) => {
+test('production ignores the moving selector and loads the integrated mine', async ({ page }) => {
   const requests: string[] = []; page.on('request', r => { if (r.url().includes('.glb')) requests.push(r.url()); });
   await page.goto('http://127.0.0.1:4173' + url); await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
-  expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); expect(requests.length).toBe(6);
-  expect(requests.some(r => r.includes('space-mine'))).toBe(false); await expect(page.locator('#moving-mine-info')).toHaveCount(0);
+  expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined(); expect(requests.length).toBe(7);
+  expect(requests.some(r => r.includes('space-mine'))).toBe(true); await expect(page.locator('#moving-mine-info')).toHaveCount(0);
 });
 test('invalid experimental GLB falls back to the existing certified mixed field', async ({ page }) => {
   await page.route('**/space-mine.glb**', route => route.fulfill({ status: 200, contentType: 'model/gltf-binary', body: 'invalid GLB fixture' }));

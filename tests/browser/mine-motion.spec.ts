@@ -18,11 +18,11 @@ for (const policy of ['baseline','fast','diagonal']) test(`${policy} DEV URL pub
   expect(result.hull).toBe(3);expect(result.fault).toBeUndefined();await expect(page.locator('#moving-mine-info')).toContainText(policy);
 });
 
-test('production ignores all three motion policies and never requests the DEV mine model',async({page})=>{
+test('production ignores all three motion policies and loads only the integrated mine',async({page})=>{
   for(const policy of ['baseline','fast','diagonal']){
     const requests:string[]=[];const listener=(r:any)=>{if(r.url().includes('.glb'))requests.push(r.url());};page.on('request',listener);
     await page.goto(`http://127.0.0.1:4173/?debug=field&experiment=moving-mine&motion=${policy}&seed=42&firstMine=1`);
     await expect(page.locator('#game')).toHaveAttribute('data-state','MENU');expect(await page.evaluate(()=>window.spaceRunner)).toBeUndefined();
-    expect(requests.length).toBe(6);expect(requests.some(r=>r.includes('space-mine'))).toBe(false);await expect(page.locator('#moving-mine-info')).toHaveCount(0);page.off('request',listener);
+    expect(requests.length).toBe(7);expect(requests.some(r=>r.includes('space-mine'))).toBe(true);await expect(page.locator('#moving-mine-info')).toHaveCount(0);page.off('request',listener);
   }
 });
