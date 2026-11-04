@@ -1,32 +1,89 @@
 {
-  "taskId": "GAMEPLAY-004B",
-  "baseline": "05d075415a6e813c28134d37d8f74afdb50af7bb",
+  "taskId": "CAMERA-001",
+  "baseline": "3b63f1d9ebb25cf6d79639447a2692dfc8af5538",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "COLLIDER_PROFILE.md": "docs/review/GAMEPLAY-004B/COLLIDER_PROFILE.md",
-    "PICKUP_ASSIST.md": "docs/review/GAMEPLAY-004B/PICKUP_ASSIST.md",
-    "FAIRNESS_IMPACT.md": "docs/review/GAMEPLAY-004B/FAIRNESS_IMPACT.md",
-    "GAMEPLAY_EVIDENCE.md": "docs/review/GAMEPLAY-004B/GAMEPLAY_EVIDENCE.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-004B/PERFORMANCE.md",
-    "REMAINING_RISKS.md": "docs/review/GAMEPLAY-004B/REMAINING_RISKS.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-004B/COLLIDER_PROFILE.md"
+    "CURRENT_CAMERA.md": "docs/review/CAMERA-001/CURRENT_CAMERA.md",
+    "CAMERA_POLICIES.md": "docs/review/CAMERA-001/CAMERA_POLICIES.md",
+    "VISUAL_COMPARISON.md": "docs/review/CAMERA-001/VISUAL_COMPARISON.md",
+    "SCREENSPACE_METRICS.md": "docs/review/CAMERA-001/SCREENSPACE_METRICS.md",
+    "PERFORMANCE.md": "docs/review/CAMERA-001/PERFORMANCE.md",
+    "OWNER_PLAYTEST_GUIDE.md": "docs/review/CAMERA-001/OWNER_PLAYTEST_GUIDE.md",
+    "IMPLEMENTATION.md": "docs/review/CAMERA-001/CAMERA_POLICIES.md"
   },
   "screenshots": [
-    "004b-before-near.png",
-    "004b-before-after.png",
-    "004b-after-near.png",
-    "004b-after-after.png",
-    "004b-station-near.png",
-    "004b-station-after.png",
-    "004b-wing-left-contact.png",
-    "004b-wing-right-contact.png"
+    "camera-left-boundary-baseline.png",
+    "camera-left-boundary-full-chase.png",
+    "camera-left-boundary-hybrid-chase.png",
+    "camera-right-boundary-baseline.png",
+    "camera-right-boundary-full-chase.png",
+    "camera-right-boundary-hybrid-chase.png",
+    "camera-wing-hit-baseline.png",
+    "camera-wing-hit-full-chase.png",
+    "camera-wing-hit-hybrid-chase.png",
+    "camera-pickup-baseline.png",
+    "camera-pickup-full-chase.png",
+    "camera-pickup-hybrid-chase.png",
+    "camera-station-baseline.png",
+    "camera-station-full-chase.png",
+    "camera-station-hybrid-chase.png",
+    "camera-vertical-baseline.png",
+    "camera-vertical-full-chase.png",
+    "camera-vertical-hybrid-chase.png",
+    "camera-sustained-baseline.png",
+    "camera-sustained-full-chase.png",
+    "camera-sustained-hybrid-chase.png",
+    "camera-aperture-center-baseline.png",
+    "camera-aperture-center-full-chase.png",
+    "camera-aperture-center-hybrid-chase.png",
+    "camera-aperture-left-baseline.png",
+    "camera-aperture-left-full-chase.png",
+    "camera-aperture-left-hybrid-chase.png",
+    "camera-aperture-right-baseline.png",
+    "camera-aperture-right-full-chase.png",
+    "camera-aperture-right-hybrid-chase.png",
+    "camera-aperture-upper-baseline.png",
+    "camera-aperture-upper-full-chase.png",
+    "camera-aperture-upper-hybrid-chase.png",
+    "camera-aperture-lower-baseline.png",
+    "camera-aperture-lower-full-chase.png",
+    "camera-aperture-lower-hybrid-chase.png",
+    "camera-position-center-baseline.png",
+    "camera-position-center-full-chase.png",
+    "camera-position-center-hybrid-chase.png",
+    "camera-position-left-baseline.png",
+    "camera-position-left-full-chase.png",
+    "camera-position-left-hybrid-chase.png",
+    "camera-position-right-baseline.png",
+    "camera-position-right-full-chase.png",
+    "camera-position-right-hybrid-chase.png",
+    "camera-position-upper-baseline.png",
+    "camera-position-upper-full-chase.png",
+    "camera-position-upper-hybrid-chase.png",
+    "camera-position-lower-baseline.png",
+    "camera-position-lower-full-chase.png",
+    "camera-position-lower-hybrid-chase.png",
+    "camera-position-corner-baseline.png",
+    "camera-position-corner-full-chase.png",
+    "camera-position-corner-hybrid-chase.png",
+    "camera-left-boundary-baseline-portrait.png",
+    "camera-left-boundary-full-chase-portrait.png",
+    "camera-left-boundary-hybrid-chase-portrait.png",
+    "camera-station-baseline-portrait.png",
+    "camera-station-full-chase-portrait.png",
+    "camera-station-hybrid-chase-portrait.png",
+    "camera-left-boundary-baseline-mobile-landscape.png",
+    "camera-left-boundary-full-chase-mobile-landscape.png",
+    "camera-left-boundary-hybrid-chase-mobile-landscape.png",
+    "camera-station-baseline-mobile-landscape.png",
+    "camera-station-full-chase-mobile-landscape.png",
+    "camera-station-hybrid-chase-mobile-landscape.png"
   ],
   "videoPreviews": [
-    "004b-before.webm",
-    "004b-after.webm",
-    "004b-wing-left.webm",
-    "004b-wing-right.webm",
-    "004b-station.webm"
+    "camera-baseline.webm",
+    "camera-full-chase.webm",
+    "camera-hybrid-chase.webm",
+    "camera-switching.webm"
   ],
   "extraChecks": [
     {
@@ -40,14 +97,14 @@
       "name": "phase2-audit"
     },
     {
-      "script": "scripts/ship-collider-audit.mjs",
+      "script": "scripts/camera-audit.mjs",
       "stripTypes": true,
-      "name": "ship-collider-audit"
+      "name": "camera-audit"
     },
     {
-      "script": "scripts/ship-collider-browser.mjs",
-      "stripTypes": false,
-      "name": "ship-collider-browser"
+      "script": "scripts/camera-browser.mjs",
+      "stripTypes": true,
+      "name": "camera-browser"
     },
     {
       "script": "scripts/collectible-package-check.mjs",
@@ -62,16 +119,16 @@
     "docs/game-design/consilium/"
   ],
   "evidenceNotes": [
-    "Normal Play enables actual wing damage and compound validation on this feature branch; no public deployment.",
-    "Real before/after Vite baseline005 at5273 and current build; native Chrome captures with actual input histories.",
-    "DEV impact ghost is an explicitly recorded visual clone, not active geometry.",
-    "Fixed-input admissions fall26\u219223/29; no hazard-volume or budget compensation."
+    "Exact approved004B ancestry, unchanged production default A; no merge/deploy.",
+    "Matched actual ReleaseModel inputs/ticks, native silent Chrome videos, all five real aperture variants.",
+    "DEV wires retained; collider text collapsible to avoid covering the ship.",
+    "B/C stable direction and zero follow lag; no automatic camera selection."
   ],
   "limitations": [
-    "Stable colliders do not follow cosmetic banking.",
-    "Local pickup approach/line of sight is not a certified complete pickup route.",
-    "Historical DEV moving experiments retain their explicit old contracts; no moving source in normal Play.",
-    "No owner approval, physical-phone FPS or indefinite leak guarantee."
+    "Owner camera decision pending.",
+    "Faint inherited boundary cues, unchanged cosmetic bank versus collider difference.",
+    "Portrait rear distance and120Hz latest-state presentation inherited.",
+    "Finite local capture samples; no physical-phone comfort or FPS approval."
   ],
   "knownBlockers": []
 }

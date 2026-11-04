@@ -1,0 +1,11 @@
+# Projection diagnostics
+
+`camera-audit.json` records camera pose/direction, static NDC centers at X−6/−3/0/3/6, projected width and120×1000 update batches. The settled desktop ship-center horizontal span across the arena is A .953633 NDC, B below2e−16, C .206286. This measures framing, not safe reachability or readability. B/C forward directions remain equal within1e−14 under sharp X/Y changes, impact displacement and varied dt.
+
+`camera-browser.json` reports actual GLB vertex projection bounds and clipped-vertex count, ship-center NDC, relevant hazard-center NDC/in-frame status, FOV/aspect, draw calls and graphics resources at each matched screenshot. Bounds include original cosmetic banking; this is more specific than testing only a collision sphere. Hazard-center inclusion does not guarantee that the whole object is visible or unoccluded. Pixel geometry alone does not evaluate player depth perception.
+
+Camera comparisons use identical state hashes rather than merely matching a seed. Separate viewport suffixes `portrait` and `mobile-landscape` identify resized captures. Scenario scripts contain raw input vectors and exact snapshot ticks; source audit pins inherited gameplay. No camera policy feeds back into simulation or input mapping.
+
+In the precommit desktop left-boundary sample, ship-center X NDC was A−.363 / B~0 / C−.079; at the right boundary A+.370 / B0 / C+.080. All1878 model vertices stayed inside the viewport in the66 tested captures, including the six actual position extremes and two mobile aspect ratios. The relevant boundary asteroid center stayed in frame. These finite results do not cover every model bank, hazard, viewport or occlusion. B loses the screen-displacement boundary cue, even though its silhouette remains visible.
+
+B/C follow the current authoritative pose with zero presentation tracking lag; they add no smoothing, drift or overshoot. A intentionally retains its existing time constant. All modes retain the fixed120Hz/latest-state render convention, so this experiment does not claim to solve pre-existing low-refresh stepping. A10,000-switch test exercises exact poses and resets. The optional half-viewport displacement benefit must be weighed against loss of boundary cues by the owner.

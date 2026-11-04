@@ -31,7 +31,19 @@ const hash = (source: string) => createHash('sha256').update(source.replaceAll('
 
 test('VFX preserves approved movement, collision, spawning, input, loop and camera formulas', () => {
   for (const [file, approvedHash] of Object.entries(approvedFiles)) assert.equal(hash(readFileSync(file, 'utf8')), approvedHash, file);
-  const newWorld = readFileSync('src/world.ts', 'utf8');
+  let newWorld = readFileSync('src/world.ts', 'utf8');
+  // CAMERA-001 extracts the presentation camera into FlightCamera. Reverse ONLY
+  // those three call-site moves to retain the original approved source digest;
+  // camera.test.ts independently executes the exact 004B recurrence/projection.
+  const extraction = [
+    ['this.flightCamera.resize(width, height);', 'this.camera.aspect = width / height;\nthis.cameraZ = Math.max(13, 7 / Math.tan(THREE.MathUtils.degToRad(29)) / this.camera.aspect);\nthis.camera.updateProjectionMatrix();'],
+    ['this.flightCamera.reset();', 'this.camera.position.set(0, 2.4, this.cameraZ);'],
+    ['this.flightCamera.update(model.ship.x, model.ship.y, model.elapsed, shake, dt);', 'this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, model.ship.x * 0.12, blend) + Math.sin(model.elapsed * 80) * shake;\nthis.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, 2.4 + model.ship.y * 0.12, blend);\nthis.camera.position.z = this.cameraZ;\nthis.camera.lookAt(0, 0, -28);'],
+  ];
+  for (const [call, original] of extraction) {
+    assert.equal(newWorld.split(call!).length, 2, call);
+    newWorld = newWorld.replace(call!, original!);
+  }
   const formulas = (source: string) => source.split(/\r?\n/).map(line => line.trim()).filter(line => /this\.camera\.|this\.cameraZ =|const blend =|this\.ship\.rotation\.[xz] =/.test(line));
   assert.equal(hash(formulas(newWorld).join('\n')), '78aff996126b05e6c9472d2c1ddf14b4f8ff223fcb2da103998cde42847d831c');
 });

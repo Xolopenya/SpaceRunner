@@ -11,6 +11,7 @@ import { EngineVFX } from './visuals/engine-vfx.ts';
 import { ImpactVFX } from './visuals/impact-vfx.ts';
 import { visualDelta, visualQuality } from './visuals/settings.ts';
 import { FragmentView } from './collectibles/view.ts';
+import { CAMERA, FlightCamera } from './camera/flight-camera.ts';
 
 function cornerGuide(): THREE.LineSegments {
   const points: THREE.Vector3[] = [];
@@ -24,7 +25,8 @@ function cornerGuide(): THREE.LineSegments {
 export class World {
   readonly renderer: THREE.WebGLRenderer;
   private readonly scene = new THREE.Scene();
-  private readonly camera = new THREE.PerspectiveCamera(58, 1, 0.1, 260);
+  private readonly camera = new THREE.PerspectiveCamera(CAMERA.fov, 1, CAMERA.near, CAMERA.far);
+  readonly flightCamera = new FlightCamera(this.camera);
   private readonly ship = new THREE.Group();
   readonly hazards: THREE.Group[] = [];
   private readonly frames: THREE.LineSegments[] = [];
@@ -39,7 +41,6 @@ export class World {
   private quality = visualQuality(1280, 800, false, false);
   private width = 1280;
   private height = 800;
-  private cameraZ = 14;
   private disposed = false;
   private readonly resources = new ResourceOwner();
 
@@ -92,9 +93,7 @@ export class World {
     const cap = this.quality.mobile ? CONFIG.render.mobilePixelRatio : CONFIG.render.maxPixelRatio;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cap));
     this.renderer.setSize(width, height, false);
-    this.camera.aspect = width / height;
-    this.cameraZ = Math.max(13, 7 / Math.tan(THREE.MathUtils.degToRad(29)) / this.camera.aspect);
-    this.camera.updateProjectionMatrix();
+    this.flightCamera.resize(width, height);
   }
 
   reset(): void {
@@ -102,7 +101,7 @@ export class World {
     this.impacts.reset();
     this.fragments.reset();
     this.ship.rotation.set(0, 0, 0);
-    this.camera.position.set(0, 2.4, this.cameraZ);
+    this.flightCamera.reset();
   }
 
   render(model: GameModel, dt: number): void {
@@ -133,10 +132,7 @@ export class World {
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);
     this.impacts.update(model.hitSerial, this.ship.position, model.ship.vx, model.ship.vy, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, dt, true), this.quality);
     const shake = model.state === 'PLAYING' ? this.impacts.remaining * 0.08 : 0;
-    this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, model.ship.x * 0.12, blend) + Math.sin(model.elapsed * 80) * shake;
-    this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, 2.4 + model.ship.y * 0.12, blend);
-    this.camera.position.z = this.cameraZ;
-    this.camera.lookAt(0, 0, -28);
+    this.flightCamera.update(model.ship.x, model.ship.y, model.elapsed, shake, dt);
     this.collisionDebug?.update(model);
     this.renderer.render(this.scene, this.camera);
   }

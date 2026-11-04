@@ -4,12 +4,14 @@ import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
 import { GameModel } from './core/game-model.ts';
 import type { LargeStructureView } from './experiments/large-structure/view.ts';
+import type { CameraSelector } from './debug/camera-selector.ts';
 
 declare global {
   interface Window { spaceRunner?: Game }
 }
 
 let game: Game | undefined;
+let cameraSelector: CameraSelector | undefined;
 let assets: AssetManager | undefined;
 let disposed = false;
 let loading = false;
@@ -44,9 +46,9 @@ async function boot(): Promise<void> {
     }
     let developerModel: GameModel | undefined = new ReleaseModel();
     debugFactory = scene => { structureView = releaseView(scene); return structureView; };
-    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
+    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles','camera'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
     let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
-    if(import.meta.env.DEV&&new URLSearchParams(location.search).get('debug')==='collectibles'&&new URLSearchParams(location.search).get('colliders')==='1'){
+    if(import.meta.env.DEV&&['collectibles','camera'].includes(new URLSearchParams(location.search).get('debug')!)&&new URLSearchParams(location.search).get('colliders')==='1'){
       const {ColliderDebugger}=await import('./debug/collider-debugger.ts');
       const {SHIP_COLLIDER}=await import('./core/ship-collider.ts');
       debugFactory=scene=>{const release=releaseView(scene),debug=new ColliderDebugger(scene,SHIP_COLLIDER);structureView={bind:slots=>{release.bind(slots);debug.bind(slots);},update:model=>{release.update(model);debug.update(model);},dispose:()=>{debug.dispose();release.dispose();}};return structureView;};
@@ -114,6 +116,11 @@ async function boot(): Promise<void> {
     }
     game = new Game(assets, undefined, debugFactory, developerModel);
     structureView?.bind(game.world.hazards);
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('debug') === 'camera') {
+      const { CameraSelector } = await import('./debug/camera-selector.ts');
+      if (disposed) return;
+      cameraSelector = new CameraSelector(game.world.flightCamera, new URLSearchParams(location.search).get('camera'));
+    }
     // Opt-in test inspection only; omitted from the production build by Vite.
     if (import.meta.env.DEV && new URLSearchParams(location.search).has('debug')) window.spaceRunner = game;
   } catch (error) {
@@ -135,6 +142,7 @@ void boot();
 if (import.meta.hot) import.meta.hot.dispose(() => {
   disposed = true;
   events.abort();
+  cameraSelector?.dispose();
   game?.dispose();
   assets?.dispose();
   delete window.spaceRunner;

@@ -479,3 +479,13 @@ Final design consistency review corrected the research proposal's scheduling ari
 - [x] Actual Chrome evidence: baseline .90 near-miss fails; new .90 pickup succeeds; real left/right wing-only asteroid hits reduce hull3→2; right-wing pickup through a station opening preserves hull3. No fake frames, inserted obstacles or human approval claim.
 - [x] Precommit audit24 genuine runs,214 independent witness replays (101 compound), deterministic repeats, matched-prefix publication26→23/29, and20 restart GPU/resource samples. Six reports record costs, limitations and actual shape dimensions. Exact-HEAD checks/ZIP/patch SHA inventory are final delivery receipts.
 - [ ] Owner review/merge and production deployment remain unauthorized; no public release change.
+
+## CAMERA-001 — matched chase-camera research, 2026-11-04
+
+- [x] Created `feature/camera-001-chase-camera-comparison` directly from approved004B `3b63f1d9ebb25cf6d79639447a2692dfc8af5538`; preserved user files and experimental branches.
+- [x] Extracted presentation camera only. A retains exact004B recurrence/projection; B follows100% X/Y, C80% with coherent camera/target translation and identical optics. Existing camera/renderer resources reused; explicit next-render snap on selection.
+- [x] DEV `debug=camera` routes through normal ReleaseModel/Mixed Flow with collectibles and compound wing damage. Live A/B/C buttons, active indicator, optional existing collider wires with collapsible legend. Normal Play/production remain A; no camera selection approved automatically.
+- [x] Focused tests cover4000 exact baseline comparisons, varied frame rates/aspects,10,000 switches, reset, pause, resize and identical1500m actual fragment/gameplay histories. Full precommit unit suite264/264 passed after adapting the historical VFX source pin to the extracted call sites while retaining its original digest.
+- [x] Actual input histories reproduce left/right boundary near misses, genuine body-clear wing damage, debris pickup, Phase2 lower-station wing pickup, vertical evasion, sustained/corner movement and all five ordinary station apertures. Matched state hashes and projected actual GLB vertex metrics accompany desktop/portrait/mobile-landscape captures.
+- [x] Six camera reports document formulas, optical/boundary trade-offs, performance methodology, reproduction and owner decision. Exact-HEAD browser/check results, raw performance/video evidence, forward/reverse patch checks, archive SHA inventory and remote receipt are final delivery artifacts.
+- [ ] Owner selects A/B/C or requests another adjustment after manual camera playtesting. Merge and production deployment are not authorized.
