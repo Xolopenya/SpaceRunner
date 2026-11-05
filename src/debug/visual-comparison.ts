@@ -27,6 +27,11 @@ export class VisualComparison {
       }
       this.root.append(row);
     }
+    const occlusion=document.createElement('button');occlusion.textContent='station occlusion';
+    occlusion.style.cssText='padding:7px 10px;margin:3px;background:#142b3a;color:#d2eef4;border:1px solid #4b7d8c';
+    const syncOcclusion=()=>occlusion.setAttribute('aria-pressed',String(world.boundaries.warp.occlusion));
+    occlusion.addEventListener('click',()=>{world.boundaries.warp.occlusion=!world.boundaries.warp.occlusion;syncOcclusion();},{signal:this.events.signal});
+    this.root.append(occlusion);syncOcclusion();
     document.getElementById('game')!.append(this.root);update();
   }
   dispose(): void { this.events.abort();this.root.remove(); }

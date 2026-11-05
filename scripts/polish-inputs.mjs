@@ -1,0 +1,7 @@
+import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {readFile,writeFile} from 'node:fs/promises';import {createHash} from 'node:crypto';
+const dir='.cache/review/GAMEPLAY-005B2/final';
+const paths=execFileSync('rg',['--files','src','tests','public']).toString().trim().split(/\r?\n/).map(p=>p.replaceAll('\\','/')).concat(['package.json','package-lock.json','tsconfig.json','vite.config.ts','playwright.config.ts','index.html']);
+const files=[];for(const path of [...new Set(paths)].sort()){const b=await readFile(path),data=/\.(?:glb|ttf|png|webm)$/.test(path)?b:Buffer.from(b.toString('utf8').replaceAll('\r\n','\n'));files.push({path,sha256:createHash('sha256').update(data).digest('hex')});}
+const browser=JSON.parse(await readFile(`${dir}/browser-results.json`,'utf8'));assert.equal(browser.stats.expected,103);assert.equal(browser.stats.unexpected,0);assert.equal(browser.stats.flaky,0);assert.equal(browser.stats.skipped,0);
+assert.match(await readFile(`${dir}/test.log`,'utf8'),/pass 293/);assert.match(await readFile(`${dir}/test.log`,'utf8'),/fail 0/);
+await writeFile(`${dir}/validation-inputs.json`,JSON.stringify({generatedAt:new Date().toISOString(),baseCommit:'80e987d7804b663d1c8bf2080fa116ef63b667de',note:'Final runtime/assets/unit/browser/build inputs, LF-normalized text; packaging checks each against committed HEAD. Runtime source was stable during final verification.',files},null,2));console.log('Validated final input hashes:',files.length,'unit293/browser103');

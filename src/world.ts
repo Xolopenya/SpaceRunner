@@ -97,6 +97,7 @@ export class World {
   reset(): void {
     this.reveal.reset();
     this.boundaries.reset();
+    this.boundaries.warp.updateOcclusion([]);
     this.engines.reset();
     this.impacts.reset();
     this.fragments.reset();
@@ -130,6 +131,7 @@ export class World {
       for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
     }
     this.boundaries.update(model.ship.x, model.ship.y, model.distance, this.quality.reducedMotion);
+    this.boundaries.warp.updateOcclusion(model.field.hazards);
     this.background.update(model.distance, model.speed, this.quality);
     this.fragments.update(model, this.quality.reducedMotion);
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);

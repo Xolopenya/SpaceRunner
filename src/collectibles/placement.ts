@@ -8,7 +8,7 @@ import { FRAGMENT as S } from './settings.ts';
 import type { ShipColliderProfile } from '../core/ship-collider.ts';
 import { ShipHazardCollision } from '../core/ship-hazard-collision.ts';
 
-export interface PickupPolicy { readonly profile: ShipColliderProfile; readonly assist: number }
+export interface PickupPolicy { readonly profile: ShipColliderProfile; readonly assist: number; readonly wingAssist?: number }
 const approachQuery = new ShipHazardCollision();
 
 export interface FragmentProposal {
@@ -103,7 +103,7 @@ export function proposeFragment(transaction: FieldTransaction, root: SchedulerRo
     const coastY = root.player.y + root.player.vy * Math.abs(root.player.vy) / (2 * CONFIG.ship.braking);
     if (Math.hypot(x - coastX, y - coastY) < S.naturalRouteOffset) { reject('natural-route'); continue; }
     if(policy?.profile.parts.some(part=>Math.hypot(x-coastX-part.offsetX,y-coastY-part.offsetY)
-      <part.radius+S.pickupRadius+policy.assist+S.coastClearance)){reject('natural-route-assist');continue;}
+      <part.radius+S.pickupRadius+policy.assist+(part.id==='body'?0:policy.wingAssist??0)+S.coastClearance)){reject('natural-route-assist');continue;}
     if (active.some(a => Math.hypot(a.x - x, a.y - y, a.passDistance - p.passDistance) < S.separation)) { reject('separation'); continue; }
     if(policy){
       const approach=pickupApproach(p,hazards,policy);

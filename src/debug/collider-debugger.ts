@@ -135,7 +135,7 @@ export class ColliderDebugger implements ColliderDebugView {
         detail = `${HAZARD_MODELS[hazardVariant(hazard.kind, hazard.phase)]} · r=${hazard.radius.toFixed(2)}\ncenter (${hazard.x.toFixed(2)}, ${hazard.y.toFixed(2)}, ${hazard.z.toFixed(2)})`;
       }
       this.info.textContent = `COLLIDERS · ${count} active · player sphere r=${CONFIG.ship.radius}\nPink: player · amber: outer sphere · mint: calibrated box\nBox variants require BOTH bounds; sphere variants use amber.\nContinuous sweep + bounded rotation tolerance.\n${detail}`;
-      if(this.profile.parts.length>1)this.info.textContent=`SHIP COLLIDERS · body pink / left green / right blue\n${this.profile.parts.map(p=>`${p.id} r=${p.radius} @ (${p.offsetX},${p.offsetY},${p.offsetZ})`).join('\n')}\nYellow: fragment r=.32 + assist=.26; body contact r=1.00\nAmber: asteroid sphere · mint: calibrated boxes / station solids\n${this.impact?`LAST REAL HIT: ${this.impact.part} · body ${this.impact.bodyClear?'CLEAR':'HIT'}\nDEV ghost holds the recorded asteroid pose for .6s`:'120Hz swept union · no hit recorded'}`;
+      if(this.profile.parts.length>1)this.info.textContent=`SHIP COLLIDERS · body pink / left green / right blue\n${this.profile.parts.map(p=>`${p.id} r=${p.radius} @ (${p.offsetX},${p.offsetY},${p.offsetZ})`).join('\n')}\nYellow: fragment r=${FRAGMENT.pickupRadius} + assist=${run?.pickupAssist??0}\nWing-only pickup assistance +${run?.wingPickupAssist??0}; damage spheres unchanged by pickup\nAmber: asteroid sphere · mint: calibrated boxes / station solids\n${this.impact?`LAST REAL HIT: ${this.impact.part} · body ${this.impact.bodyClear?'CLEAR':'HIT'}\nDEV ghost holds the recorded asteroid pose for .6s`:'120Hz swept union · no hit recorded'}`;
     }
   }
 

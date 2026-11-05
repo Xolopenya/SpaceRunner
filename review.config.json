@@ -1,16 +1,14 @@
 {
-  "taskId": "GAMEPLAY-005B",
-  "baseline": "393c2c6ae48b5cc0f5ec164367d3bcd3f7b0b5ea",
+  "taskId": "GAMEPLAY-005B2",
+  "baseline": "80e987d7804b663d1c8bf2080fa116ef63b667de",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "ROOT_CAUSE_POP_IN.md": "docs/review/GAMEPLAY-005B/ROOT_CAUSE_POP_IN.md",
-    "WARP_CORRIDOR_DESIGN.md": "docs/review/GAMEPLAY-005B/WARP_CORRIDOR_DESIGN.md",
-    "DEPTH_HAZE_AND_REVEAL.md": "docs/review/GAMEPLAY-005B/DEPTH_HAZE_AND_REVEAL.md",
-    "READABILITY.md": "docs/review/GAMEPLAY-005B/READABILITY.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-005B/PERFORMANCE.md",
-    "OWNER_PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-005B/OWNER_PLAYTEST_GUIDE.md",
-    "REMAINING_RISKS.md": "docs/review/GAMEPLAY-005B/REMAINING_RISKS.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-005B/ROOT_CAUSE_POP_IN.md"
+    "CORRIDOR_OCCLUSION.md": "docs/review/GAMEPLAY-005B2/CORRIDOR_OCCLUSION.md",
+    "PICKUP_CALIBRATION.md": "docs/review/GAMEPLAY-005B2/PICKUP_CALIBRATION.md",
+    "WING_COLLIDER_CALIBRATION.md": "docs/review/GAMEPLAY-005B2/WING_COLLIDER_CALIBRATION.md",
+    "FAIRNESS.md": "docs/review/GAMEPLAY-005B2/FAIRNESS.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-005B2/PERFORMANCE.md",
+    "OWNER_PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-005B2/OWNER_PLAYTEST_GUIDE.md"
   },
   "screenshots": [],
   "videoPreviews": [],
@@ -22,7 +20,7 @@
     },
     {
       "name": "gameplay-preservation",
-      "script": "scripts/visual-preservation.mjs",
+      "script": "scripts/polish-preservation.mjs",
       "stripTypes": false
     }
   ],
@@ -41,14 +39,14 @@
     }
   ],
   "evidenceNotes": [
-    "Ordinary Play preserves005A gameplay and defaults to warp/seamless.",
-    "Use node scripts/visual-freeze.mjs before baseline diagnostics; create the complete final artifact with node scripts/visual-pack.mjs.",
-    "Exact baseline and four-mode visual/performance evidence, pixel contribution traces and native silent WebM are retained."
+    "Exact005B baseline; three focused owner corrections.",
+    "node scripts/polish-freeze.mjs; node --experimental-strip-types scripts/polish-audit.mjs; node --experimental-strip-types scripts/polish-analysis.mjs; node --experimental-strip-types scripts/polish-scenarios.mjs.",
+    "Real Chrome capture scripts polish-capture.mjs, polish-corridor-probe.mjs and polish-performance.mjs. Package with polish-pack.mjs."
   ],
   "limitations": [
     "Owner playtest required.",
-    "Pixel thresholds are not human recognition or physical-phone approval.",
-    "Rare cohort saturation fails open; no observed fallback in the corpus.",
-    "No merge/deployment."
+    "One sphere per wing is a stable arcade approximation; cosmetic banking is deliberately independent.",
+    "Original owner screenshot was not supplied; described station intersection reconstructed.",
+    "No physical-phone or GPU timer measurements; no merge or deployment."
   ]
 }

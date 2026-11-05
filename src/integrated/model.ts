@@ -10,7 +10,7 @@ import { ADAPTIVE_GEOMETRY } from '../experiments/adaptive-homing/transaction.ts
 import { IntegratedCollision, IntegratedPrediction } from './collision.ts';
 
 export const INTEGRATED_GEOMETRY: ValidationGeometry = Object.freeze<ValidationGeometry>({
-  ...ADAPTIVE_GEOMETRY, version: 'integrated-compound-homing-v1', shipProfile: SHIP_COLLIDER,
+  ...ADAPTIVE_GEOMETRY, version: `integrated-compound-homing-v1/${SHIP_COLLIDER.version}`, shipProfile: SHIP_COLLIDER,
   compoundMotion: 'adaptive-homing-v1', prediction: context => new IntegratedPrediction(context),
   queryCost: h => ADAPTIVE_GEOMETRY.queryCost(h) * SHIP_COLLIDER.parts.length,
   inspect(candidate, known) {

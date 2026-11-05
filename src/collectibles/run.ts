@@ -32,7 +32,10 @@ export class FragmentRun {
   private readonly sight = new ShipHazardCollision();
   readonly pickupProfile:ShipColliderProfile;
   readonly pickupAssist:number;
-  constructor(pickupProfile:ShipColliderProfile=BODY_COLLIDER,pickupAssist=0) {this.pickupProfile=pickupProfile;this.pickupAssist=pickupAssist;}
+  readonly wingPickupAssist:number;
+  constructor(pickupProfile:ShipColliderProfile=BODY_COLLIDER,pickupAssist=0,wingPickupAssist=0) {
+    this.pickupProfile=pickupProfile;this.pickupAssist=pickupAssist;this.wingPickupAssist=wingPickupAssist;
+  }
   get active(): readonly FragmentProposal[] { return this.slots.flatMap(s => s.state === 'active' && s.proposal ? [s.proposal] : []); }
 
   reset(): void {
@@ -56,7 +59,7 @@ export class FragmentRun {
     const slot = this.slots.find(s => s.state !== 'active');
     if (!slot) { this.stats.skipped++; return; }
     const proposal = proposeFragment(transaction, root, known, this.active, () => this.stats.candidatesRejected++,
-      this.pickupAssist?{profile:this.pickupProfile,assist:this.pickupAssist}:undefined);
+      this.pickupAssist?{profile:this.pickupProfile,assist:this.pickupAssist,wingAssist:this.wingPickupAssist}:undefined);
     if (!proposal) { this.stats.skipped++; return; }
     slot.proposal = proposal; slot.state = 'active'; this.stats.placed++; this.stats[proposal.situation]++;
     this.ordinarySince = 0; this.nextOrdinary = 2 + fragmentHash(proposal.id + '/cadence') % 3;
@@ -73,7 +76,7 @@ export class FragmentRun {
         this.from.x=previousX+part.offsetX-p.x;this.from.y=previousY+part.offsetY-p.y;this.from.z=p.passDistance-previousDistance+part.offsetZ;
         this.to.x=x+part.offsetX-p.x;this.to.y=y+part.offsetY-p.y;this.to.z=p.passDistance-distance+part.offsetZ;
         this.stats.checks++;
-        if(!sweptSphereHit(this.from,this.to,part.radius+S.pickupRadius+this.pickupAssist))continue;
+        if(!sweptSphereHit(this.from,this.to,part.radius+S.pickupRadius+this.pickupAssist+(part.id==='body'?0:this.wingPickupAssist)))continue;
         const dx=this.to.x-this.from.x,dy=this.to.y-this.from.y,dz=this.to.z-this.from.z,l=dx*dx+dy*dy+dz*dz;
         const t=l?Math.max(0,Math.min(1,-(this.from.x*dx+this.from.y*dy+this.from.z*dz)/l)):0;
         let blocked=false;

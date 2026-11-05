@@ -17,7 +17,7 @@ export const RELEASE_GEOMETRY={...FLOW_GEOMETRY,version:`release-${SHIP_COLLIDER
   }};
 
 export class ReleaseModel extends RuntimeGameModel {
- readonly fragments = new FragmentRun(SHIP_COLLIDER,FRAGMENT.pickupAssist);
+ readonly fragments = new FragmentRun(SHIP_COLLIDER,FRAGMENT.pickupAssist,FRAGMENT.wingPickupAssist);
  readonly shipColliderProfile = SHIP_COLLIDER;
  protected override readonly collisions=new ShipHazardCollision(SHIP_COLLIDER,true);
  get lastShipContact(){return this.collisions.contact;}

@@ -72,3 +72,19 @@ for (const cadence of [2, 4, 12]) test(`visual lifecycle stays bounded at ${cade
   expect(final).toEqual(original);
   for (const viewport of [{ width: 390, height: 844 }, { width: 844, height: 390 }]) { await page.setViewportSize(viewport);await expect.poll(()=>page.evaluate(()=>{const g=window.spaceRunner!,r=document.getElementById('flight')!.getBoundingClientRect();return Math.abs(g.world.flightCamera.camera.aspect-r.width/r.height);})).toBeLessThan(1e-6);const r = await page.evaluate(() => { const g = window.spaceRunner!;g.world.render(g.model, 0);const rect=document.getElementById('flight')!.getBoundingClientRect();return {aspect:g.world.flightCamera.camera.aspect,expected:rect.width/rect.height}; });expect(r.aspect).toBeCloseTo(r.expected, 6); }
 });
+
+test('committed station solids locally suppress warp; live DEV toggle leaves full state and depth flags intact', async ({page})=>{
+ await boot(page);let found=false;
+ for(let i=0;i<80&&!found;i++){await advance(page,120);found=await page.evaluate(()=>{const g=window.spaceRunner as any;return g.model.field.slots.some((h:any)=>h.planned&&h.kind>=4&&h.kind<=8&&h.z< -20&&h.z> -140)});}
+ expect(found).toBe(true);
+ const before=await page.evaluate(()=>{const g=window.spaceRunner as any;return{model:JSON.stringify(g.model),counts:g.world.boundaries.warp.sides.map((s:any)=>s.material.uniforms.exclusionCount.value),memory:{...g.world.renderer.info.memory},opaque:g.world.reveal.targets.filter((t:any)=>t.family==='station').every((t:any)=>t.entries.every((e:any)=>e.original.depthWrite&&!e.original.transparent))}});
+ expect(before.counts.reduce((a:number,b:number)=>a+b,0)).toBeGreaterThan(0);expect(before.opaque).toBe(true);
+ await page.getByRole('button',{name:'station occlusion',exact:true}).click();
+ const off=await page.evaluate(()=>{const g=window.spaceRunner as any;g.world.render(g.model,0);return{model:JSON.stringify(g.model),counts:g.world.boundaries.warp.sides.map((s:any)=>s.material.uniforms.exclusionCount.value)}});
+ expect(off.model).toBe(before.model);expect(off.counts).toEqual([0,0,0,0]);
+ await page.getByRole('button',{name:'station occlusion',exact:true}).click();
+ const on=await page.evaluate(()=>{const g=window.spaceRunner as any;g.world.render(g.model,0);return{model:JSON.stringify(g.model),counts:g.world.boundaries.warp.sides.map((s:any)=>s.material.uniforms.exclusionCount.value),memory:{...g.world.renderer.info.memory}}});
+ expect(on.model).toBe(before.model);expect(on.counts).toEqual(before.counts);expect(on.memory).toEqual(before.memory);
+ await page.locator('#pause').click();await page.locator('#restart-pause').click();
+ expect(await page.evaluate(()=>{const g=window.spaceRunner as any;g.world.render(g.model,0);return g.world.boundaries.warp.sides.map((s:any)=>s.material.uniforms.exclusionCount.value)})).toEqual([0,0,0,0]);
+});
