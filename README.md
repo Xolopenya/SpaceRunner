@@ -83,7 +83,7 @@ npm run preview
 
 ## Экспериментальная камера
 
-В текущей review-ветке GAMEPLAY-005A обычный Play использует Hybrid Chase, Mixed Flow со станциями, Energy Fragments, редкие adaptive-homing мины и визуальные подсказки границ. Воспроизводимый DEV-забег: `?debug=integrated&seed=42`; коллайдеры: `&colliders=1`. Историческое сравнение CAMERA-001 остаётся в `?debug=camera&camera=baseline&seed=42` (`full-chase` / `hybrid-chase`), только в DEV. Изменения не слиты в main и не опубликованы. Инструкция: [`OWNER_PLAYTEST_GUIDE.md`](docs/review/GAMEPLAY-005A/OWNER_PLAYTEST_GUIDE.md).
+В текущей review-ветке GAMEPLAY-005B обычный Play сохраняет интегрированный цикл 005A и включает warp-коридор с плавным появлением сертифицированных объектов. A/B-сравнение: `?debug=visuals&boundaries=warp&reveal=seamless&seed=42`; переключатели `legacy/warp` и `legacy/seamless` работают только в DEV. Камера Hybrid Chase, управление и игровые правила сохранены. Инструкция: [`OWNER_PLAYTEST_GUIDE.md`](docs/review/GAMEPLAY-005B/OWNER_PLAYTEST_GUIDE.md). Изменения не слиты в main и не опубликованы.
 
 ## Модели и лицензии
 

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { ResourceOwner } from '../assets/resources.ts';
 import type { GameModel } from '../core/game-model.ts';
+import { publicationElapsed } from '../visuals/object-reveal.ts';
+import type { ObjectReveal, RevealTarget } from '../visuals/object-reveal.ts';
 import { FRAGMENT as S } from './settings.ts';
 import { fragmentsOf } from './state.ts';
 
@@ -13,7 +15,10 @@ export class FragmentView {
   private serial = 0;
   private burstAt = -1;
   private disposed = false;
-  constructor(scene: THREE.Scene) {
+  private readonly reveal?:ObjectReveal;
+  private readonly revealTargets:RevealTarget[]=[];
+  constructor(scene: THREE.Scene,reveal?:ObjectReveal) {
+    this.reveal=reveal;
     this.root.name = 'energy-fragments';
     const crystal = new THREE.OctahedronGeometry(.34);
     crystal.scale(1, 1.35, 1);
@@ -26,6 +31,7 @@ export class FragmentView {
       const group = new THREE.Group(); group.name = `energy-fragment-${i}`;
       group.add(new THREE.Mesh(crystal, shell), new THREE.Mesh(core, light), new THREE.Mesh(ring, halo));
       group.visible = false; this.root.add(group); this.meshes.push(group);
+      if(reveal)this.revealTargets.push(reveal.register(group,'fragment'));
     }
     this.burst = new THREE.Mesh(ring, halo.clone()); this.burst.visible = false; this.root.add(this.burst);
     scene.add(this.root); this.resources.track(this.root);
@@ -43,6 +49,8 @@ export class FragmentView {
     for (let i = 0; i < this.meshes.length; i++) {
       const mesh = this.meshes[i]!, slot = run.slots[i]!, p = slot.proposal;
       const age=model.elapsed-run.lastPickup.elapsed;
+      const target=this.revealTargets[i];
+      if(target&&this.reveal)this.reveal.apply(target,p?.id,target.id===p?.id?target.birth:p?publicationElapsed(model,p.anchor):model.elapsed,p?p.passDistance-model.distance:0);
       const attracting=slot.state==='collected'&&run.lastPickup.assisted&&run.lastPickup.slot===i&&age>=0&&age<S.magnetSeconds;
       mesh.visible = (slot.state === 'active' && !!p)||!!attracting;
       if(attracting){

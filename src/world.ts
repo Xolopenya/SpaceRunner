@@ -12,6 +12,10 @@ import { ImpactVFX } from './visuals/impact-vfx.ts';
 import { visualDelta, visualQuality } from './visuals/settings.ts';
 import { FragmentView } from './collectibles/view.ts';
 import { ArenaBoundaries } from './visuals/arena-boundaries.ts';
+import { ObjectReveal, publicationElapsed } from './visuals/object-reveal.ts';
+import type { RevealTarget } from './visuals/object-reveal.ts';
+import type { RevealMode } from './visuals/reveal-settings.ts';
+import type { BoundaryMode } from './visuals/warp-corridor.ts';
 import { CAMERA, FlightCamera } from './camera/flight-camera.ts';
 
 export class World {
@@ -22,6 +26,8 @@ export class World {
   private readonly ship = new THREE.Group();
   readonly hazards: THREE.Group[] = [];
   readonly boundaries: ArenaBoundaries;
+  readonly reveal = new ObjectReveal();
+  private readonly hazardReveal: RevealTarget[] = [];
   private readonly angles = { x: 0, y: 0, z: 0 };
   private readonly collisionDebug?: ColliderDebugView;
   private readonly background: SpaceBackground;
@@ -58,18 +64,21 @@ export class World {
       for (const id of HAZARD_MODELS) group.add(assets.clone(id));
       group.visible = false;
       this.hazards.push(group);
+      this.hazardReveal.push(this.reveal.register(group,'debris'));
       this.scene.add(group);
     }
     // Track only World-owned resources BEFORE attaching independently owned VFX
     // and debugger roots. Imported models are borrowed from AssetManager.
     this.resources.track(this.scene, assets.resources);
     this.boundaries = new ArenaBoundaries(this.scene);
+    this.boundaries.setMode('warp');
     this.flightCamera.setMode('hybrid-chase');
     this.background = new SpaceBackground(this.scene);
     this.engines = new EngineVFX(this.scene, this.ship);
     this.impacts = new ImpactVFX(this.scene);
-    this.fragments = new FragmentView(this.scene);
+    this.fragments = new FragmentView(this.scene, this.reveal);
     this.collisionDebug = debugFactory?.(this.scene);
+    this.collisionDebug?.setReveal?.(this.reveal);
   }
 
   resize(width: number, height: number): void {
@@ -83,7 +92,10 @@ export class World {
     this.flightCamera.resize(width, height);
   }
 
+  setVisualModes(boundaries: BoundaryMode, reveal: RevealMode): void { this.boundaries.setMode(boundaries);this.reveal.setMode(reveal); }
+
   reset(): void {
+    this.reveal.reset();
     this.boundaries.reset();
     this.engines.reset();
     this.impacts.reset();
@@ -102,9 +114,12 @@ export class World {
     // A thin low-intensity shimmer replaces whole-ship strobing.
     this.ship.visible = true;
 
+    this.reveal.beginFrame(model.elapsed);
     for (let i = 0; i < model.field.hazards.length; i++) {
       const hazard = model.field.hazards[i]!;
       const group = this.hazards[i]!;
+      const target=this.hazardReveal[i]!,id=(hazard as typeof hazard & {planned?:{id:string}}).planned?.id;
+      this.reveal.apply(target,hazard.active?id:undefined,target.id===id?target.birth:id?publicationElapsed(model,id):model.elapsed,-hazard.z);
       group.visible = hazard.active;
       if (!hazard.active) continue;
       group.position.set(hazard.x, hazard.y, hazard.z);
@@ -114,7 +129,7 @@ export class World {
       const variant = hazardVariant(hazard.kind, hazard.phase);
       for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
     }
-    this.boundaries.update(model.ship.x, model.ship.y, model.distance);
+    this.boundaries.update(model.ship.x, model.ship.y, model.distance, this.quality.reducedMotion);
     this.background.update(model.distance, model.speed, this.quality);
     this.fragments.update(model, this.quality.reducedMotion);
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);
@@ -128,6 +143,7 @@ export class World {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
+    this.reveal.dispose();
     this.collisionDebug?.dispose();
     this.boundaries.dispose();
     this.background.dispose();

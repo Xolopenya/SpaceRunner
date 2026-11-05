@@ -1,7 +1,7 @@
 import './styles.css';
 import { Game } from './game.ts';
 import { AssetManager } from './assets/asset-manager.ts';
-import type { ColliderDebugFactory } from './debug/types.ts';
+import type { ColliderDebugFactory, ColliderDebugView } from './debug/types.ts';
 import { MineAssetManager } from './experiments/moving-mine/assets.ts';
 import { ReleaseModel, releaseView } from './release/model.ts';
 import { IntegratedModel } from './integrated/model.ts';
@@ -17,6 +17,7 @@ declare global {
 let game: Game | undefined;
 let cameraSelector: CameraSelector | undefined;
 let assets: AssetManager | undefined;
+let visualComparison: {dispose():void}|undefined;
 let disposed = false;
 let loading = false;
 const events = new AbortController();
@@ -27,7 +28,7 @@ async function boot(): Promise<void> {
   if (loading || disposed || game) return;
   loading = true;
   retry.hidden = true;
-  const integrated = !import.meta.env.DEV || !new URLSearchParams(location.search).has('debug') || new URLSearchParams(location.search).get('debug') === 'integrated';
+  const integrated = !import.meta.env.DEV || !new URLSearchParams(location.search).has('debug') || ['integrated','visuals'].includes(new URLSearchParams(location.search).get('debug')!);
   assets = integrated ? new MineAssetManager(import.meta.env.BASE_URL) : new AssetManager(import.meta.env.BASE_URL);
   try {
     if (import.meta.env.DEV) {
@@ -51,8 +52,8 @@ async function boot(): Promise<void> {
     }
     let developerModel: GameModel | undefined = new ReleaseModel();
     debugFactory = scene => { structureView = releaseView(scene); return structureView; };
-    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles','camera','integrated'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
-    let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> | undefined;
+    if(import.meta.env.DEV && new URLSearchParams(location.search).has('debug') && !['field','collectibles','camera','integrated','visuals'].includes(new URLSearchParams(location.search).get('debug')!)){ developerModel=new GameModel(); debugFactory=undefined; if(new URLSearchParams(location.search).get('debug')==='colliders'){const {ColliderDebugger}=await import('./debug/collider-debugger.ts');debugFactory=scene=>new ColliderDebugger(scene);} }
+    let structureView: Pick<LargeStructureView, 'bind' | 'update' | 'dispose'> & Pick<ColliderDebugView,'setReveal'> | undefined;
     if(import.meta.env.DEV&&['collectibles','camera'].includes(new URLSearchParams(location.search).get('debug')!)&&new URLSearchParams(location.search).get('colliders')==='1'){
       const {ColliderDebugger}=await import('./debug/collider-debugger.ts');
       const {SHIP_COLLIDER}=await import('./core/ship-collider.ts');
@@ -128,7 +129,7 @@ async function boot(): Promise<void> {
         const { SHIP_COLLIDER } = await import('./core/ship-collider.ts');
         debugFactory = scene => {
           const view = new IntegratedView(scene, mineAssets), wires = new ColliderDebugger(scene, SHIP_COLLIDER);
-          structureView = { bind(slots) { view.bind(slots); wires.bind(slots); }, update(model) { view.update(model); wires.update(model); }, dispose() { wires.dispose(); view.dispose(); } };
+          structureView = { setReveal(reveal){view.setReveal(reveal);}, bind(slots) { view.bind(slots); wires.bind(slots); }, update(model) { view.update(model); wires.update(model); }, dispose() { wires.dispose(); view.dispose(); } };
           return structureView;
         };
       }
@@ -140,6 +141,10 @@ async function boot(): Promise<void> {
       const { CameraSelector } = await import('./debug/camera-selector.ts');
       if (disposed) return;
       cameraSelector = new CameraSelector(game.world.flightCamera, new URLSearchParams(location.search).get('camera'));
+    }
+    if(import.meta.env.DEV&&new URLSearchParams(location.search).get('debug')==='visuals') {
+      const {VisualComparison}=await import('./debug/visual-comparison.ts');
+      visualComparison=new VisualComparison(game.world,new URLSearchParams(location.search));
     }
     // Opt-in test inspection only; omitted from the production build by Vite.
     if (import.meta.env.DEV && new URLSearchParams(location.search).has('debug')) window.spaceRunner = game;
@@ -163,6 +168,7 @@ if (import.meta.hot) import.meta.hot.dispose(() => {
   disposed = true;
   events.abort();
   cameraSelector?.dispose();
+  visualComparison?.dispose();
   game?.dispose();
   assets?.dispose();
   delete window.spaceRunner;

@@ -2,6 +2,8 @@ import { BoxGeometry, EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mes
 import type { Scene } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { ResourceOwner } from '../../assets/resources.ts';
+import { publicationElapsed } from '../../visuals/object-reveal.ts';
+import type { ObjectReveal, RevealTarget } from '../../visuals/object-reveal.ts';
 import { CONFIG } from '../../config.ts';
 import type { GameModel } from '../../core/game-model.ts';
 import type { RuntimeObstacleField } from '../../debug/runtime-field.ts';
@@ -86,6 +88,8 @@ export class StructureVariantsView implements ColliderDebugView {
   private readonly aperture: Aperture;
   private readonly mode: StructureMode;
   private disposed = false;
+  private reveal?:ObjectReveal;
+  private readonly revealTargets:RevealTarget[]=[];
   constructor(scene: Scene, aperture: Aperture, mode: StructureMode, colliders: boolean) {
     this.aperture = aperture; this.mode = mode; this.root.name = 'structure-variants-dev-root';
     const templates = APERTURE_NAMES.map((_, i) => wreckModel(i, colliders));
@@ -98,6 +102,7 @@ export class StructureVariantsView implements ColliderDebugView {
       background: '#07111ee8', padding: '7px 10px', font: '11px/1.5 monospace', whiteSpace: 'pre-line', pointerEvents: 'none' });
     document.getElementById('game')!.append(this.info);
   }
+  setReveal(reveal:ObjectReveal):void {this.reveal=reveal;for(const group of this.instances)this.revealTargets.push(reveal.register(group,'station'));}
   bind(slots: readonly Group[]): void { this.slots = slots; }
   update(model: GameModel): void {
     if (this.disposed) return;
@@ -108,6 +113,7 @@ export class StructureVariantsView implements ColliderDebugView {
       if (!h.planned || h.z > CONFIG.hazards.despawnZ) continue;
       const group = this.instances[count++]; if (!group) continue;
       group.visible = true; group.position.set(h.x, h.y, h.z);
+      const target=this.revealTargets[count-1];if(target&&this.reveal)this.reveal.apply(target,h.planned.id,target.id===h.planned.id?target.birth:publicationElapsed(model,h.planned.id),-h.z);
       for (let variant = 0; variant < 5; variant++) group.children[variant]!.visible = variant === h.kind - 4;
     }
     for (let i = count; i < 8; i++) this.instances[i]!.visible = false;

@@ -1,41 +1,19 @@
 {
-  "taskId": "GAMEPLAY-005A",
-  "baseline": "a16e0707fccdaee927db95826eef92f3d801992d",
+  "taskId": "GAMEPLAY-005B",
+  "baseline": "393c2c6ae48b5cc0f5ec164367d3bcd3f7b0b5ea",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "INTEGRATED_OVERVIEW.md": "docs/review/GAMEPLAY-005A/INTEGRATED_OVERVIEW.md",
-    "CAMERA_AND_BOUNDARIES.md": "docs/review/GAMEPLAY-005A/CAMERA_AND_BOUNDARIES.md",
-    "MINE_INTEGRATION.md": "docs/review/GAMEPLAY-005A/MINE_INTEGRATION.md",
-    "PLAYTEST_NOTES.md": "docs/review/GAMEPLAY-005A/PLAYTEST_NOTES.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-005A/PERFORMANCE.md",
-    "OWNER_PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-005A/OWNER_PLAYTEST_GUIDE.md",
-    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-005A/INTEGRATED_OVERVIEW.md"
+    "ROOT_CAUSE_POP_IN.md": "docs/review/GAMEPLAY-005B/ROOT_CAUSE_POP_IN.md",
+    "WARP_CORRIDOR_DESIGN.md": "docs/review/GAMEPLAY-005B/WARP_CORRIDOR_DESIGN.md",
+    "DEPTH_HAZE_AND_REVEAL.md": "docs/review/GAMEPLAY-005B/DEPTH_HAZE_AND_REVEAL.md",
+    "READABILITY.md": "docs/review/GAMEPLAY-005B/READABILITY.md",
+    "PERFORMANCE.md": "docs/review/GAMEPLAY-005B/PERFORMANCE.md",
+    "OWNER_PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-005B/OWNER_PLAYTEST_GUIDE.md",
+    "REMAINING_RISKS.md": "docs/review/GAMEPLAY-005B/REMAINING_RISKS.md",
+    "IMPLEMENTATION.md": "docs/review/GAMEPLAY-005B/ROOT_CAUSE_POP_IN.md"
   },
-  "screenshots": [
-    "integrated-ordinary.png",
-    "integrated-pickup.png",
-    "integrated-station.png",
-    "integrated-mine.png",
-    "integrated-phase2.png",
-    "integrated-boundary-450.png",
-    "integrated-mine-colliders.png",
-    "integrated-station-colliders.png",
-    "integrated-boundary-250-colliders.png",
-    "integrated-mine-390x844.png",
-    "integrated-boundary-250-390x844.png",
-    "integrated-station-390x844.png",
-    "integrated-mine-844x390.png",
-    "integrated-boundary-250-844x390.png",
-    "integrated-station-844x390.png"
-  ],
-  "videoPreviews": [
-    "integrated-ordinary.webm",
-    "integrated-pickup.webm",
-    "integrated-station.webm",
-    "integrated-mine.webm",
-    "integrated-phase2.webm",
-    "integrated-boundary-450.webm"
-  ],
+  "screenshots": [],
+  "videoPreviews": [],
   "extraChecks": [
     {
       "name": "collision-audit",
@@ -43,33 +21,8 @@
       "stripTypes": true
     },
     {
-      "name": "phase2-audit",
-      "script": "scripts/assignment-audit.mjs",
-      "stripTypes": true
-    },
-    {
-      "name": "wing-audit",
-      "script": "scripts/ship-collider-audit.mjs",
-      "stripTypes": true
-    },
-    {
-      "name": "collectible-audit",
-      "script": "scripts/collectible-audit.mjs",
-      "stripTypes": true
-    },
-    {
-      "name": "integrated-audit",
-      "script": "scripts/integrated-audit.mjs",
-      "stripTypes": true
-    },
-    {
-      "name": "integrated-browser",
-      "script": "scripts/integrated-browser.mjs",
-      "stripTypes": false
-    },
-    {
-      "name": "patch-applicability",
-      "script": "scripts/collectible-package-check.mjs",
+      "name": "gameplay-preservation",
+      "script": "scripts/visual-preservation.mjs",
       "stripTypes": false
     }
   ],
@@ -88,13 +41,14 @@
     }
   ],
   "evidenceNotes": [
-    "Ordinary Play on this feature branch includes Hybrid, Mixed Flow, stations, optional Energy Fragments, balanced adaptive mines and visual perimeter edging.",
-    "No merge or deployment.",
-    "Use node scripts/integrated-pack.mjs to package retained final-pass receipts with exact source digests, CRC, SHA256 inventory and bidirectional full-tree patch validation."
+    "Ordinary Play preserves005A gameplay and defaults to warp/seamless.",
+    "Use node scripts/visual-freeze.mjs before baseline diagnostics; create the complete final artifact with node scripts/visual-pack.mjs.",
+    "Exact baseline and four-mode visual/performance evidence, pixel contribution traces and native silent WebM are retained."
   ],
   "limitations": [
     "Owner playtest required.",
-    "Bounded proposals can omit playable sections; no universal mine fairness proof.",
-    "Finite desktop Chrome timings and viewport emulation do not establish physical-phone performance."
+    "Pixel thresholds are not human recognition or physical-phone approval.",
+    "Rare cohort saturation fails open; no observed fallback in the corpus.",
+    "No merge/deployment."
   ]
 }

@@ -501,3 +501,16 @@ Final design consistency review corrected the research proposal's scheduling ari
 - [x] Targeted24-run/8-seed corpus:366 independent integrated witness replays, zero field faults, maximum one active mine; all8 witness runs reach2500m with hull3.34/400 proposals omitted. Optional collect pilots obtain4–6 rewards with hull1–3. Historical Phase2 audit plus214 wing/78 collectible witness replays pass. Full historical mine matrix and physical-device approval were not claimed.
 - [x] Six review reports, reproducible captures/audits and exact-source ZIP packaging with CRC/SHA256 and bidirectional full-tree patch verification prepared. Final SHA, push receipt and package identity are delivery metadata.
 - [ ] Owner playtest and any future main merge/deployment approval remain pending. No merge or deployment is authorized.
+
+
+## GAMEPLAY-005B — warp corridor and seamless object reveal, 2026-11-05
+
+- [x] Owner approved005A Hybrid/mines/fragments/density/Phase2. Created `feature/gameplay-005b-visual-seamlessness` directly from verified `393c2c6ae48b5cc0f5ec164367d3bcd3f7b0b5ea` after fetch; preserved unrelated user files. No experimental branch merge.
+- [x] Froze exact baseline sources and real first-appearance videos before changing visuals. Three1500m seeded traces identify immediate certified publication, opaque flat-fog star occlusion, and the old mine warning visibility gate. No GLB loading delay or guessed fog-only diagnosis.
+- [x] Added presentation-only world-depth coverage/haze with two shared publication cohorts, original depth ordering, identity/reset lifecycle and fail-open saturation. Certifiable simulation/publication, budgets, controls, collider profile, reward policy and Phase2 rules remain byte unchanged across80 protected files.
+- [x] Four true-bound warp surfaces atCONFIG X±6/Y±3.6 provide thin energy threads, local halo and analytic forward streaks. Smooth2.4m proximity response, derivative antialiasing, reduced motion and distance-clock pause/reset. No physics wall, particle pool, extra texture or postprocess.
+- [x] Ordinary Play defaults to warp+seamless; DEV live four-way visual switching preserves exact simulation.154 matched object traces,61 baseline/feature state pairs,14 matched readable/mobile stills, frozen before/after videos and continuous integrated clip retained.
+- [x] Ten focused unit tests bring total to288; focused browser lifecycle covers warning ticks, opaque depth flags, cohorts/pool reuse,30/60Hz-style rendering/catch-up and resource resets. Final100-case full browser/check receipts are packaged separately from initial harness/interrupted attempts.
+- [x] Sequential exact-baseline/all-four-mode performance:6000 native frames, identical endpoint state hashes. Combined RAF p95 desktop17.0ms/portrait16.9ms versus17.2/17.1ms baseline; no speedup or phone guarantee claimed. Two added programs,231 shared material variants, about1.06MB retained heap increase; ten stable UI restarts per case.
+- [x] Seven reports and reproducible probe/capture/performance/preservation/package tooling prepared. Final Git SHA, push receipt and verified ZIP identity are delivery metadata.
+- [ ] Owner playtest/final acceptance pending. No main merge, force-push or deployment is authorized.
