@@ -4,7 +4,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { verify } from './review-verify.mjs';
 const git=(...args)=>execFileSync('git',args).toString(),directory='.cache/review/VISUAL-006/final';
-export const normalizedBytes=(path,data)=>/\.(?:ts|mjs|js|py|json|css|html|txt|md|svg)$/.test(path)?Buffer.from(data.toString('utf8').replaceAll('\r\n','\n')):data;
+export const normalizedBytes=(path,data)=>path==='.gitignore'||/\.(?:ts|mjs|js|py|json|css|html|txt|md|svg)$/.test(path)?Buffer.from(data.toString('utf8').replaceAll('\r\n','\n')):data;
 async function snapshot(){
  const paths=git('ls-files','--cached','--others','--exclude-standard','-z').split('\0').filter(p=>/^(?:src|public|tests|scripts)\//.test(p)||['package.json','package-lock.json','vite.config.ts','tsconfig.json','playwright.config.ts','review.config.json','index.html','.gitignore'].includes(p)).sort();
  return Promise.all(paths.map(async path=>({path,sha256:createHash('sha256').update(normalizedBytes(path,await readFile(path))).digest('hex')})));
