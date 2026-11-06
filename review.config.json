@@ -1,14 +1,15 @@
 {
-  "taskId": "GAMEPLAY-005B2",
-  "baseline": "80e987d7804b663d1c8bf2080fa116ef63b667de",
+  "taskId": "VISUAL-006",
+  "baseline": "218d6a1d477d9a61b08c0abd1828aa61c3b95562",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "CORRIDOR_OCCLUSION.md": "docs/review/GAMEPLAY-005B2/CORRIDOR_OCCLUSION.md",
-    "PICKUP_CALIBRATION.md": "docs/review/GAMEPLAY-005B2/PICKUP_CALIBRATION.md",
-    "WING_COLLIDER_CALIBRATION.md": "docs/review/GAMEPLAY-005B2/WING_COLLIDER_CALIBRATION.md",
-    "FAIRNESS.md": "docs/review/GAMEPLAY-005B2/FAIRNESS.md",
-    "PERFORMANCE.md": "docs/review/GAMEPLAY-005B2/PERFORMANCE.md",
-    "OWNER_PLAYTEST_GUIDE.md": "docs/review/GAMEPLAY-005B2/OWNER_PLAYTEST_GUIDE.md"
+    "DESIGN_CONCEPT.md": "docs/review/VISUAL-006/DESIGN_CONCEPT.md",
+    "IMPLEMENTATION.md": "docs/review/VISUAL-006/IMPLEMENTATION.md",
+    "STATION_OCCLUSION.md": "docs/review/VISUAL-006/STATION_OCCLUSION.md",
+    "VISUAL_COMPARISON.md": "docs/review/VISUAL-006/VISUAL_COMPARISON.md",
+    "PERFORMANCE.md": "docs/review/VISUAL-006/PERFORMANCE.md",
+    "OWNER_PLAYTEST_GUIDE.md": "docs/review/VISUAL-006/OWNER_PLAYTEST_GUIDE.md",
+    "KNOWN_LIMITATIONS.md": "docs/review/VISUAL-006/KNOWN_LIMITATIONS.md"
   },
   "screenshots": [],
   "videoPreviews": [],
@@ -20,7 +21,7 @@
     },
     {
       "name": "gameplay-preservation",
-      "script": "scripts/polish-preservation.mjs",
+      "script": "scripts/warp-preservation.mjs",
       "stripTypes": false
     }
   ],
@@ -39,14 +40,14 @@
     }
   ],
   "evidenceNotes": [
-    "Exact005B baseline; three focused owner corrections.",
-    "node scripts/polish-freeze.mjs; node --experimental-strip-types scripts/polish-audit.mjs; node --experimental-strip-types scripts/polish-analysis.mjs; node --experimental-strip-types scripts/polish-scenarios.mjs.",
-    "Real Chrome capture scripts polish-capture.mjs, polish-corridor-probe.mjs and polish-performance.mjs. Package with polish-pack.mjs."
+    "Exact005B2 baseline; presentation-only shared fragmented field.",
+    "node scripts/warp-evidence.mjs --stills; --videos; --performance (run sequentially).",
+    "node scripts/warp-pack.mjs; four matched policies, accepted station profiles and untouched gameplay."
   ],
   "limitations": [
     "Owner playtest required.",
-    "One sphere per wing is a stable arcade approximation; cosmetic banking is deliberately independent.",
-    "Original owner screenshot was not supplied; described station intersection reconstructed.",
+    "Sparse decorative fragments do not describe a collision tolerance; owner selects the visual policy.",
+    "Station apertures are conservatively reserved at their own depth; unrelated projected foreground light is depth-tested.",
     "No physical-phone or GPU timer measurements; no merge or deployment."
   ]
 }

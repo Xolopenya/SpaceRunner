@@ -1,0 +1,12 @@
+# Known limitations
+
+- Visual selection,comfort and sense of speed require owner playtest. Automated state/pixel/resource checks do not establish preference or human recognition.
+- Viewports emulate desktop1280×800,portrait390×844 and landscape844×390. Physical phones,thermal throttling and real touch-device GPU performance remain untested.
+- Sparse fragments leave genuine gaps,so a boundary is not continuously marked. The cue is a ship-center reference,not a wing-clearance measurement. Cosmetic banking and the accepted unbanked compound collider retain their approximation.
+- New geometry conservatively excludes entire small links near solids and reserves station apertures;this can remove more field than exact triangle clipping. Tiny link-length changes can remain around the feather;it is not physically simulated light.
+- Foreground peripheral light may project over a distant station/opening without physically intersecting it. Normal opaque depth tests remain;no screen-space suppression or volumetric renderer was added. Legacy intentionally preserves continuous rails for comparison.
+- Reduced motion removes extra streaks but retains distance-driven world motion. Silent videos do not assess audio;audio sources/settings are protected unchanged.
+- Shared geometry/material construction is bounded. First use of a previously hidden legacy/new policy can upload its already allocated geometry/compile its shader. Warmed resource stability must be interpreted separately from this one-time initialization.
+- RAF and JavaScript timing are local Chrome observations,not GPU timers or phone guarantees. Small mode differences do not imply a performance improvement. Build retains Vite's existing large-chunk advisory.
+- One landscape C RAF interval reached90.1ms despite a0.1ms preceding field update;its exact cause is unassigned. There is no strict frame-deadline guarantee. All modes retain the same1 texture/1 program renderer.info residual after complete disposal;the field's own resources dispose once and its geometry count returns to0.
+- Early harness attempts exposed a readiness race and lazy resource warm-up mismatch;the first full browser run also exposed an existing ResizeObserver timing race. These were corrected with readiness/event waits and explicit resource warm-up,without relaxing gameplay/depth/resource assertions. Final301 units/105 browser tests pass. Runtime gameplay/camera/reveal sources remain protected.

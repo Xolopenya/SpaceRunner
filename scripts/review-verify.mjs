@@ -9,7 +9,7 @@ import { loadReviewCheckpoint, resumableCheck } from './target-lock-review-resum
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const git = (...args) => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024 });
 
-export async function verify(taskId, extraChecks = []) {
+export async function verify(taskId, extraChecks = [], options = {}) {
   const directory = resolve(root, '.cache/review', taskId, 'final');
   await mkdir(directory, { recursive: true });
   const head = git('rev-parse', 'HEAD').toString().trim();
@@ -17,7 +17,10 @@ export async function verify(taskId, extraChecks = []) {
   const env = { ...process.env, NO_COLOR: '1', REVIEW_RESULT_DIR: directory };
   delete env.FORCE_COLOR;
   const npmCli = process.env.npm_execpath || join(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
-  const commands = ['typecheck', 'test', 'build', 'test:browser'].map(name => ({ name, command: `npm run ${name}`, executable: process.execPath, args: [npmCli, 'run', name] }));
+  const commands = ['typecheck', 'test', 'build', 'test:browser'].map(name => {
+    const extra = name === 'test:browser' && options.browserWorkers === 2 ? ['--', '--workers=2'] : [];
+    return { name, command: `npm run ${name}${extra.length ? ' -- --workers=2' : ''}`, executable: process.execPath, args: [npmCli, 'run', name, ...extra] };
+  });
   commands.push({ name: 'diff-check', command: 'git diff --check', executable: 'git', args: ['diff', '--check'] });
   commands.push({ name: 'source-safety', command: 'node scripts/review-static.mjs', executable: process.execPath, args: ['scripts/review-static.mjs'] });
   commands.push({ name: 'build-analysis', command: 'node scripts/build-analysis.mjs', executable: process.execPath, args: ['scripts/build-analysis.mjs'] });

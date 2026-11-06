@@ -2,7 +2,7 @@ import { test, expect } from './helpers.ts';
 
 async function boot(page: import('@playwright/test').Page, params = '') {
   await page.addInitScript(()=>{window.requestAnimationFrame=()=>0;window.cancelAnimationFrame=()=>{};});
-  await page.goto(`/?debug=visuals&seed=42${params}`);await page.locator('#launch').click();
+  await page.goto(`/?debug=visuals&seed=42${params}`);await page.waitForFunction(()=>!!window.spaceRunner,null,{polling:100});await page.locator('#launch').click();
   await page.evaluate(() => { (window.spaceRunner as any).loop.stop(); });
 }
 async function advance(page: import('@playwright/test').Page, ticks: number, cadence = 2) {
@@ -27,14 +27,15 @@ test('ordinary Play enables warp and seamless reveal without DEV controls or ext
   await page.locator('#launch').click();
   const r = await page.evaluate(() => { const g = (window as any).visualGame;g.loop.stop();g.world.render(g.model, 0);
     return { camera: g.world.flightCamera.mode, boundaries: g.world.boundaries.mode, reveal: g.world.reveal.mode, warp: g.world.boundaries.warp.root.visible, source: g.model.field.experiment.version }; });
-  expect(r).toEqual({ camera: 'hybrid-chase', boundaries: 'warp', reveal: 'seamless', warp: true, source: 'integrated-playable-v1' });
+  expect(r).toEqual({ camera: 'hybrid-chase', boundaries: 'fragmented-warp', reveal: 'seamless', warp: false, source: 'integrated-playable-v1' });
   expect(assets).toHaveLength(7);await expect(page.locator('#visual-comparison')).toHaveCount(0);expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();
 });
 test('four live visual combinations preserve the complete model and pooled resources at the same Phase 2 state', async ({ page }) => {
   await boot(page);await advance(page, 4500);
+  await page.evaluate(()=>{const g=window.spaceRunner!;for(const mode of ['legacy','warp'] as const){g.world.setVisualModes(mode,'seamless');g.world.render(g.model,0);}});
   const before = await page.evaluate(() => JSON.stringify(window.spaceRunner!.model));const rows = [];
   for (const boundaries of ['legacy', 'warp']) for (const reveal of ['legacy', 'seamless']) {
-    await page.locator(`[data-boundaries="${boundaries}"]`).click();await page.locator(`[data-reveal="${reveal}"]`).click();
+    await page.locator(`[data-boundaries="${boundaries}"]`).last().click();await page.locator(`[data-reveal="${reveal}"]`).click();
     rows.push(await page.evaluate(() => { const g = window.spaceRunner! as any;g.world.render(g.model, 0);return { model: JSON.stringify(g.model), phase: g.model.phase, hull: g.model.hull, memory: { ...g.world.renderer.info.memory }, variants: g.world.reveal.materials.size }; }));
   }
   for (const r of rows) { expect(r.model).toBe(before);expect(r.phase).toBe(2);expect(r.hull).toBe(3);expect(r.variants).toBe(rows[0]!.variants); }
@@ -87,4 +88,31 @@ test('committed station solids locally suppress warp; live DEV toggle leaves ful
  expect(on.model).toBe(before.model);expect(on.counts).toEqual(before.counts);expect(on.memory).toEqual(before.memory);
  await page.locator('#pause').click();await page.locator('#restart-pause').click();
  expect(await page.evaluate(()=>{const g=window.spaceRunner as any;g.world.render(g.model,0);return g.world.boundaries.warp.sides.map((s:any)=>s.material.uniforms.exclusionCount.value)})).toEqual([0,0,0,0]);
+});
+
+test('four warp candidates switch live without state writes and preserve pooled resources, pause and restart', async ({page})=>{
+  await boot(page,'&warp=fragmented-warp');await advance(page,4500);
+  const model=await page.evaluate(()=>JSON.stringify(window.spaceRunner!.model));
+  for(const mode of ['legacy','fragmented-arcs','flowing-filaments','fragmented-warp']){
+    await page.locator(`[data-warp="${mode}"]`).click();
+    const r=await page.evaluate(()=>{const g=window.spaceRunner as any;g.world.render(g.model,0);return{model:JSON.stringify(g.model),mode:g.world.boundaries.mode,geometry:g.world.boundaries.field.geometry.id,material:g.world.boundaries.field.material.id,segments:g.world.boundaries.field.activeSegments}});
+    expect(r.model).toBe(model);expect(r.mode).toBe(mode==='legacy'?'warp':mode);expect(r.segments).toBeLessThanOrEqual(36);
+  }
+  await page.locator('#pause').click();
+  expect(await page.evaluate(()=>{const g=window.spaceRunner as any,f=g.world.boundaries.field,s=()=>JSON.stringify({u:f.material.uniforms,index:Array.from(f.geometry.index.array),fade:Array.from(f.geometry.getAttribute('fade').array)}),before=s();for(let i=0;i<90;i++)g.world.render(g.model,1/30);return before===s()})).toBe(true);
+  const resources=[];for(let i=0;i<10;i++){
+    await page.locator('#restart-pause').click();await advance(page,120);await page.locator('#pause').click();
+    resources.push(await page.evaluate(()=>{const g=window.spaceRunner as any;return{memory:{...g.world.renderer.info.memory},geometry:g.world.boundaries.field.geometry.id,material:g.world.boundaries.field.material.id}}));
+  }
+  resources.forEach(r=>expect(r).toEqual(resources[0]));
+});
+
+test('portrait DEV comparison leaves Launch, pause and restart reachable', async ({page})=>{
+  await page.setViewportSize({width:390,height:844});await boot(page,'&warp=fragmented-warp');
+  await expect(page.locator('#visual-comparison')).toBeVisible();
+  for(const mode of ['legacy','fragmented-arcs','flowing-filaments','fragmented-warp'])await page.locator(`[data-warp="${mode}"]`).click();
+  await page.locator('#pause').click();await page.locator('#restart-pause').click();
+  await expect(page.locator('#game')).toHaveAttribute('data-state','PLAYING');
+  await page.setViewportSize({width:844,height:390});
+  await expect(page.locator('[data-warp="fragmented-warp"]')).toBeVisible();
 });

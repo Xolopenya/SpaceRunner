@@ -1,0 +1,11 @@
+# Station-aware fragment exclusion
+
+The new system does not draw a continuous boundary surface. It reads the same committed slots,actual positions,isWreck/wreckProfile boxes,eight-instance limit and retained-station/despawn rule used by StructureVariantsView. Speculative proposals never affect it. Station geometry,aperture dimensions and collision boxes are protected unchanged.
+
+For every short ribbon link,the CPU computes a conservative world-space AABB from all four strip corners at its distance-derived depth. If it overlaps any actual station solid plus0.10m padding,the link's indices degenerate:there is no renderable triangle through that block. A Chebyshev distance to the exclusion boxes gives a smoothstep1.6m feather outside the cut. This combines geometric placement exclusion with local fading,independent of transparent sorting.
+
+Each station's true aperture is also reserved within its±3m axial slab. This prevents upper/lower/left/right openings from acquiring a decorative bridge where the real movement boundary crosses the traversable hole. It is intentionally conservative around that station depth and can remove more decoration than necessary. It neither draws a plane nor makes the physical opening smaller. Outside the slab,the real hole can still reveal distant space and sparse peripheral light.
+
+The geometry tests reconstruct every retained link independently against all four solids and aperture bounds for all five profiles and five distances,including wraps. They also exercise uncommitted/retired slots,feather values and restoration after retirement. Native captures include the existing certified isolated five-aperture diagnostic;its historical body collider is explicitly distinct from the integrated compound simulation. Integrated station screenshots/videos use natural accepted objects and recorded actual control inputs.
+
+Ordinary depth testing handles light behind opaque metal/asteroids. This is not a volumetric light solver:unrelated foreground strands can project over a distant object in open space. There is no guarantee that every projected decorative stroke vanishes from every camera view. Full-depth beams have been removed from all new modes;the legacy comparison intentionally retains them.

@@ -2,7 +2,7 @@ import { AdditiveBlending, BufferGeometry, Color, DoubleSide, Float32BufferAttri
 import { CONFIG } from '../config.ts';
 import { isWreck, wreckProfile } from '../experiments/structure-variants/profile.ts';
 
-export type BoundaryMode = 'legacy' | 'warp';
+export type BoundaryMode = 'legacy' | 'warp' | import('./fragmented-warp.ts').FieldMode;
 export const WARP = Object.freeze({ reach: 2.4, depth: 180, nearFade: 4, farFade: 115, spacing: 23, base: .10, boost: .90 });
 export const WARP_OCCLUSION = Object.freeze({ capacity: 32, stations: 8, feather: 1.25 });
 interface StationSlot { readonly kind: number; readonly x: number; readonly y: number; readonly z: number; readonly planned?: unknown }

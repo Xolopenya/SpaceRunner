@@ -60,6 +60,7 @@ test('integrated DEV diagnostics use the same loop and boundary strength follows
   expect(edge.x).toBeGreaterThan(5); expect(edge.mode).toBe('hybrid-chase'); expect(edge.opacities[1]).toBeGreaterThan(edge.opacities[0]! * 3);
   await expect(page.locator('#collider-debug-info')).toBeVisible(); await expect(page.locator('#camera-research')).toHaveCount(0);
   await page.locator('#pause').click(); await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(()=>page.evaluate(()=>window.spaceRunner!.world.flightCamera.camera.aspect)).toBeCloseTo(390/844,5);
   const portrait = await page.evaluate(() => { const g = window.spaceRunner!; g.world.render(g.model, 0); return { aspect: g.world.flightCamera.camera.aspect, fov: g.world.flightCamera.camera.fov }; });
   expect(portrait.aspect).toBeCloseTo(390 / 844, 5); expect(portrait.fov).toBe(58);
 });

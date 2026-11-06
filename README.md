@@ -95,3 +95,7 @@ npm run preview
 ### GAMEPLAY-005B2 — точечная калибровка
 
 Текущая review-ветка локально гасит warp на пересечениях со станцией, увеличивает помощь сбора до 0,36 и уточняет сферы крыльев. DEV: `?debug=visuals&seed=0&colliders=1`; кнопка station occlusion сравнивает отрисовку в одном состоянии. Для физического A/B доступны записи одинакового управления и точный предыдущий исходник. [Проверки, ограничения и воспроизведение](docs/review/GAMEPLAY-005B2/OWNER_PLAYTEST_GUIDE.md). В main не слито, deployment не выполнен.
+
+### VISUAL-006 — сравнение оформления границ
+
+На этой экспериментальной ветке обычный Play использует Fragmented Warp Field. После `npm run dev` откройте `http://127.0.0.1:5173/?debug=visuals&warp=fragmented-warp&seed=42`: четыре кнопки `legacy`, `fragmented-arcs`, `flowing-filaments`, `fragmented-warp` переключают оформление в текущем забеге. Управление, Hybrid Chase, мины, сбор, коллизии и Phase 2 сохранены. [Сравнение и инструкция владельцу](docs/review/VISUAL-006/OWNER_PLAYTEST_GUIDE.md). Окончательный вариант выбирает владелец; merge и публикация не выполнены.

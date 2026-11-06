@@ -71,7 +71,7 @@ export class World {
     // and debugger roots. Imported models are borrowed from AssetManager.
     this.resources.track(this.scene, assets.resources);
     this.boundaries = new ArenaBoundaries(this.scene);
-    this.boundaries.setMode('warp');
+    this.boundaries.setMode('fragmented-warp');
     this.flightCamera.setMode('hybrid-chase');
     this.background = new SpaceBackground(this.scene);
     this.engines = new EngineVFX(this.scene, this.ship);
@@ -130,7 +130,7 @@ export class World {
       const variant = hazardVariant(hazard.kind, hazard.phase);
       for (let j = 0; j < group.children.length; j++) group.children[j]!.visible = j === variant;
     }
-    this.boundaries.update(model.ship.x, model.ship.y, model.distance, this.quality.reducedMotion);
+    this.boundaries.update(model.ship.x, model.ship.y, model.distance, this.quality.reducedMotion, model.field.hazards);
     this.boundaries.warp.updateOcclusion(model.field.hazards);
     this.background.update(model.distance, model.speed, this.quality);
     this.fragments.update(model, this.quality.reducedMotion);
