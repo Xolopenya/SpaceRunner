@@ -1,17 +1,19 @@
-# Архитектура релиза
+# Архитектура RELEASE-007
 
-main.ts загружает AssetManager и создаёт Game с ReleaseModel. В публичной сборке нет window.spaceRunner и панелей диагностики. Старые селекторы остаются внутри DEV-ветки.
+Обычный запуск в main.ts создаёт MineAssetManager, IntegratedModel и Game. В public build нет window.spaceRunner и исследовательских селекторов. Имена каталогов debug и experiments сохраняют историю разработки: используемые из них классы входят в обычный production-граф.
 
-Game владеет InputManager, GameLoop, HUD, World, AudioManager и SoundPanel. GameModel хранит состояние LOADING/MENU/PLAYING/PAUSED/GAME_OVER, Ship, дистанцию, корпус и время. Фиксированный шаг 120 Гц передаёт ввод в Ship, затем изменяет время/дистанцию, обновляет поле и проверяет непрерывные столкновения. Удар уменьшает корпус; Game синхронизирует экран и звук. StandalonePlatform сохраняет рекорд локально.
+IntegratedModel наследует ReleaseModel, RuntimeGameModel и GameModel. Он связывает integratedSource с Balanced AdaptiveSource, существующим Mixed Flow, RuntimeObstacleField и OwnershipLedger. GameLoop передаёт ввод с фиксированным шагом 120 Гц. Одна пара beginPlanningFrame/finishPlanningFrame ограничивает работу планировщика на render-интервал; редкий рендер может вызвать безопасный пропуск будущей секции.
 
-ReleaseModel наследует RuntimeGameModel и использует mixedFlowSource и WreckCollision. DifficultyDirector выбирает существующие семейства. RuntimeObstacleField создаёт одну отложенную секцию; RuntimePlanningSession проверяет полную известную геометрию, ищет маршрут и повторяет его перед атомарной публикацией в OwnershipLedger и пул. Отказ не разрешает публикацию опасной геометрии. Бюджеты, запас реакции и размер коллайдеров не увеличивались/не уменьшались.
+RuntimePlanningSession проверяет полную известную геометрию, включая реактивную мину и составной SHIP_COLLIDER. Независимый replay и gate из настоящего текущего состояния предшествуют атомарной публикации. Отказ или незавершённая работа не публикуют препятствие. Бюджеты, запасы реакции и collision margins в RELEASE-007 не меняются.
 
-В src/release/settings.ts находятся порог 500 м, множитель скорости 1.08 и дополнительный интервал Phase 1 в две клетки по 24 units. ReleaseModel меняет только длину пустого зарезервированного хвоста коротких секций; сами препятствия и исходные производители сохранены. Phase 2 возвращает исходные интервалы Mixed Flow. Уже опубликованные секции не перестраиваются при переходе. Поэтому рост частоты проявляется после горизонта планирования.
+Ship использует общую форму: корпус r0.42; крылья ±1.08/-0.30/0.70, r0.18. IntegratedCollision и IntegratedPrediction используют тот же профиль. Визуальный крен не поворачивает физические сферы. AdaptiveSource обновляет фактическое состояние мины после движения Ship; её инерция, предупреждение и swept CCD участвуют в прогнозе и replay.
 
-release:true проходит через контекст валидатора, копирование корня и FlightState. flightSpeed применяется и к живому движению, и к прогнозу/повтору, включая пересечение порога внутри будущей траектории. Без release:true старые модели используют прежнюю скорость. Фаза определяется монотонной дистанцией, сбрасывается при start и не меняется при pause. HUD объявляет переход на три секунды игрового времени.
+FragmentRun размещает необязательные Energy Fragments только после успешной публикации поля. Swept pickup и LOS по твёрдым частям станции сохраняют помощь 1.10 для корпуса и0.96 для крыла. FragmentView показывает140мс магнитную анимацию; счётчик потребляется HUD и AudioManager без дополнительной экономики.
 
-World использует общий AssetManager и пул мешей. releaseView повторно использует StructureVariantsView, скрывает обычный меш на месте станции и показывает правильный вариант проёма; диагностическая панель удалена. Ресурсы освобождаются через прежний ResourceOwner.
+release/settings.ts задаёт порог500м, множитель1.08 и48м дополнительного интервала некоторых коротких секций Phase1. Общий flightSpeed используется и живой моделью, и прогнозом/replay. Уже опубликованное поле не перестраивается при переходе фазы.
 
-SoundPanel меняет AudioSettings; AudioManager применяет master/music/sfx к раздельным узлам графа и сохраняет значения. HUD получает модель на кадре. Настройки не меняют физику.
+World получает состояние для показа. FlightCamera использует80% Hybrid Chase с неизменными FOV и оптикой. ArenaBoundaries показывает только FragmentedWarpField C: одна ribbon-геометрия/материал, движение по дистанции, proximity и геометрическое исключение пересечений с реальными станциями. ObjectReveal использует simulation elapsed и общие material cohorts для плавного появления и depth haze. IntegratedView показывает станции и GLB мины; FragmentView, EngineVFX и ImpactVFX владеют своими ресурсами.
 
-Контроллер мины находится в src/experiments/adaptive-homing/controller.ts, относительный CCD и предиктор рядом. Они не участвуют в публичном релизе. Mermaid-диаграмма оставлена для отдельного задания после приёмки.
+Game владеет HUD, InputManager, AudioManager, SoundPanel, World и lifecycle. Пауза, потеря фокуса, рестарт и dispose сохраняют общий граф ресурсов и единственный AudioContext. SoundPanel меняет Master/Music/SFX/mute; StandalonePlatform и ScoreStorage сохраняют настройки/рекорд локально. Нет backend и зависимости игровой логики от будущего Yandex SDK.
+
+Источники: src/main.ts, game.ts, integrated/, release/, core/, debug/runtime-field.ts, experiments/adaptive-homing/, collectibles/, camera/, visuals/, audio/.

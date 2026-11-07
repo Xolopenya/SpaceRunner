@@ -1,15 +1,15 @@
 {
-  "taskId": "VISUAL-006",
-  "baseline": "218d6a1d477d9a61b08c0abd1828aa61c3b95562",
+  "taskId": "RELEASE-007",
+  "baseline": "bbfb48ccf390b8feceb82ada4f01e86b912b4779",
   "repository": "https://github.com/Xolopenya/SpaceRunner",
   "reports": {
-    "DESIGN_CONCEPT.md": "docs/review/VISUAL-006/DESIGN_CONCEPT.md",
-    "IMPLEMENTATION.md": "docs/review/VISUAL-006/IMPLEMENTATION.md",
-    "STATION_OCCLUSION.md": "docs/review/VISUAL-006/STATION_OCCLUSION.md",
-    "VISUAL_COMPARISON.md": "docs/review/VISUAL-006/VISUAL_COMPARISON.md",
-    "PERFORMANCE.md": "docs/review/VISUAL-006/PERFORMANCE.md",
-    "OWNER_PLAYTEST_GUIDE.md": "docs/review/VISUAL-006/OWNER_PLAYTEST_GUIDE.md",
-    "KNOWN_LIMITATIONS.md": "docs/review/VISUAL-006/KNOWN_LIMITATIONS.md"
+    "INTEGRATION.md": "docs/review/RELEASE-007/INTEGRATION.md",
+    "SAFETY.md": "docs/review/RELEASE-007/SAFETY.md",
+    "PERFORMANCE.md": "docs/review/RELEASE-007/PERFORMANCE.md",
+    "REGRESSION.md": "docs/review/RELEASE-007/REGRESSION.md",
+    "DEPLOYMENT.md": "docs/review/RELEASE-007/DEPLOYMENT.md",
+    "KNOWN_LIMITATIONS.md": "docs/review/RELEASE-007/KNOWN_LIMITATIONS.md",
+    "OWNER_PLAYTEST_GUIDE.md": "docs/review/RELEASE-007/OWNER_PLAYTEST_GUIDE.md"
   },
   "screenshots": [],
   "videoPreviews": [],
@@ -20,8 +20,28 @@
       "stripTypes": true
     },
     {
-      "name": "gameplay-preservation",
-      "script": "scripts/warp-preservation.mjs",
+      "name": "release-preservation",
+      "script": "scripts/release-preservation.mjs",
+      "stripTypes": false
+    },
+    {
+      "name": "release-safety",
+      "script": "scripts/release-audit.mjs",
+      "stripTypes": true
+    },
+    {
+      "name": "compound-ship-audit",
+      "script": "scripts/ship-collider-audit.mjs",
+      "stripTypes": true
+    },
+    {
+      "name": "phase2-audit",
+      "script": "scripts/assignment-audit.mjs",
+      "stripTypes": true
+    },
+    {
+      "name": "pages-production",
+      "script": "scripts/release-production.mjs",
       "stripTypes": false
     }
   ],
@@ -40,14 +60,14 @@
     }
   ],
   "evidenceNotes": [
-    "Exact005B2 baseline; presentation-only shared fragmented field.",
-    "node scripts/warp-evidence.mjs --stills; --videos; --performance (run sequentially).",
-    "node scripts/warp-pack.mjs; four matched policies, accepted station profiles and untouched gameplay."
+    "Owner approved Mode C and main/Pages publication in RELEASE-007.",
+    "All approved src/public/package/Vite inputs remain unchanged; release adds gates, metadata and docs.",
+    "Run release-verify.mjs, release-scenarios.mjs, release-capture.mjs, release-performance.mjs; after Pages deployment release-capture.mjs --live."
   ],
   "limitations": [
-    "Owner playtest required.",
-    "Sparse decorative fragments do not describe a collision tolerance; owner selects the visual policy.",
-    "Station apertures are conservatively reserved at their own depth; unrelated projected foreground light is depth-tested.",
-    "No physical-phone or GPU timer measurements; no merge or deployment."
-  ]
+    "Physical phones untested.",
+    "Fail-closed cadence-dependent future publication omissions remain; already-published mine physics is cadence-independent under matched fixed-step inputs.",
+    "Cold shader/JIT and occasional RAF/long-task spikes are reported, not claimed eliminated."
+  ],
+  "approvedFeature": "a5906ef0baaeb5cfce6b59c29df6d378e1e141ad"
 }

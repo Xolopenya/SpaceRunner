@@ -1,5 +1,9 @@
 # Third-party asset provenance
 
+## RELEASE-007 integration
+
+The release uses the previously documented Kenney Space Kit models,original station-wreck geometry,3D Assets CC0 mine,local licensed fonts and original synthesized audio in ordinary IntegratedModel Play. Earlier DEV-only notes below describe their historical acquisition stage,not the current production import graph. RELEASE-007 adds no external asset or download;all original sources,authors,licenses and shipped notices remain unchanged. See the updated architecture and release reports for the active runtime.
+
 ## Original station wreck v2 — GAMEPLAY-EXPERIMENT-003B2, 2026-10-25
 
 **Salvaged station pressure-frame v2**, authored by Codex for Space Runner. Original/final format: TypeScript / Three.js meshes; composed asymmetric steel members, original panel/repair/scorch/stencil paint and a real internally offset aperture. No downloaded model, texture, font, conversion or asset pack. Source: `src/experiments/structure-variants/profile.ts` and `view.ts`. Original geometry/markings are dedicated under CC0-1.0, without attribution obligations; existing Three.js MIT and Kenney notices remain. [Provenance/source URL/license](../assets/experimental/station-wreck-v2/PROVENANCE.md), [research and construction](review/GAMEPLAY-EXPERIMENT-003B2/VISUAL_DESIGN.md). Mixed neighbors use unchanged native Kenney hazard assets and generated geometry/IDs. Everything new is DEV-only; production assets and v1 model source stay unchanged.

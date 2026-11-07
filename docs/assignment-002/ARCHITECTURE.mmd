@@ -1,34 +1,34 @@
 flowchart TD
-    Main["main.ts — запуск"] --> Game["Game — управление приложением"]
-    Main --> Assets["AssetManager — загрузка моделей"]
-
-    Game --> Input["InputManager — клавиатура и touch"]
-    Game --> Loop["GameLoop — фиксированный шаг 120 Гц"]
-    Input -->|ось X/Y| Loop
-    Loop -->|step| Model["ReleaseModel / GameModel — состояние забега"]
-
-    Settings["release/settings.ts — правила фаз"] --> Model
-    Model --> Ship["Ship — движение корабля"]
-    Model --> Field["RuntimeObstacleField — препятствия"]
-    Model --> Collision["WreckCollision — проверка столкновений"]
-    Field -->|запрашивает секцию| Source["Mixed Flow / DifficultyDirector — выбор встреч"]
-    Settings -->|интервалы встреч| Source
-    Field -->|проверяет кандидата| Planner["RuntimePlanningSession / Validator — поиск и replay"]
-    Planner -->|разрешает публикацию| Field
-
-    Game --> World["World — сцена Three.js"]
-    Assets -->|3D-ресурсы| World
-    Game --> HUD["HUD — экран и показатели"]
-    Game --> Audio["AudioManager / SoundPanel — звук и настройки"]
-    Game --> Storage["StandalonePlatform / ScoreStorage — рекорд"]
-    Model -.->|игровые данные через Game| World
-    Model -.->|игровые данные через Game| HUD
-
-    classDef core fill:#e5f3f7,stroke:#2d8298,color:#18313a;
-    classDef orchestration fill:#263849,stroke:#263849,color:#ffffff;
-    classDef generation fill:#fff2dc,stroke:#b87922,color:#503914;
-    classDef presentation fill:#f0f2f5,stroke:#8f9ba8,color:#202b36;
-    class Main,Game,Loop orchestration;
-    class Model,Ship,Field,Collision core;
-    class Source,Planner,Settings generation;
-    class Input,Assets,World,HUD,Audio,Storage presentation;
+    Main["main.ts"] --> Assets["MineAssetManager / AssetManager"]
+    Main --> Game["Game"]
+    Main --> Model["IntegratedModel extends ReleaseModel"]
+    Game --> Input["InputManager"]
+    Game --> Loop["GameLoop: 120 Hz"]
+    Input --> Loop
+    Loop --> Model
+    Model --> Ship["Ship"]
+    Model --> Collision["IntegratedCollision / SHIP_COLLIDER"]
+    Model --> Field["RuntimeObstacleField / OwnershipLedger"]
+    Source["integratedSource / AdaptiveSource / Mixed Flow"] --> Field
+    Field --> Planner["RuntimePlanningSession / Validator"]
+    Planner --> Prediction["IntegratedPrediction / SHIP_COLLIDER"]
+    Planner --> Replay["Independent trajectory replay / actual-root gate"]
+    Replay --> Field
+    Model --> Mine["AdaptiveSource: live mine feedback"]
+    Mine --> Planner
+    Model --> Fragments["FragmentRun: swept pickup / solid LOS"]
+    Field --> Fragments
+    Phase["release/settings.ts / flightSpeed"] --> Model
+    Phase --> Planner
+    Game --> World["World"]
+    Assets --> World
+    World --> Camera["FlightCamera: Hybrid Chase"]
+    World --> Warp["ArenaBoundaries / FragmentedWarpField C"]
+    World --> Reveal["ObjectReveal"]
+    World --> View["IntegratedView / StructureVariantsView / FragmentView"]
+    Game --> HUD["HUD"]
+    Game --> Audio["AudioManager / SoundPanel"]
+    Game --> Storage["StandalonePlatform / ScoreStorage"]
+    Model -.-> World
+    Model -.-> HUD
+    Model -.-> Audio
