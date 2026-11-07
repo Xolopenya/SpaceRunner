@@ -38,7 +38,7 @@ with zipfile.ZipFile(archive) as z:
         size = int(header[2]); cursor = end + 1
         assert z.read(f"project_snapshot/{path}") == batch[cursor:cursor + size], path
         cursor += size + 1
-    patch = z.read("changes/baseline-to-head.patch")
+    patch = z.read("changes/baseline-to-release.patch")
 
 scratch = (root / ".cache" / "review" / "RELEASE-007" / f"independent-{head[:7]}").resolve()
 assert scratch.is_relative_to(root / ".cache" / "review" / "RELEASE-007")
