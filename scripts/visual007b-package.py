@@ -79,11 +79,18 @@ patch_receipt={'baseline':BASELINE,'head':head,'forward':'complete HEAD tree exa
 (OUT/'patch-verification.json').write_text(json.dumps(patch_receipt,indent=2))
 
 entries={}
-with zipfile.ZipFile(io.BytesIO(git('archive','--format=zip',head))) as archive:
-    for info in archive.infolist():
-        if info.is_dir():continue
-        assert not info.filename.startswith(('node_modules/','dist/','.cache/','review-packages/'))
-        entries[f'source/{info.filename}']=archive.read(info)
+# Windows git archive applies checkout EOL conversion to some text blobs.
+# Read canonical objects directly so licenses and every source byte match HEAD.
+paths=git('ls-tree','-r','--name-only',head).decode().splitlines()
+specs='\n'.join(f'{head}:{path}' for path in paths)+'\n'
+batch=subprocess.check_output(['git','cat-file','--batch'],cwd=ROOT,input=specs.encode())
+cursor=0
+for path in paths:
+    assert not path.startswith(('node_modules/','dist/','.cache/','review-packages/'))
+    end=batch.index(b'\n',cursor);header=batch[cursor:end].split();assert header[1]==b'blob'
+    size=int(header[2]);cursor=end+1
+    entries[f'source/{path}']=batch[cursor:cursor+size];cursor+=size+1
+assert cursor==len(batch)
 inputs=json.loads((OUT/'validated-inputs.json').read_text())
 for item in inputs:
     data=entries[f"source/{item['path']}"]
