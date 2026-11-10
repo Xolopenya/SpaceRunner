@@ -1,5 +1,17 @@
 # Delivery checklist
 
+## VISUAL-007B — station materials and contained energy shard, 2026-11-10
+
+- [x] Branched `feature/visual-007b-station-crystal-polish` from exact007A `552740c3b8ae0927b2caff9c89f2fcc5b7ac897d`; its parent is RELEASE-007 follow-up `d5b02d8`, grandparent `88c557a`. Unrelated user files preserved; no main merge or deployment.
+- [x] Owner approved007A mines: all mine sources/assets/palette/controller remain unchanged. Station-only steel-blue panels, dark supports/recesses and restrained original aperture markings improve tonal separation; all five station geometry buffers and collider contracts are byte-identical.
+- [x] Original CC0 contained energy shard selected over capsule/floating-reactor concepts. Eight-slot pool, three draws/three geometries/four materials remain; triangles144→280. Existing0.54m envelope,1.10/.96 pickup distances,140ms magnet, occlusion, count/chime/HUD and burst geometry preserved. No new download/texture/light/dependency/postprocess.
+- [x] Final305 unit tests,107 browser tests in one clean one-worker full run, typecheck/build and preservation checks pass. Historical three007A failures investigated; a007B HMR module-identity observer bug fixed without changing behavior assertions or timeouts. Initial105/107 run, interrupted prototype run and old logs retained.
+- [x] Real matched54 desktop pairs, five apertures, body/both-wing/Phase2 pickups, station/debris/mine/warp coexistence, mobile orientations and eight gameplay videos.122 inherited inputs and three performance endpoint states match; owner approval is not inferred from an automated pilot.
+- [x] Sequential5400 native frames/60 UI restarts: RAF p9516.9ms before/after, max calls48, materials224/geometries43/texture1 stable, programs15→14; scene triangles12928→13064 with one active reward. Removed vertex-color shader variants after observing a155ms prototype first-use peak; final desktop max46.4ms versus59.8ms baseline. Cold startup/physical-phone limits disclosed.
+- [x] Seven required [review reports](review/VISUAL-007B/ART_DIRECTION.md), reproducible tools and exact-HEAD ZIP workflow with full-tree forward/reverse patch, CRC and SHA inventory prepared. Commit, remote HEAD and archive identities are delivery receipts.
+- [ ] Owner playtest/visual acceptance remains required. Feature push is authorized by007B; merge and production deployment are not.
+
+
 ## VISUAL-007A — mine and station art pass, 2026-11-10
 
 - [x] Created `codex/visual-007a-mine-structure-polish` from public `d5b02d8`, preserving existing untracked user work. Main is unchanged; no deployment or remote push.

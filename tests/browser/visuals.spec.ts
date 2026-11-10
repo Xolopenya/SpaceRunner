@@ -1,4 +1,4 @@
-import { test, expect } from './helpers.ts';
+import { test, expect, observeOrdinaryLaunch } from './helpers.ts';
 
 async function boot(page: import('@playwright/test').Page, params = '') {
   await page.addInitScript(()=>{window.requestAnimationFrame=()=>0;window.cancelAnimationFrame=()=>{};});
@@ -22,8 +22,7 @@ async function advance(page: import('@playwright/test').Page, ticks: number, cad
 test('ordinary Play enables warp and seamless reveal without DEV controls or extra assets', async ({ page }) => {
   const assets: string[] = [];page.on('response', r => { if (r.url().endsWith('.glb')) assets.push(r.url()); });
   await page.goto('/?seed=42');await expect(page.locator('#launch')).toBeVisible();
-  await page.evaluate(async () => { const path = '/src/game.ts', { Game } = await import(path), start = Game.prototype.start;
-    Game.prototype.start = function () { (window as any).visualGame = this;start.call(this); }; });
+  await observeOrdinaryLaunch(page,'visualGame');
   await page.locator('#launch').click();
   const r = await page.evaluate(() => { const g = (window as any).visualGame;g.loop.stop();g.world.render(g.model, 0);
     return { camera: g.world.flightCamera.mode, boundaries: g.world.boundaries.mode, reveal: g.world.reveal.mode, warp: g.world.boundaries.warp.root.visible, source: g.model.field.experiment.version }; });

@@ -2,6 +2,7 @@ import {BoxGeometry, BufferGeometry, EdgesGeometry, Float32BufferAttribute, Grou
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {PROFILES, WRECK as W} from '../experiments/structure-variants/profile.ts';
 import {HAZARD_STYLE as S} from './hazard-style.ts';
+import {STATION_MATERIALS as M} from './station-materials.ts';
 
 /** Damaged pressure-frame. XY footprints and the four body bounds are exact.
  * Face plating projects at most 10cm in Z; nothing projects into the aperture.
@@ -9,9 +10,9 @@ import {HAZARD_STYLE as S} from './hazard-style.ts';
 export function salvageStation(index: number, colliders = false): Group {
   const profile = PROFILES[index]!;
   const root = new Group();root.name = `station-wreck-v2:${profile.name}`;
-  const material = (color: number, metalness = .35) => new MeshStandardMaterial({color, metalness, roughness: .73});
-  const bodyMaterial = material(S.graphite);
-  const materials = [material(S.navy), material(S.steel), material(S.recess), material(S.amber), material(S.cyan)];
+  const material = (color: number, metalness = M.metalness) => new MeshStandardMaterial({color, metalness, roughness: M.roughness});
+  const bodyMaterial = material(M.body);
+  const materials = [material(M.panel), material(M.reinforcement), material(M.recess), material(S.amber), material(S.cyan)];
   materials[4]!.emissive.setHex(S.cyan);materials[4]!.emissiveIntensity = .45;
   const batches: BufferGeometry[][] = materials.map(() => []);
   function block(batch: number, x: number, y: number, z: number, w: number, h: number, d: number): void {

@@ -5,8 +5,9 @@ import { publicationElapsed } from '../visuals/object-reveal.ts';
 import type { ObjectReveal, RevealTarget } from '../visuals/object-reveal.ts';
 import { FRAGMENT as S } from './settings.ts';
 import { fragmentsOf } from './state.ts';
+import { shardResources } from './shard-model.ts';
 
-/** Fixed mesh pool; three shared geometries, three shared materials, no textures. */
+/** Fixed mesh pool; three shared geometries, four materials including the burst. */
 export class FragmentView {
   readonly root = new THREE.Group();
   private readonly resources = new ResourceOwner();
@@ -20,20 +21,15 @@ export class FragmentView {
   constructor(scene: THREE.Scene,reveal?:ObjectReveal) {
     this.reveal=reveal;
     this.root.name = 'energy-fragments';
-    const crystal = new THREE.OctahedronGeometry(.34);
-    crystal.scale(1, 1.35, 1);
-    const core = new THREE.OctahedronGeometry(.14);
-    const ring = new THREE.TorusGeometry(.51, .025, 4, 16);
-    const shell = new THREE.MeshBasicMaterial({ color: 0x1deed8, transparent: true, opacity: .64, depthWrite: false });
-    const light = new THREE.MeshBasicMaterial({ color: 0xd6ffff });
-    const halo = new THREE.MeshBasicMaterial({ color: 0x46ffe6, transparent: true, opacity: .7, depthWrite: false });
+    const {core,frame,ring,energy,metal,halo}=shardResources();
     for (let i = 0; i < S.capacity; i++) {
       const group = new THREE.Group(); group.name = `energy-fragment-${i}`;
-      group.add(new THREE.Mesh(crystal, shell), new THREE.Mesh(core, light), new THREE.Mesh(ring, halo));
+      group.add(new THREE.Mesh(core, energy), new THREE.Mesh(frame, metal), new THREE.Mesh(ring, halo));
       group.visible = false; this.root.add(group); this.meshes.push(group);
       if(reveal)this.revealTargets.push(reveal.register(group,'fragment'));
     }
-    this.burst = new THREE.Mesh(ring, halo.clone()); this.burst.visible = false; this.root.add(this.burst);
+    const burstMaterial=halo.clone();burstMaterial.opacity=.7;
+    this.burst = new THREE.Mesh(ring, burstMaterial); this.burst.visible = false; this.root.add(this.burst);
     scene.add(this.root); this.resources.track(this.root);
   }
   reset(): void {

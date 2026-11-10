@@ -1,12 +1,9 @@
-import { test, expect } from './helpers.ts';
+import { test, expect, observeOrdinaryLaunch } from './helpers.ts';
 
 test('ordinary Play uses Hybrid, mines and fragments through stations and Phase 2; UI pause/resume/restart resets one shared scene', async ({ page }) => {
   await page.goto('/?seed=42'); await expect(page.locator('#launch')).toBeVisible();
   // Observe the ordinary Game instance at its existing launch method. No debug URL or app test hook.
-  await page.evaluate(async () => {
-    const path = '/src/game.ts', { Game } = await import(path), original = Game.prototype.start;
-    Game.prototype.start = function () { (window as any).integratedTest = this; original.call(this); };
-  });
+  await observeOrdinaryLaunch(page,'integratedTest');
   await page.locator('#launch').click();
   await expect(page.locator('#camera-research')).toHaveCount(0);
   expect(await page.evaluate(() => window.spaceRunner)).toBeUndefined();

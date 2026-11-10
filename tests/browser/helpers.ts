@@ -13,6 +13,17 @@ export const test = base.extend<{ cleanConsole: void }>({
 
 export { expect };
 
+/** Observe the actual module loaded by Vite, including an HMR timestamp.
+ * Importing the bare path can create a different constructor after an edit. */
+export async function observeOrdinaryLaunch(page: Page, key: string): Promise<void> {
+  await page.evaluate(async key => {
+    const url=performance.getEntriesByType('resource').map(e=>e.name).find(name=>new URL(name).pathname==='/src/game.ts');
+    if(!url)throw new Error('Loaded Game module not found');
+    const {Game}=await import(url),start=Game.prototype.start;
+    Game.prototype.start=function(){(window as any)[key]=this;start.call(this);};
+  },key);
+}
+
 export async function launch(page: Page, url = '/?debug&seed=42') {
   await page.goto(url);
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');

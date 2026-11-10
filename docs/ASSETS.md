@@ -1,5 +1,16 @@
 # Third-party asset provenance
 
+## VISUAL-007B — contained energy shard and station materials, 2026-11-10
+
+Original contained-shard procedural geometry authored by Codex for Space Runner
+in `src/collectibles/shard-model.ts`, dedicated under CC0-1.0: a faceted energy
+core, four retention shoes and small cyan inlays, merged into shared resources.
+The prior halo/pickup-burst torus geometry is retained unchanged. Station-only
+colors/roughness/metalness are authored in `src/visuals/station-materials.ts`;
+all 007A station geometry is unchanged. No external asset, generated bitmap,
+download, texture, font or dependency is added. Approved 007A mine sources,
+licensed GLB bytes, Kenney models and shipped notices remain unchanged.
+
 ## VISUAL-007A — mine armor and salvaged station, 2026-11-10
 
 Original procedural geometry authored by Codex for Space Runner in
