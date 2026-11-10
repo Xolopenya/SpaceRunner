@@ -1,5 +1,22 @@
 # Third-party asset provenance
 
+## VISUAL-007A — mine armor and salvaged station, 2026-11-10
+
+Original procedural geometry authored by Codex for Space Runner in
+`src/visuals/mine-shell.ts` and `src/visuals/salvage-station.ts`, with palette and
+cosmetic dimensions in `src/visuals/hazard-style.ts`. Segmented armor, sensor
+collars, signal emitters, clipped armor cassettes, diagonal braces, cooling
+channels, maintenance markings and aperture lamps are dedicated under CC0-1.0.
+No download, texture, generated bitmap, font, dependency or external asset was
+added. The existing 3D Assets CC0 mine GLB is borrowed unchanged as an 86% scale
+visual core; its original source, author, license and SHA256 remain recorded
+below. Kenney models and all shipped notices remain unchanged.
+
+Station bodies retain the four exact collider boxes. Added details remain on
+their solid XY footprints and extend at most 0.10m from a face in Z. They never
+enter the flight aperture. The new mine armor fits the original normalized unit
+sphere; its world radius is still the existing 1.35m presentation scale.
+
 ## RELEASE-007 integration
 
 The release uses the previously documented Kenney Space Kit models,original station-wreck geometry,3D Assets CC0 mine,local licensed fonts and original synthesized audio in ordinary IntegratedModel Play. Earlier DEV-only notes below describe their historical acquisition stage,not the current production import graph. RELEASE-007 adds no external asset or download;all original sources,authors,licenses and shipped notices remain unchanged. See the updated architecture and release reports for the active runtime.

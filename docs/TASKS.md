@@ -1,5 +1,17 @@
 # Delivery checklist
 
+## VISUAL-007A — mine and station art pass, 2026-11-10
+
+- [x] Created `codex/visual-007a-mine-structure-polish` from public `d5b02d8`, preserving existing untracked user work. Main is unchanged; no deployment or remote push.
+- [x] Added original CC0 segmented mine armor/sensors with idle cyan, amber warning and red pursuit/coast signals; pause/reduced-motion and existing reveal material variants are respected. Licensed GLB bytes, motion and collider remain unchanged.
+- [x] Replaced flush station paint with clipped navy armor, exposed cooling channels, asymmetric panels, diagonal braces and amber/black aperture boundaries. Exact four body boxes and five apertures remain; solid-only details project at most0.10m in Z. Shared pooled batches reduce station calls12→9/materials12→6.
+- [x] Preserved119 baseline runtime/asset/build inputs. Nine matched real gameplay states and three matched performance endpoints are identical. Added no external asset, dependency, texture, light or postprocessing.
+- [x] Captured before/after normal/warning/pursuit mine, approach/passage and asteroid/collectible coexistence, with native videos and mobile orientation stills. Automated input replay is not owner acceptance; originals, receipts, comparison boards and video sampling checks are retained.
+- [x] Final304 unit tests, typecheck/build, source and diff checks pass. Full browser run102/105; obsolete lamp assertion updated and three isolated repeats3/3 pass. Initial integrated timeout and passive-audio seed11 death remain documented rather than erased.
+- [x] Sequential5400 native frames /60 UI restarts: RAF p9516.9–17.0ms before/after; max scene calls48; materials338→224, geometries44→43, textures1/programs15 unchanged. Scene triangles7936→12928; landscape callback p953.5→5.8ms is disclosed. Physical phones untested.
+- [x] Added [owner review and measured limits](review/VISUAL-007A/REVIEW.md), reproducible capture/performance/preservation tools and exact-HEAD ZIP packaging with CRC/SHA256 inventory. Final commit/archive identity is a delivery receipt.
+- [ ] Owner visual/playtest acceptance and any remote push, merge or deployment remain separate approvals.
+
 ## ASSIGNMENT-002 — Public release
 
 - [x] Normal Play integrates approved Mixed Flow and variable-aperture wrecks; homing excluded due to measured risks.

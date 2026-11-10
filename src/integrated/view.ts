@@ -1,4 +1,5 @@
-import { Group, Mesh, MeshBasicMaterial, SphereGeometry } from 'three';
+import { Group } from 'three';
+import { MineShell } from '../visuals/mine-shell.ts';
 import type { Scene } from 'three';
 import { ResourceOwner } from '../assets/resources.ts';
 import type { GameModel } from '../core/game-model.ts';
@@ -10,19 +11,20 @@ import { MINE } from '../experiments/moving-mine/settings.ts';
 import { isMine } from '../experiments/moving-mine/motion.ts';
 import type { IntegratedModel } from './model.ts';
 
-/** One borrowed GLB, one warning lamp, no public diagnostic panel. */
+/** Borrowed licensed core with pooled technical armor and phase emitters. */
 export class IntegratedView {
   readonly root = new Group();
   private readonly flow: ReturnType<typeof releaseView>;
   private readonly resources = new ResourceOwner();
   private readonly mine = new Group();
-  private readonly lamp = new Mesh(new SphereGeometry(.18, 8, 6), new MeshBasicMaterial({ color: 0xff481c }));
+  private readonly shell: MineShell;
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   private slots: readonly Group[] = [];
   private reveal?:ObjectReveal;
   private revealTarget?:RevealTarget;
   constructor(scene: Scene, assets: MineAssetManager) {
     this.flow = releaseView(scene);
-    this.mine.add(assets.cloneMine()); this.lamp.position.set(0, .15, .72); this.mine.add(this.lamp);
+    this.shell = new MineShell(assets.cloneMine()); this.mine.add(this.shell.root);
     this.mine.name = 'integrated-adaptive-mine'; this.mine.scale.setScalar(MINE.radius);
     this.root.add(this.mine); scene.add(this.root); this.resources.track(this.root, assets.resources);
   }
@@ -37,9 +39,7 @@ export class IntegratedView {
       if (h.active && (this.reveal?.mode==='seamless'||model.homing.current?.phase !== 'waiting')) {
         this.mine.visible = true; this.mine.position.set(h.x, h.y, h.z);
         const target=this.revealTarget;if(target&&this.reveal&&h.planned)this.reveal.apply(target,h.planned.id,target.id===h.planned.id?target.birth:publicationElapsed(model,h.planned.id),-h.z);
-        this.lamp.visible=model.homing.current?.phase!=='waiting';
-        const pulse = model.homing.current?.phase === 'warning' ? .55 + .45 * Math.sin(model.elapsed * Math.PI * 3) ** 2 : 1;
-        this.lamp.material.color.setRGB(pulse, .12 * pulse, .025 * pulse);
+        this.shell.update(model.homing.current?.phase ?? 'waiting', model.elapsed, this.reducedMotion.matches);
       }
     }
   }

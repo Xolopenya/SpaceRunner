@@ -52,17 +52,17 @@ test('new certified debris starts at zero coverage, advances without transparenc
   await page.locator('#pause').click();await page.locator('#restart-pause').click();await advance(page, 48);
   expect(await page.evaluate(id => (window.spaceRunner!.world.reveal.diagnostic(id) as any).coverage, first.id)).toBe(0);
 });
-test('mine distant hull precedes its unchanged red warning; pause/resume retains warp and reveal clocks', async ({ page }) => {
+test('mine idle emitters precede amber warning at the unchanged tick; pause/resume retains signals, warp and reveal clocks', async ({ page }) => {
   await boot(page);await advance(page, 3000);
-  const waiting = await page.evaluate(() => { const g = window.spaceRunner! as any;return { phase: g.model.homing.current?.phase, body: g.world.collisionDebug.mine.visible, lamp: g.world.collisionDebug.lamp.visible }; });
-  expect(waiting.phase).toBe('waiting');expect(waiting.body).toBe(true);expect(waiting.lamp).toBe(false);
+  const waiting = await page.evaluate(() => { const g = window.spaceRunner! as any;return { phase: g.model.homing.current?.phase, body: g.world.collisionDebug.mine.visible, color: g.world.collisionDebug.shell.signals.material.color.toArray() }; });
+  expect(waiting.phase).toBe('waiting');expect(waiting.body).toBe(true);expect(waiting.color[0]).toBeLessThan(waiting.color[1]);
   const warning = await page.evaluate(() => { const g = window.spaceRunner! as any, m = g.model;
     while (m.homing.current?.phase === 'waiting') { const w = m.field.certificate;let t = w ? Math.round((m.elapsed - w.context.elapsed) * 120) : 0, axis = { x: 0, y: 0 };for (const r of w?.controls ?? []) { if (t < r.ticks) { axis = r.input;break; }t -= r.ticks; }m.step(1 / 120, axis); }
     g.world.render(m, 0);const h = m.field.slots.find((s: any) => s.active && s.kind === 9);
-    return { tick: m.homing.current.tick, warningTick: h.planned.motion.warningTick, body: g.world.collisionDebug.mine.visible, lamp: g.world.collisionDebug.lamp.visible, coverage: g.world.reveal.diagnostic(h.planned.id).coverage, hull: m.hull }; });
-  expect(warning.tick).toBe(warning.warningTick);expect(warning.body).toBe(true);expect(warning.lamp).toBe(true);expect(warning.coverage).toBe(1);expect(warning.hull).toBe(3);
+    return { tick: m.homing.current.tick, warningTick: h.planned.motion.warningTick, body: g.world.collisionDebug.mine.visible, color: g.world.collisionDebug.shell.signals.material.color.toArray(), coverage: g.world.reveal.diagnostic(h.planned.id).coverage, hull: m.hull }; });
+  expect(warning.tick).toBe(warning.warningTick);expect(warning.body).toBe(true);expect(warning.color[0]).toBeGreaterThan(warning.color[1]);expect(warning.color[1]).toBeGreaterThan(warning.color[2]);expect(warning.coverage).toBe(1);expect(warning.hull).toBe(3);
   await page.locator('#pause').click();
-  const frozen = await page.evaluate(() => { const g = window.spaceRunner! as any, sample = () => JSON.stringify({ mine: g.model.homing.current, uniforms: g.world.boundaries.warp.sides.map((s: any) => s.material.uniforms), age: g.world.reveal.banks.map((b: any) => b.age.value) });const before = sample();for (let i = 0; i < 120; i++) g.world.render(g.model, 1 / 30);return before === sample(); });
+  const frozen = await page.evaluate(() => { const g = window.spaceRunner! as any, sample = () => JSON.stringify({ mine: g.model.homing.current, signals: g.world.collisionDebug.shell.signals.material.color.toArray(), uniforms: g.world.boundaries.warp.sides.map((s: any) => s.material.uniforms), age: g.world.reveal.banks.map((b: any) => b.age.value) });const before = sample();for (let i = 0; i < 120; i++) g.world.render(g.model, 1 / 30);return before === sample(); });
   expect(frozen).toBe(true);await page.locator('#resume').click();await expect(page.locator('#game')).toHaveAttribute('data-state', 'PLAYING');
 });
 for (const cadence of [2, 4, 12]) test(`visual lifecycle stays bounded at ${cadence} simulation ticks per render and responsive resize`, async ({ page }) => {
