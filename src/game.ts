@@ -10,6 +10,7 @@ import { AssetManager } from './assets/asset-manager.ts';
 import type { ColliderDebugFactory } from './debug/types.ts';
 import { AudioManager } from './audio/audio-manager.ts';
 import { SoundPanel } from './audio/sound-panel.ts';
+import { FeedbackOrchestrator } from './feedback/orchestrator.ts';
 
 export class Game {
   readonly model: GameModel;
@@ -26,6 +27,7 @@ export class Game {
   private pauseReason = 'Your flight is paused.';
   private contextLost = false;
   private readonly assets: AssetManager;
+  readonly feedback: FeedbackOrchestrator;
 
   constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory, model: GameModel = new GameModel()) {
     this.model = model;
@@ -34,6 +36,13 @@ export class Game {
     const canvas = element<HTMLCanvasElement>('flight');
     canvas.tabIndex = 0;
     this.world = new World(canvas, assets, debugFactory);
+    this.feedback = new FeedbackOrchestrator(this.model.events, {
+      reset: () => { this.world.clearFeedback(); this.audio.clearFeedback(); },
+      contact: (event, preset) => this.world.feedback(event, preset),
+      sound: cue => this.audio.playCue(cue),
+      gameOver: delay => this.audio.play('gameOver', delay),
+      hud: event => this.ui.feedback(event),
+    });
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     this.soundPanel = new SoundPanel(this.audio);
     const options = { signal: this.events.signal };
@@ -90,8 +99,13 @@ export class Game {
         (this.model as GameModel & {beginPlanningFrame?:()=>void}).beginPlanningFrame?.();planningFrameStarted=true;
       }
       this.model.step(dt,this.input.axis);
+      this.model.events.flush();
+      this.feedback.flush();
     }, dt => {
       (this.model as GameModel & {finishPlanningFrame?:(dt:number)=>void}).finishPlanningFrame?.(dt);planningFrameStarted=false;
+      this.model.events.flush();
+      this.feedback.flush();
+      this.feedback.update(this.model.state, dt);
       this.syncState();
       this.audio.update(this.model);
       this.soundPanel.update();
@@ -111,8 +125,11 @@ export class Game {
     const seed = Number.isFinite(parsed) ? parsed >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0]!;
     this.input.clear();
     this.audio.resetRun();
+    this.model.setRecordBaseline(this.platform.scores.best);
     this.model.start(seed);
     this.world.reset();
+    this.model.events.flush();
+    this.feedback.flush();
     this.syncState();
     this.audio.activate('launch');
   }
@@ -151,6 +168,7 @@ export class Game {
 
   dispose(): void {
     this.loop.stop();
+    this.feedback.dispose();
     (this.model as GameModel & { dispose?: () => void }).dispose?.();
     this.input.dispose();
     this.events.abort();

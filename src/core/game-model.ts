@@ -3,10 +3,21 @@ import { HazardCollision } from './hazard-collision.ts';
 import { ObstacleField } from './obstacles.ts';
 import { Ship } from './ship.ts';
 import type { Axis } from './ship.ts';
+// FEEDBACK-001A instrumentation begin
+import { GameEvents } from '../events/game-events.ts';
+// FEEDBACK-001A instrumentation end
 
 export type GameState = 'LOADING' | 'MENU' | 'PLAYING' | 'PAUSED' | 'GAME_OVER';
 
 export class GameModel {
+  // FEEDBACK-001A instrumentation begin
+  readonly events = new GameEvents();
+  runId = 0;
+  private previousBest = 0;
+  private recordAnnounced = false;
+  setRecordBaseline(best: number): void { this.previousBest = Number.isFinite(best) ? Math.max(0, best) : 0; }
+  dispose(): void { this.events.dispose(); }
+  // FEEDBACK-001A instrumentation end
   state: GameState = 'LOADING';
   readonly ship = new Ship();
   readonly field = new ObstacleField();
@@ -33,6 +44,12 @@ export class GameModel {
     this.elapsed = this.distance = this.invulnerability = this.hitSerial = 0;
     this.hull = CONFIG.ship.hull;
     this.state = 'PLAYING';
+    // FEEDBACK-001A instrumentation begin
+    this.events.clear();
+    this.runId++;
+    this.recordAnnounced = false;
+    this.events.emit('run.started', { runId: this.runId, elapsed: 0, seed: this.seed });
+    // FEEDBACK-001A instrumentation end
   }
 
   pause(): void { if (this.state === 'PLAYING') this.state = 'PAUSED'; }
@@ -49,6 +66,12 @@ export class GameModel {
     this.distance += travel;
     this.invulnerability = Math.max(0, this.invulnerability - dt);
     this.field.update(dt, this.speed, this.distance, this.elapsed);
+    // FEEDBACK-001A instrumentation begin
+    if (!this.recordAnnounced && this.score > this.previousBest) {
+      this.recordAnnounced = true;
+      this.events.emit('score.recordBroken', { runId: this.runId, elapsed: this.elapsed, previousBest: this.previousBest, score: this.score });
+    }
+    // FEEDBACK-001A instrumentation end
     if (this.invulnerability > 0) return;
     for (const hazard of this.field.hazards) {
       if (!hazard.active) continue;
@@ -64,6 +87,21 @@ export class GameModel {
         this.hitSerial++;
         this.invulnerability = CONFIG.ship.invulnerability;
         if (this.hull <= 0) this.state = 'GAME_OVER';
+        // FEEDBACK-001A instrumentation begin
+        const context = {
+          runId: this.runId, elapsed: this.elapsed, source: 'obstacle' as const,
+          obstacleKind: hazard.kind, obstacleId: (hazard as typeof hazard & { planned?: { id: string } }).planned?.id,
+          position: Object.freeze({ x: this.ship.x, y: this.ship.y, z: 0 }),
+          obstaclePosition: Object.freeze({ x: hazard.x, y: hazard.y, z: hazard.z }),
+          velocity: Object.freeze({ x: this.ship.vx, y: this.ship.vy }),
+        };
+        this.events.emit('obstacle.collision', { ...context, damageApplied: true });
+        this.events.emit('player.damage', { ...context, previousHP: this.hull + 1, currentHP: this.hull });
+        if (this.hull <= 0) {
+          this.events.emit('player.destroyed', { ...context, score: this.score });
+          this.events.emit('run.ended', { runId: this.runId, elapsed: this.elapsed, reason: 'destroyed', score: this.score, seed: this.seed });
+        }
+        // FEEDBACK-001A instrumentation end
         break;
       }
     }

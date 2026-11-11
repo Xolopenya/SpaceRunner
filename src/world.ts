@@ -17,6 +17,9 @@ import type { RevealTarget } from './visuals/object-reveal.ts';
 import type { RevealMode } from './visuals/reveal-settings.ts';
 import type { BoundaryMode } from './visuals/warp-corridor.ts';
 import { CAMERA, FlightCamera } from './camera/flight-camera.ts';
+import type { ReactionEvent } from './feedback/orchestrator.ts';
+import type { FeedbackPreset } from './feedback/settings.ts';
+import { CameraImpulse } from './feedback/camera-impulse.ts';
 
 export class World {
   readonly renderer: THREE.WebGLRenderer;
@@ -34,6 +37,7 @@ export class World {
   private readonly engines: EngineVFX;
   private readonly impacts: ImpactVFX;
   private readonly fragments: FragmentView;
+  private readonly cameraImpulse = new CameraImpulse();
   private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   private readonly coarsePointer = window.matchMedia('(pointer: coarse)');
   private quality = visualQuality(1280, 800, false, false);
@@ -103,6 +107,22 @@ export class World {
     this.fragments.reset();
     this.ship.rotation.set(0, 0, 0);
     this.flightCamera.reset();
+    this.cameraImpulse.reset();
+  }
+
+  feedback(event: ReactionEvent, preset: FeedbackPreset): void {
+    if (this.disposed) return;
+    if (event.type === 'collectible.collected') this.fragments.trigger(event.payload, preset);
+    else {
+      this.impacts.trigger(event.payload.position, event.payload.velocity.x, event.payload.velocity.y, preset);
+      this.cameraImpulse.trigger(preset);
+    }
+  }
+
+  clearFeedback(): void {
+    this.impacts.cancel();
+    this.fragments.cancel();
+    this.cameraImpulse.reset();
   }
 
   render(model: GameModel, dt: number): void {
@@ -135,8 +155,11 @@ export class World {
     this.background.update(model.distance, model.speed, this.quality);
     this.fragments.update(model, this.quality.reducedMotion);
     this.engines.update(visualDelta(model.state, dt), model.state, model.speed, this.quality);
-    this.impacts.update(model.hitSerial, this.ship.position, model.ship.vx, model.ship.vy, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, dt, true), this.quality);
-    const shake = model.state === 'PLAYING' ? this.impacts.remaining * 0.08 : 0;
+    this.impacts.update(this.ship.position, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, dt, true), this.quality);
+    this.cameraImpulse.update(model.state, dt);
+    // Hybrid/Full Chase reconstruct both endpoints; the historical DEV baseline
+    // has an accumulating recurrence, so it deliberately receives no impulse.
+    const shake = (model.state === 'PLAYING' || model.state === 'PAUSED') && !this.quality.reducedMotion && this.flightCamera.mode !== 'baseline' ? this.cameraImpulse.amplitude : 0;
     this.flightCamera.update(model.ship.x, model.ship.y, model.elapsed, shake, dt);
     this.collisionDebug?.update(model);
     this.renderer.render(this.scene, this.camera);

@@ -9,6 +9,7 @@ import { FRAGMENT as S } from './settings.ts';
 import { BODY_COLLIDER } from '../core/ship-collider.ts';
 import type { ShipColliderProfile, ShipColliderPart } from '../core/ship-collider.ts';
 import { ShipHazardCollision } from '../core/ship-hazard-collision.ts';
+import type { GameEventMap } from '../events/game-events.ts';
 
 interface PickupFeedback { x:number; y:number; distance:number; elapsed:number; z?:number; slot?:number; assisted?:boolean; part?:ShipColliderPart['id'] }
 type PickupHazard = PlannedHazard | { readonly planned?: PlannedHazard };
@@ -33,6 +34,8 @@ export class FragmentRun {
   readonly pickupProfile:ShipColliderProfile;
   readonly pickupAssist:number;
   readonly wingPickupAssist:number;
+  /** Bound by the owning model, invoked once per accepted pickup, including same-tick pickups. */
+  onCollected?: (pickup: Omit<GameEventMap['collectible.collected'], 'runId'>) => void;
   constructor(pickupProfile:ShipColliderProfile=BODY_COLLIDER,pickupAssist=0,wingPickupAssist=0) {
     this.pickupProfile=pickupProfile;this.pickupAssist=pickupAssist;this.wingPickupAssist=wingPickupAssist;
   }
@@ -92,6 +95,9 @@ export class FragmentRun {
       if (contact) {
         slot.state = 'collected'; this.count++; this.stats.collected++;
         this.lastPickup = { x: p.x, y: p.y, z:distance-p.passDistance,distance,elapsed,slot:index,assisted:this.pickupAssist>0,part:contact.id };
+        this.onCollected?.({ elapsed, item: 'energy-fragment', itemId: p.id,
+          position: Object.freeze({ x: p.x, y: p.y, z: distance - p.passDistance }),
+          reward: 1, total: this.count, assisted: this.pickupAssist > 0 });
       } else if (distance - p.passDistance > CONFIG.hazards.despawnZ) { slot.state = 'retired'; this.stats.retired++; }
       if (slot.state !== 'active') slot.proposal = undefined;
     }

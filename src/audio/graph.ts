@@ -66,7 +66,7 @@ class EngineAudio {
   }
 }
 
-interface Voice { source: AudioBufferSourceNode; critical: boolean }
+interface Voice { source: AudioBufferSourceNode; critical: boolean; gain?: GainNode }
 
 /** Native graph also used unchanged by OfflineAudioContext review captures. */
 export class AudioGraph {
@@ -128,7 +128,7 @@ export class AudioGraph {
     if (this.state === 'PLAYING') this.engine.update(speed, vx, vy, this.context.currentTime);
   }
 
-  play(kind: Sound, delay = 0): void {
+  play(kind: Sound, delay = 0, options?: { readonly rate: number; readonly gain: number }): void {
     if (this.disposed) return;
     const critical = kind === 'destruction' || kind === 'gameOver';
     if (this.voices.size >= AUDIO.maxVoices) {
@@ -138,8 +138,11 @@ export class AudioGraph {
     }
     const source = this.context.createBufferSource();
     source.buffer = this.buffers.get(kind)!;
-    source.connect(this.sfxBus);
-    const voice = { source, critical };
+    if (options) source.playbackRate.value = options.rate;
+    const gain = options && options.gain !== 1 ? this.context.createGain() : undefined;
+    if (gain) { gain.gain.value = options!.gain; source.connect(gain).connect(this.sfxBus); }
+    else source.connect(this.sfxBus);
+    const voice = { source, critical, gain };
     this.voices.add(voice);
     this.counts[kind]++;
     source.onended = () => this.release(voice, false);
@@ -151,6 +154,7 @@ export class AudioGraph {
     voice.source.onended = null;
     if (stop) voice.source.stop();
     voice.source.disconnect();
+    voice.gain?.disconnect();
     voice.source.buffer = null;
   }
 

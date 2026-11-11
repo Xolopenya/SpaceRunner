@@ -12,6 +12,7 @@ class Parameter {
 
 class Node {
   gain = new Parameter(); frequency = new Parameter(); Q = new Parameter();
+  playbackRate = new Parameter();
   threshold = new Parameter(); knee = new Parameter(); ratio = new Parameter(); attack = new Parameter(); release = new Parameter();
   type = ''; loop = false; buffer: unknown = null; onended: (() => void) | null = null;
   connected = false;
@@ -48,15 +49,16 @@ const storage = () => new AudioSettingsStorage(() => ({ getItem: () => null, set
 const frame = () => ({ state: 'PLAYING', speed: 20, ship: { vx: 0, vy: 0 }, hitSerial: 0, hull: 3 });
 const graph = (manager: AudioManager) => (manager as unknown as { graph: import('../src/audio/graph.ts').AudioGraph }).graph;
 
-test('pickup chime consumes each counter change once and respects independent Master/SFX/mute', async () => {
+test('explicit pickup cues respect independent Master/SFX/mute and never replay muted requests', async () => {
   const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
-  await audio.unlock(); const submit = (count: number) => audio.update({ ...frame(), fragments: { count } } as Parameters<AudioManager['update']>[0]);
-  submit(0); submit(1); submit(1); assert.equal(graph(audio).counts.pickup, 1);
+  await audio.unlock();
+  const cue = { variants: ['pickup'] as const, gain: 1, rate: [1, 1] as const };
+  audio.playCue(cue); audio.update(frame()); assert.equal(graph(audio).counts.pickup, 1);
   audio.setSettings({ master: .3, sfx: .4, music: .8 });
   assert.equal(graph(audio).master.gain.value, .3 * AUDIO.headroom); assert.equal(graph(audio).sfxBus.gain.value, .4);
-  audio.setSettings({ muted: true }); submit(2); audio.setSettings({ muted: false }); submit(2);
+  audio.setSettings({ muted: true }); audio.playCue(cue); audio.setSettings({ muted: false }); audio.update(frame());
   assert.equal(graph(audio).counts.pickup, 1); assert.equal(graph(audio).musicBus.gain.value, .8);
-  audio.resetRun(); submit(0); submit(1); assert.equal(graph(audio).counts.pickup, 2); audio.dispose();
+  audio.resetRun(); audio.playCue(cue); assert.equal(graph(audio).counts.pickup, 2); audio.dispose();
 });
 
 test('audio defaults, clamping, mute and gain headroom are safe', () => {
@@ -126,14 +128,17 @@ test('menu music reacts immediately to settings and menu return reuses the same 
   assert.ok(music.musicLevel.gain.value > 0); audio.dispose();
 });
 
-test('one impact per damage serial, distinct final sounds, bounded voices and completed cleanup', async () => {
+test('explicit contacts, distinct final sounds, bounded voices and completed cleanup', async () => {
   const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
   const model = frame(); audio.update(model); await audio.unlock();
   model.hitSerial = 1; model.hull = 2;
+  audio.play('impact');
   for (let i = 0; i < 100; i++) audio.update(model);
   assert.equal(graph(audio).counts.impact, 1);
   model.hitSerial = 2; model.hull = 1; audio.update(model);
+  audio.play('impact');
   model.hitSerial = 3; model.hull = 0; model.state = 'GAME_OVER';
+  audio.play('destruction'); audio.play('gameOver', .55);
   for (let i = 0; i < 100; i++) audio.update(model);
   assert.equal(graph(audio).counts.impact, 2); assert.equal(graph(audio).counts.destruction, 1); assert.equal(graph(audio).counts.gameOver, 1);
   for (let i = 0; i < 50; i++) audio.play('click');
@@ -163,7 +168,7 @@ test('unavailable or rejected Web Audio remains silent and consumes stale hit ev
   const context = new Context(); context.resumeAction = () => Promise.reject(new Error('blocked'));
   const audio = new AudioManager(storage(), () => context as unknown as AudioContext);
   const model = frame(); audio.update(model); await audio.unlock(); assert.equal(audio.status, 'blocked');
-  model.hitSerial = 1; model.hull = 2; audio.update(model);
+  model.hitSerial = 1; model.hull = 2; audio.update(model); audio.play('impact');
   context.resumeAction = undefined; await audio.unlock(); audio.update(model);
   assert.equal(graph(audio).counts.impact, 0); audio.dispose();
 });
@@ -174,6 +179,28 @@ test('late resume after disposal cannot initialize or revive audio', async () =>
   const audio = new AudioManager(storage(), () => context as unknown as AudioContext);
   const pending = audio.unlock(); audio.dispose(); complete(); await pending;
   assert.equal(context.starts, 0); assert.equal(audio.status, 'disposed');
+});
+
+test('cue variants apply bounded pitch/gain, release nodes and do not consume gameplay randomness', async () => {
+  const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
+  audio.update(frame()); await audio.unlock();
+  audio.playCue({ variants: ['impact', 'pickup'], gain: .5, rate: [.9, 1.1] }, 1);
+  const voice = [...graph(audio).voices][0]!;
+  assert.equal(graph(audio).counts.pickup, 1); assert.equal(voice.source.playbackRate.value, 1.1);
+  assert.equal(voice.gain?.gain.value, .5);
+  const gain = voice.gain as unknown as Node; (voice.source as unknown as Node).finish();
+  assert.equal(gain.connected, false); assert.equal(graph(audio).voices.size, 0); audio.dispose();
+});
+
+test('run reset invalidates an unfinished gesture cue and cancels scheduled old game-over voices', async () => {
+  const context = new Context(); let finish!: () => void;
+  context.resumeAction = () => new Promise<void>(resolve => { finish = resolve; });
+  const audio = new AudioManager(storage(), () => context as unknown as AudioContext);
+  audio.update(frame()); audio.activate('launch'); audio.resetRun(); finish();
+  await new Promise<void>(resolve => setTimeout(resolve, 0));
+  context.resumeAction = undefined; await audio.unlock(); assert.equal(graph(audio).counts.launch, 0);
+  audio.play('gameOver', .55); assert.equal(graph(audio).voices.size, 1);
+  audio.resetRun(); assert.equal(graph(audio).voices.size, 0); audio.dispose();
 });
 
 test('partial graph allocation failure closes the context and releases started sources', async () => {

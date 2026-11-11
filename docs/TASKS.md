@@ -1,5 +1,13 @@
 # Delivery checklist
 
+## FEEDBACK-001A — Game Feel & Feedback Foundation, 2026-11-11
+
+- [x] Audited the actual fixed loop, collision/health, fragment, director, audio, camera, HUD and reset paths. Branched from VISUAL-007B `8edfec0`; preserved unrelated user files.
+- [x] Added bounded typed facts and one coordinator using existing VFX/SFX pools, Hybrid scalar camera response and HUD; removed independent contact-counter polling. No control/collider/generation/balance/reward changes.
+- [x] Three real scenarios, priority, pause/recovery, per-run identities, clear/dispose and sound variants are integrated. Added focused and regression tests; reports and reproducible preservation/performance/package tooling accompany delivery.
+- [x] Final318 unit tests,109 browser tests in one clean11.3-minute run, typecheck/build and126-path preservation pass. Sequential2400-frame Chrome comparison retains16.9ms RAF p95 and exact endpoint state; portrait CPU p95 changes2.8→3.1ms. Ten UI restarts retain resources/subscriptions. Initial two report-directory ENOENT failures and successful repeat are documented.
+- [ ] Owner subjective/physical-phone playtest and any future remote push/merge/deployment remain separate.
+
 ## VISUAL-007B — station materials and contained energy shard, 2026-11-10
 
 - [x] Branched `feature/visual-007b-station-crystal-polish` from exact007A `552740c3b8ae0927b2caff9c89f2fcc5b7ac897d`; its parent is RELEASE-007 follow-up `d5b02d8`, grandparent `88c557a`. Unrelated user files preserved; no main merge or deployment.

@@ -6,6 +6,9 @@ import type { ObjectReveal, RevealTarget } from '../visuals/object-reveal.ts';
 import { FRAGMENT as S } from './settings.ts';
 import { fragmentsOf } from './state.ts';
 import { shardResources } from './shard-model.ts';
+import type { PickupEvent } from '../feedback/orchestrator.ts';
+import type { FeedbackPreset } from '../feedback/settings.ts';
+import { FEEDBACK } from '../feedback/settings.ts';
 
 /** Fixed mesh pool; three shared geometries, four materials including the burst. */
 export class FragmentView {
@@ -13,8 +16,8 @@ export class FragmentView {
   private readonly resources = new ResourceOwner();
   private readonly meshes: THREE.Group[] = [];
   private readonly burst: THREE.Mesh;
-  private serial = 0;
   private burstAt = -1;
+  private burstPreset: FeedbackPreset = FEEDBACK.pickup;
   private disposed = false;
   private readonly reveal?:ObjectReveal;
   private readonly revealTargets:RevealTarget[]=[];
@@ -33,10 +36,16 @@ export class FragmentView {
     scene.add(this.root); this.resources.track(this.root);
   }
   reset(): void {
-    this.serial = 0; this.burstAt = -1;
+    this.burstAt = -1;
     for (const mesh of this.meshes) mesh.visible = false;
     this.burst.visible = false;
   }
+  trigger(event: PickupEvent, preset: FeedbackPreset): void {
+    this.burstAt = event.elapsed;
+    this.burstPreset = preset;
+    this.burst.position.set(event.position.x, event.position.y, event.position.z);
+  }
+  cancel(): void { this.burstAt = -1; this.burst.visible = false; }
   update(model: GameModel, reducedMotion: boolean): void {
     if (this.disposed) return;
     const run = fragmentsOf(model);
@@ -63,18 +72,13 @@ export class FragmentView {
       mesh.children[0]!.scale.setScalar(1 + .07 * Math.sin(time * 3 + i));
       mesh.children[2]!.rotation.y = -mesh.rotation.y;
     }
-    if (run.count < this.serial) this.reset();
-    if (run.count > this.serial) {
-      this.burstAt = run.lastPickup.elapsed+(run.lastPickup.assisted?S.magnetSeconds:0);
-      this.burst.position.set(run.lastPickup.x, run.lastPickup.y, 0);
-    }
-    this.serial = run.count;
     const age = model.elapsed - this.burstAt;
-    if(run.lastPickup.assisted&&age>=-S.magnetSeconds&&age<S.burstSeconds)this.burst.position.set(model.ship.x,model.ship.y,0);
-    this.burst.visible = this.burstAt >= 0 && age >= 0 && age < S.burstSeconds;
+    // Keep the contact ring at the collection point; the existing assisted mesh
+    // attraction remains a separate, authoritative presentation of lastPickup.
+    this.burst.visible = this.burstAt >= 0 && age >= 0 && age < this.burstPreset.duration;
     if (this.burst.visible) {
       this.burst.scale.setScalar(1 + age * (reducedMotion ? 1 : 5));
-      (this.burst.material as THREE.MeshBasicMaterial).opacity = .85 * (1 - age / S.burstSeconds);
+      (this.burst.material as THREE.MeshBasicMaterial).opacity = this.burstPreset.flash * this.burstPreset.intensity * (1 - age / this.burstPreset.duration);
     }
   }
   dispose(): void { if (this.disposed) return; this.disposed = true; this.root.removeFromParent(); this.resources.dispose(); }

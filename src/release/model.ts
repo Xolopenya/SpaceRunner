@@ -33,6 +33,7 @@ export class ReleaseModel extends RuntimeGameModel {
   const selected=encounterSource??source;
   super('baseline',{...selected,published(transaction,root){selected.published?.(transaction,root);if(encounterSource&&!transaction.hazards.some(h=>h.motion))owner.fragments.published(transaction,root,owner.field.ledger.knownHazards(root.distance));}},true);
   owner=this;
+  this.fragments.onCollected = pickup => this.events.emit('collectible.collected', { ...pickup, runId: this.runId });
  }
  get phase():1|2{return this.distance>=RELEASE.phase2Distance?2:1;}
  override get speed():number{return flightSpeed(this.elapsed,this.distance,true);}
@@ -42,10 +43,13 @@ export class ReleaseModel extends RuntimeGameModel {
  }
  override step(dt:number,axis:Axis):void{
   const playing=this.state==='PLAYING',x=this.ship.x,y=this.ship.y,distance=this.distance;
+  const previousPhase = this.phase;
   super.step(dt,axis);
   if(playing&&this.distance>distance)this.fragments.step(x,y,distance,this.ship.x,this.ship.y,this.distance,this.elapsed,this.field.slots);
+  if (playing && previousPhase === 1 && this.phase === 2) this.events.emit('game.phaseChanged', {
+    runId: this.runId, elapsed: this.elapsed, scope: 'progression', previous: 1, current: 2 });
  }
- override dispose():void{this.fragments.reset();this.collisions.reset();super.dispose();}
+ override dispose():void{this.fragments.onCollected=undefined;this.fragments.reset();this.collisions.reset();super.dispose();}
 }
 /** Production visuals reuse the real wreck renderer, without diagnostic panels. */
 export const releaseView=(scene:ConstructorParameters<typeof StructureVariantsView>[0])=>{

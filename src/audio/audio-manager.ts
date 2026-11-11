@@ -3,12 +3,11 @@ import { AudioSettingsStorage, normalizeSettings } from './settings.ts';
 import type { AudioSettings } from './settings.ts';
 import type { Sound } from './synthesis.ts';
 import type { GameState } from '../core/game-model.ts';
+import type { SoundCue } from '../feedback/settings.ts';
 
 export interface AudioFrame {
   readonly state: GameState; readonly speed: number;
   readonly ship: { readonly vx: number; readonly vy: number };
-  readonly hitSerial: number; readonly hull: number;
-  readonly fragments?: { readonly count: number };
 }
 export type AudioStatus = 'locked' | 'running' | 'muted' | 'blocked' | 'unavailable' | 'suspended' | 'disposed';
 type ContextFactory = () => AudioContext;
@@ -25,8 +24,6 @@ export class AudioManager {
   private unavailable = false;
   private blocked = false;
   private generation = 0;
-  private serial = 0;
-  private pickupSerial = 0;
   private frame?: AudioFrame;
 
   constructor(preferences = new AudioSettingsStorage(), createContext: ContextFactory = () => new AudioContext({ latencyHint: 'interactive' })) {
@@ -87,27 +84,29 @@ export class AudioManager {
   update(frame: AudioFrame): void {
     if (this.disposed) return;
     this.frame = frame;
-    const hit = frame.hitSerial > this.serial;
-    const restart = frame.hitSerial < this.serial;
-    this.serial = frame.hitSerial; // Consume while locked/muted; never replay stale hits.
-    const count = frame.fragments?.count ?? 0, pickup = count > this.pickupSerial;
-    this.pickupSerial = count;
     const graph = this.graph;
     try {
-      if (restart) graph?.clearVoices();
       graph?.setState(frame.state);
       if (!graph || this.status !== 'running') return;
       graph.update(frame.speed, frame.ship.vx, frame.ship.vy);
-      if (pickup) graph.play('pickup');
-      if (hit) {
-        if (frame.hull <= 0) { graph.play('destruction'); graph.play('gameOver', 0.55); }
-        else graph.play('impact');
-      }
     } catch { this.disable(); }
   }
 
-  play(kind: Sound): void {
-    try { if (this.status === 'running') this.graph?.play(kind); }
+  play(kind: Sound, delay = 0): void {
+    try { if (this.status === 'running') this.graph?.play(kind, delay); }
+    catch { this.disable(); }
+  }
+
+  /** Variation is presentation-only and supplied by the caller, never gameplay RNG.
+   * Locked/muted requests are discarded immediately, without a deferred queue. */
+  playCue(cue: SoundCue, variation = .5): void {
+    const value = Number.isFinite(variation) ? Math.max(0, Math.min(1, variation)) : .5;
+    const kind = cue.variants[Math.min(cue.variants.length - 1, Math.floor(value * cue.variants.length))];
+    if (!kind) return;
+    const rate = Math.max(.5, Math.min(2, cue.rate[0] + (cue.rate[1] - cue.rate[0]) * value));
+    const gain = Math.max(0, Math.min(1, cue.gain));
+    if (!Number.isFinite(rate) || !Number.isFinite(gain)) return;
+    try { if (this.status === 'running') this.graph?.play(kind, 0, { rate, gain }); }
     catch { this.disable(); }
   }
 
@@ -119,10 +118,12 @@ export class AudioManager {
   }
 
   resetRun(): void {
-    this.serial = 0;
-    this.pickupSerial = 0;
+    this.generation++;
+    this.pending = undefined;
     try { this.graph?.clearVoices(); } catch { this.disable(); }
   }
+
+  clearFeedback(): void { try { this.graph?.clearVoices(); } catch { this.disable(); } }
 
   background(): void {
     this.foreground = false;

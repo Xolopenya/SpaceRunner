@@ -8,6 +8,8 @@ import { ImpactVFX } from '../src/visuals/impact-vfx.ts';
 import { SpaceBackground } from '../src/visuals/space-background.ts';
 import { VISUALS, visualDelta, visualQuality } from '../src/visuals/settings.ts';
 import { GameModel } from '../src/core/game-model.ts';
+import { withoutFeedbackInstrumentation } from './fixtures/feedback-instrumentation.ts';
+import { FEEDBACK } from '../src/feedback/settings.ts';
 
 const quality = visualQuality(1280, 800, false, false);
 // LF-normalized hashes measured from approved d3d3aaaaaf0c7af52e4043cf57c15899ce77147e.
@@ -30,7 +32,7 @@ const approvedFiles: Record<string, string> = {
 const hash = (source: string) => createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex');
 
 test('VFX preserves approved movement, collision, spawning, input, loop and camera formulas', () => {
-  for (const [file, approvedHash] of Object.entries(approvedFiles)) assert.equal(hash(readFileSync(file, 'utf8')), approvedHash, file);
+  for (const [file, approvedHash] of Object.entries(approvedFiles)) assert.equal(hash(file === 'src/core/game-model.ts' ? withoutFeedbackInstrumentation(readFileSync(file, 'utf8')) : readFileSync(file, 'utf8')), approvedHash, file);
   let newWorld = readFileSync('src/world.ts', 'utf8');
   // CAMERA-001 extracts the presentation camera into FlightCamera. Reverse ONLY
   // those three call-site moves to retain the original approved source digest;
@@ -102,20 +104,22 @@ test('trail length is stable at 30, 60 and 144 FPS without accumulated sample gr
   assert.ok(Math.max(...lengths) - Math.min(...lengths) < 0.26, String(lengths));
 });
 
-test('impact emits once per hitSerial, freezes, finishes after death and resets its bounded pool', () => {
+test('explicit impact contact freezes, finishes after death and resets its bounded pool', () => {
   const impacts = new ImpactVFX(new Scene()), ship = new Vector3(1, 2, 0);
   const inspect = impacts as unknown as { emissions: number };
   const particles = impacts.root.getObjectByName('impact-particles') as Points;
   const identity = particles.geometry.getAttribute('position').array;
-  for (let i = 0; i < 5; i++) impacts.update(1, ship, 3, 0, 1.6, 1, 1 / 60, quality);
+  impacts.trigger(ship, 3, 0, FEEDBACK.damage);
+  for (let i = 0; i < 5; i++) impacts.update(ship, 1.6, 1, 1 / 60, quality);
   assert.equal(inspect.emissions, 1);
   const frozen = Array.from(identity), life = impacts.remaining;
-  impacts.update(1, ship, 3, 0, 1.6, 1, 0, quality);
+  impacts.update(ship, 1.6, 1, 0, quality);
   assert.equal(impacts.remaining, life);
   assert.deepEqual(Array.from(identity), frozen);
-  impacts.update(2, ship, 0, 0, 0, 2, 0.01, quality);
+  impacts.trigger(ship, 0, 0, FEEDBACK.destroyed);
+  impacts.update(ship, 0, 2, 0.01, quality);
   assert.equal(inspect.emissions, 2);
-  for (let i = 0; i < 8; i++) impacts.update(2, ship, 0, 0, 0, 2, visualDelta('GAME_OVER', 0.1, true), quality);
+  for (let i = 0; i < 8; i++) impacts.update(ship, 0, 2, visualDelta('GAME_OVER', 0.1, true), quality);
   assert.equal(impacts.remaining, 0);
   assert.equal(particles.visible, false);
   impacts.reset();

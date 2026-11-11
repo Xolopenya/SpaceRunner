@@ -1,6 +1,8 @@
 import { RELEASE } from './release/settings.ts';
 import { GameModel } from './core/game-model.ts';
 import { fragmentsOf } from './collectibles/state.ts';
+import type { GameEvent } from './events/game-events.ts';
+import { FEEDBACK } from './feedback/settings.ts';
 
 export function element<T extends HTMLElement = HTMLElement>(id: string): T {
   const node = document.getElementById(id);
@@ -40,6 +42,22 @@ export class HUD {
   private lastHull = -1;
   private lastSpeed = -1;
   private lastHit = false;
+  private pickupAt = -1;
+
+  feedback(event: GameEvent): void {
+    switch (event.type) {
+      case 'run.started':
+        this.pickupAt = -1;
+        delete this.game.dataset.damageAt;
+        this.game.dataset.recordBroken = 'false';
+        this.game.dataset.runEnded = 'false';
+        break;
+      case 'collectible.collected': this.pickupAt = event.payload.elapsed; break;
+      case 'player.damage': this.game.dataset.damageAt = String(event.payload.elapsed); break;
+      case 'score.recordBroken': this.game.dataset.recordBroken = 'true'; break;
+      case 'run.ended': this.game.dataset.runEnded = 'true'; break;
+    }
+  }
 
   showState(model: GameModel, best: number, pauseReason: string): void {
     const state = model.state;
@@ -62,9 +80,9 @@ export class HUD {
   }
 
   update(model: GameModel): void {
-    const fragments = fragmentsOf(model), pickupAt = fragments?.lastPickup.elapsed ?? -1;
+    const fragments = fragmentsOf(model), pickupAt = this.pickupAt;
     text(this.energy, String(fragments?.count ?? 0).padStart(2, '0'));
-    this.energyBlock.dataset.pulse = String(pickupAt >= 0 && model.elapsed - pickupAt < .42);
+    this.energyBlock.dataset.pulse = String(pickupAt >= 0 && model.elapsed - pickupAt < FEEDBACK.pickup.duration);
     const phase='phase' in model ? Number(model.phase) : 1;
     if(phase===1){this.phaseShown=1;this.phaseAt=0;}
     if(phase===2&&this.phaseShown===1){this.phaseShown=2;this.phaseAt=model.elapsed;}

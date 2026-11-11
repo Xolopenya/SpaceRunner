@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'feedback', testMatch: 'feedback.spec.ts', timeout: 90_000 },
     { name: 'visuals', testMatch: 'visuals.spec.ts', timeout: 120_000 },
     { name: 'integrated', testMatch: 'integrated.spec.ts', timeout: 120_000 },
     { name: 'camera', testMatch: 'camera.spec.ts', timeout: 90_000 },

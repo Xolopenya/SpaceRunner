@@ -3,8 +3,11 @@ import { Random } from '../core/random.ts';
 import { ResourceOwner } from '../assets/resources.ts';
 import { VISUALS } from './settings.ts';
 import type { VisualQuality } from './settings.ts';
+import { FEEDBACK } from '../feedback/settings.ts';
+import type { FeedbackPreset } from '../feedback/settings.ts';
+import type { EventPosition } from '../events/game-events.ts';
 
-/** Single bounded burst; hitSerial is the only emission signal. */
+/** One reusable burst, explicitly triggered by the feedback coordinator. */
 export class ImpactVFX {
   readonly root = new THREE.Group();
   private readonly resources = new ResourceOwner();
@@ -12,9 +15,9 @@ export class ImpactVFX {
   private readonly shield: THREE.Mesh;
   private readonly flash: THREE.Mesh;
   private readonly directions = new Float32Array(VISUALS.impactParticles * 3);
-  private serial = 0;
   private life = 0;
   private emissions = 0;
+  private preset: FeedbackPreset = FEEDBACK.damage;
 
   constructor(scene: THREE.Scene) {
     this.root.name = 'impact-vfx';
@@ -47,39 +50,39 @@ export class ImpactVFX {
   get remaining(): number { return this.life; }
 
   reset(): void {
-    this.serial = this.emissions = this.life = 0;
+    this.emissions = this.life = 0;
     this.particles.visible = this.flash.visible = this.shield.visible = false;
     (this.particles.geometry.getAttribute('position').array as Float32Array).fill(0);
     this.particles.geometry.getAttribute('position').needsUpdate = true;
   }
 
-  update(serial: number, ship: THREE.Vector3, velocityX: number, velocityY: number, invulnerability: number, elapsed: number, dt: number, quality: VisualQuality): void {
-    if (serial !== this.serial) {
-      if (serial > this.serial) {
-        this.life = VISUALS.impactSeconds;
-        this.emissions++;
-        this.particles.position.copy(ship);
-        this.flash.position.copy(ship);
-        // Bias the burst against the steering direction without gameplay input.
-        this.particles.rotation.set(velocityY * 0.025, -velocityX * 0.025, 0);
-      }
-      this.serial = serial;
-    }
+  trigger(position: EventPosition, velocityX: number, velocityY: number, preset: FeedbackPreset): void {
+    this.preset = preset;
+    this.life = preset.duration;
+    this.emissions++;
+    this.particles.position.set(position.x, position.y, position.z);
+    this.flash.position.copy(this.particles.position);
+    this.particles.rotation.set(velocityY * FEEDBACK.impact.velocityBias, -velocityX * FEEDBACK.impact.velocityBias, 0);
+  }
+
+  cancel(): void { this.life = 0; this.particles.visible = this.flash.visible = false; }
+
+  update(ship: THREE.Vector3, invulnerability: number, elapsed: number, dt: number, quality: VisualQuality): void {
     this.life = Math.max(0, this.life - dt);
-    const age = VISUALS.impactSeconds - this.life;
-    const fade = this.life / VISUALS.impactSeconds;
+    const age = this.preset.duration - this.life;
+    const fade = this.life / this.preset.duration;
     this.particles.visible = this.life > 0;
     this.particles.geometry.setDrawRange(0, quality.impactParticles);
-    (this.particles.material as THREE.PointsMaterial).opacity = fade * fade;
+    (this.particles.material as THREE.PointsMaterial).opacity = Math.min(1, fade * fade * this.preset.intensity);
     if (this.life > 0 && dt > 0) {
       const positions = this.particles.geometry.getAttribute('position') as THREE.BufferAttribute;
       const travel = age * (1 - age * 0.5);
       for (let i = 0; i < this.directions.length; i++) positions.array[i] = this.directions[i]! * travel;
       positions.needsUpdate = true;
     }
-    this.flash.visible = age < 0.25 && this.life > 0;
-    this.flash.scale.setScalar(1 + age * 6);
-    (this.flash.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 1 - age / 0.25) * 0.45;
+    this.flash.visible = age < FEEDBACK.impact.flashSeconds && this.life > 0;
+    this.flash.scale.setScalar(1 + age * FEEDBACK.impact.expansion);
+    (this.flash.material as THREE.MeshBasicMaterial).opacity = Math.max(0, 1 - age / FEEDBACK.impact.flashSeconds) * this.preset.flash;
     this.shield.visible = invulnerability > 0;
     this.shield.position.copy(ship);
     (this.shield.material as THREE.MeshBasicMaterial).opacity = Math.min(1, invulnerability / 0.2) * (quality.reducedMotion ? 0.10 : 0.11 + Math.sin(elapsed * 7) * 0.025);

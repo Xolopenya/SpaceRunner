@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { withoutFeedbackInstrumentation } from './fixtures/feedback-instrumentation.ts';
 import { Mesh, Box3, Vector3 } from 'three';
 import { CONFIG } from '../src/config.ts';
 import { Ship } from '../src/core/ship.ts';
@@ -181,7 +182,7 @@ test('boundary bypasses hit solid geometry; damage, pause, restart, cancellation
   m.step(CONFIG.step, { x: 0, y: 0 }); const old = m.field.pending!; m.dispose(); assert.equal(old.getResult()!.reason, 'CANCELLED');
 });
 
-test('the production GameModel seam changes only TypeScript visibility, keeping approved executable source intact', () => {
-  const source = readFileSync('src/core/game-model.ts', 'utf8').replaceAll('\r\n', '\n').replace('protected readonly collisions', 'private readonly collisions');
+test('the production GameModel preserves approved rules outside additive event hooks and visibility seam', () => {
+  const source = withoutFeedbackInstrumentation(readFileSync('src/core/game-model.ts', 'utf8')).replace('protected readonly collisions', 'private readonly collisions');
   assert.equal(createHash('sha256').update(source).digest('hex'), '9c1b10a43bd24685b0096f8822152ad006182e6ca6b6071ce3106ca1f81d24d7');
 });
