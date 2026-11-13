@@ -94,6 +94,7 @@ export class GameModel {
           position: Object.freeze({ x: this.ship.x, y: this.ship.y, z: 0 }),
           obstaclePosition: Object.freeze({ x: hazard.x, y: hazard.y, z: hazard.z }),
           velocity: Object.freeze({ x: this.ship.vx, y: this.ship.vy }),
+          obstaclePose: Object.freeze({ radius: hazard.radius, phase: hazard.phase, spin: hazard.spin, distance: this.distance }),
         };
         this.events.emit('obstacle.collision', { ...context, damageApplied: true });
         this.events.emit('player.damage', { ...context, previousHP: this.hull + 1, currentHP: this.hull });

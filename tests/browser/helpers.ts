@@ -49,4 +49,6 @@ export async function endRun(page: Page) {
     await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', String(hull));
   }
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'GAME_OVER');
+  // 001B keeps authoritative GAME_OVER immediate; only presentation defers results.
+  await expect(page.locator('#game-over')).toBeVisible();
 }

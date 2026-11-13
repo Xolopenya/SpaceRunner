@@ -109,3 +109,15 @@ Space mine (Modular Spaceships and Space Fleet), publisher3D Assets, [exact sour
 ## GAMEPLAY-005A integrated mine — 2026-11-04
 
 This feature branch also loads the existing Space Mine GLB in ordinary Play and the local static feature build. The original56,912-byte file and SHA256 above are unchanged; source, author3D Assets and CC0 license remain documented in the003C provenance record. No asset download or conversion occurred. Runtime normalization and materials reuse MineAssetManager; the model is loaded once and borrowed by one pooled mine presentation. New boundary edging is repository-authored Three.js line geometry with no external texture. Main was not merged or deployed.
+
+## FEEDBACK-001B runtime visual derivatives — 2026-11-11
+
+Ship breakup sections are generated once from the existing Kenney Space Kit
+`craft_speederA.glb` triangles, retaining original paint/normals. Source/author/license
+remain Kenney, CC0 as documented above and in the bundled original notice; derivatives
+and redistribution in a public commercial browser game are permitted by CC0.
+Original GLB bytes are unchanged. Scorch/fissure shaders, procedural rock/panel shards,
+glow/shockwave geometry and effect code are original project-authored runtime content.
+There is no new downloaded model, texture, font, sound or music. The existing mine GLB
+and its CC0 provenance above remain unchanged. Review screenshots/video are actual
+renders of this repository's production application, not externally sourced artwork.

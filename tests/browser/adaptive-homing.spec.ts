@@ -23,6 +23,8 @@ for(const [lead,hull]of [[132,3],[30,2]] as const)test(`real adaptive ${lead===1
  if(lead===30){
   const death=await page.evaluate(()=>{const g=window.spaceRunner! as any,m=g.model;for(let n=0;n<20000&&m.state==='PLAYING';n++)m.step(1/120,{x:0,y:0});g.loop.render(1/60);return{state:m.state,hull:m.hull,fault:m.field.fault};});
   expect(death.state).toBe('GAME_OVER');expect(death.hull).toBe(0);expect(death.fault).toBeUndefined();await expect(page.locator('#game')).toHaveAttribute('data-state','GAME_OVER');
+  // This fixture stopped RAF: explicitly skip the new presentation clock.
+  await page.locator('#skip-destruction').click();
   await page.locator('#replay').click();await expect(page.locator('#game')).toHaveAttribute('data-state','PLAYING');expect(await page.evaluate(()=>(window.spaceRunner!.model as any).homing.samples.length)).toBeLessThan(120);
  }
 });

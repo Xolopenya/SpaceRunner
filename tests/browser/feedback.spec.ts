@@ -75,10 +75,11 @@ test('integrated pickup, collision, immunity, pause, death and ten restarts use 
   expect(death.facts.filter(t => t === 'player.damage')).toHaveLength(3);
   expect(death.facts.filter(t => t === 'player.destroyed')).toHaveLength(1);
   expect(death.facts.filter(t => t === 'run.ended')).toHaveLength(1);
-  expect(death.sounds.destruction).toBe(1); expect(death.sounds.gameOver).toBe(1);
+  expect(death.sounds.destruction).toBe(1); expect(death.sounds.gameOver).toBe(0);
   await page.screenshot({ path: `${evidence}/screenshots/destroyed.png` });
-  await page.evaluate(() => { const g = window.spaceRunner as any; for (let i = 0; i < 50; i++) g.loop.render(1 / 60); });
+  await page.evaluate(() => { const g = window.spaceRunner as any; for (let i = 0; i < 150; i++) g.loop.render(1 / 60); });
   expect((await inspect()).life).toBe(0); expect((await inspect()).pulse).toBe(0);
+  expect((await inspect()).sounds.gameOver).toBe(1);
   const restarts = [];
   for (let run = 0; run < 10; run++) {
     await page.locator('#replay').click(); await page.evaluate(() => (window.spaceRunner as any).loop.render(0));
@@ -87,6 +88,7 @@ test('integrated pickup, collision, immunity, pause, death and ten restarts use 
     expect(reset.subscribers).toBe(death.subscribers); expect(reset.ids).toEqual(death.ids); expect(reset.memory).toEqual(death.memory);
     await expect(page.locator('#energy-count')).toHaveText('00');
     for (let hp = 3; hp > 0; hp--) { await page.evaluate(() => { window.spaceRunner!.model.invulnerability = 0; }); await hit(); }
+    await page.locator('#skip-destruction').click();
   }
   await page.locator('#replay').click(); await page.evaluate(() => (window.spaceRunner as any).loop.render(0));
   await page.screenshot({ path: `${evidence}/screenshots/restarted.png` });

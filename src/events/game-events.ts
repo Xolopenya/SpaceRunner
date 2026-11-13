@@ -10,6 +10,8 @@ export interface CollisionContext extends EventContext {
   readonly position: EventPosition;
   readonly obstaclePosition: EventPosition;
   readonly velocity: Readonly<{ x: number; y: number }>;
+  /** Rendering snapshot retained after slot deactivation; not a physics contact. */
+  readonly obstaclePose?: Readonly<{ radius: number; phase: number; spin: number; distance: number }>;
 }
 export interface GameEventMap {
   'run.started': EventContext & { readonly seed: number };

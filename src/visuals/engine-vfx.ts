@@ -80,7 +80,7 @@ export class EngineVFX {
     this.trails.visible = false;
   }
 
-  update(dt: number, state: string, speed: number, quality: VisualQuality): void {
+  update(dt: number, state: string, speed: number, quality: VisualQuality, feedbackPower = 1, failure = false): void {
     this.ship.updateMatrixWorld(true);
     for (let engine = 0; engine < 2; engine++) this.anchors[engine]!.set(engine === 0 ? -0.56 : 0.56, -0.21, 1.49).applyMatrix4(this.ship.matrixWorld);
     if (!this.initialized) {
@@ -128,12 +128,12 @@ export class EngineVFX {
       }
       attribute.needsUpdate = true;
     }
-    const active = state === 'PLAYING' || state === 'PAUSED';
+    const active = state === 'PLAYING' || state === 'PAUSED' || failure;
     const pulse = quality.reducedMotion ? 1 : 0.96 + Math.sin(this.time * 18) * 0.04;
-    this.glow.uniforms.power!.value = active ? (0.55 + this.power * 0.4) * pulse : state === 'MENU' ? 0.32 : 0;
-    this.flames.forEach(flame => { flame.visible = active; flame.scale.y = (0.7 + speed / 70) * pulse; });
-    this.trails.visible = active && this.time > 0;
-    (this.trails.material as THREE.MeshBasicMaterial).opacity = this.power * (quality.reducedMotion ? 0.20 : 0.48);
+    this.glow.uniforms.power!.value = active ? (0.55 + this.power * 0.4) * pulse * feedbackPower : state === 'MENU' ? 0.32 : 0;
+    this.flames.forEach(flame => { flame.visible = active && feedbackPower > .02; flame.scale.y = (0.7 + speed / 70) * pulse * feedbackPower; });
+    this.trails.visible = active && this.time > 0 && feedbackPower > .02;
+    (this.trails.material as THREE.MeshBasicMaterial).opacity = this.power * (quality.reducedMotion ? 0.20 : 0.48) * feedbackPower;
   }
 
   dispose(): void { this.root.removeFromParent(); this.trails.removeFromParent(); this.resources.dispose(); }

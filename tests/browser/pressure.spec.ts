@@ -43,6 +43,8 @@ for (const policy of ['baseline', 'pressure']) test(`${policy} selector preserve
   });
   expect(end.state).toBe('GAME_OVER'); expect(end.hull).toBe(0); expect(end.hits).toBe(3); expect(end.fault).toBeUndefined();
   await page.evaluate(() => (window.spaceRunner! as unknown as { loop: { render(dt: number): void } }).loop.render(1 / 60));
+  // RAF is deliberately stopped above, so use the accessible cinematic skip.
+  await page.locator('#skip-destruction').click();
   await page.locator('#replay').click(); expect(await page.evaluate(() => window.spaceRunner!.model.hull)).toBe(3);
 });
 

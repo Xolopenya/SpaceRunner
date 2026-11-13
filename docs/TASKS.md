@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## FEEDBACK-001B — Collision, Damage & Destruction Visual Slice, 2026-11-11
+
+- [x] Branched from exact001A `5f5a428`; audited actual GLB materials, production obstacle families, retained station rendering, mine identity and results timing. Unrelated user files preserved.
+- [x] Persistent surface damage, bounded rock/metal/mine/station effects, original-GLB hull breakup and configurable skippable presentation-only death sequence integrated through001A. Original GAME_OVER/score/platform stop remain immediate.
+- [x] Natural production captures cover all four obstacle families, three hull states, fatal contact/breakup/aftermath/results/restart and portrait; native browser recording included. No entities/HP/cooldown/generation edits in primary proof.
+- [x] Focused logic/lifecycle/accessibility/context-recovery checks and reproducible preservation, capture, performance and exact-source packaging tooling added. Final test/benchmark/package identities accompany delivery.
+- [x] Final325 unit tests,113 browser tests in one clean13.0-minute run, typecheck/build and130-path preservation pass. All349 frozen inputs match;9,120 native benchmark frames/80 natural death-reset replays retain matching serialized gameplay endpoints and stable GPU/subscription counts. Heap growth and the separate memory-series RAF anomaly remain documented limits.
+- [ ] Physical-phone/owner subjective acceptance and any push/main merge/deployment remain separate.
+
 ## FEEDBACK-001A — Game Feel & Feedback Foundation, 2026-11-11
 
 - [x] Audited the actual fixed loop, collision/health, fragment, director, audio, camera, HUD and reset paths. Branched from VISUAL-007B `8edfec0`; preserved unrelated user files.

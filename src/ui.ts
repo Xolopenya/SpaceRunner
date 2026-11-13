@@ -59,13 +59,15 @@ export class HUD {
     }
   }
 
-  showState(model: GameModel, best: number, pauseReason: string): void {
+  showState(model: GameModel, best: number, pauseReason: string, cinematic = false): void {
     const state = model.state;
     this.game.dataset.state = state;
+    this.game.dataset.cinematic = String(cinematic);
+    element('skip-destruction').hidden = !cinematic;
     element('loading').hidden = state !== 'LOADING';
     element('menu').hidden = state !== 'MENU';
     element('paused').hidden = state !== 'PAUSED';
-    element('game-over').hidden = state !== 'GAME_OVER';
+    element('game-over').hidden = state !== 'GAME_OVER' || cinematic;
     element('hud').hidden = state !== 'PLAYING';
     element('pause').hidden = state !== 'PLAYING';
     this.telemetry.hidden = state !== 'PLAYING';
@@ -76,7 +78,7 @@ export class HUD {
     text(element('pause-reason'), pauseReason);
     text(element('seed'), `Route ${model.seed}`);
     const focusId = { MENU: 'launch', PLAYING: 'flight', PAUSED: 'resume', GAME_OVER: 'replay', LOADING: 'loading' }[state];
-    element(focusId).focus({ preventScroll: true });
+    element(cinematic ? 'skip-destruction' : focusId).focus({ preventScroll: true });
   }
 
   update(model: GameModel): void {

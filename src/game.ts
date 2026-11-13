@@ -28,6 +28,8 @@ export class Game {
   private contextLost = false;
   private readonly assets: AssetManager;
   readonly feedback: FeedbackOrchestrator;
+  private shownCinematic = false;
+  private pendingResultsCue = false;
 
   constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory, model: GameModel = new GameModel()) {
     this.model = model;
@@ -40,8 +42,9 @@ export class Game {
       reset: () => { this.world.clearFeedback(); this.audio.clearFeedback(); },
       contact: (event, preset) => this.world.feedback(event, preset),
       sound: cue => this.audio.playCue(cue),
-      gameOver: delay => this.audio.play('gameOver', delay),
+      gameOver: delay => { if (this.world.destruction.sequence.active) this.pendingResultsCue = true; else this.audio.play('gameOver', delay); },
       hud: event => this.ui.feedback(event),
+      collision: event => this.world.collisionFeedback(event),
     });
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     this.soundPanel = new SoundPanel(this.audio);
@@ -53,6 +56,12 @@ export class Game {
     element('launch').addEventListener('click', () => this.start(), options);
     element('restart-pause').addEventListener('click', () => { if(this.model.state==='PAUSED'){this.model.state='GAME_OVER';this.start();} }, options);
     element('replay').addEventListener('click', () => this.start(), options);
+    element('skip-destruction').addEventListener('click', () => this.skipDestruction(), options);
+    window.addEventListener('keydown', event => {
+      if (this.world.destruction.sequence.active && !event.repeat && ['Space', 'Enter', 'Escape'].includes(event.code)) {
+        event.preventDefault(); this.skipDestruction();
+      }
+    }, options);
     element('pause').addEventListener('click', () => this.pause('Your flight is paused.', true), options);
     element('resume').addEventListener('click', () => this.resume(), options);
     window.addEventListener('blur', () => {
@@ -75,6 +84,7 @@ export class Game {
     canvas.addEventListener('webglcontextlost', event => {
       event.preventDefault();
       this.contextLost = true;
+      this.skipDestruction();
       this.pause('Graphics context lost. Waiting for recovery…');
       this.audio.background();
       element<HTMLButtonElement>('resume').disabled = true;
@@ -106,6 +116,7 @@ export class Game {
       this.model.events.flush();
       this.feedback.flush();
       this.feedback.update(this.model.state, dt);
+      this.world.presentationSuspended = this.contextLost || document.hidden;
       this.syncState();
       this.audio.update(this.model);
       this.soundPanel.update();
@@ -125,6 +136,7 @@ export class Game {
     const seed = Number.isFinite(parsed) ? parsed >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0]!;
     this.input.clear();
     this.audio.resetRun();
+    this.pendingResultsCue = false;
     this.model.setRecordBaseline(this.platform.scores.best);
     this.model.start(seed);
     this.world.reset();
@@ -157,13 +169,22 @@ export class Game {
   }
 
   private syncState(): void {
-    if (this.shownState === this.model.state) return;
+    const changed = this.shownState !== this.model.state;
+    const cinematic = this.model.state === 'GAME_OVER' && this.world.destruction.sequence.active;
+    if (!changed && this.shownCinematic === cinematic) return;
     this.input.clear();
-    if (this.model.state === 'GAME_OVER') this.platform.scores.record(this.model.score);
-    this.platform.gameplayChanged(this.model.state === 'PLAYING');
+    if (changed && this.model.state === 'GAME_OVER') this.platform.scores.record(this.model.score);
+    if (changed) this.platform.gameplayChanged(this.model.state === 'PLAYING');
+    if (this.shownCinematic && !cinematic && this.pendingResultsCue) { this.pendingResultsCue = false; this.audio.play('gameOver'); }
+    this.shownCinematic = cinematic;
     this.shownState = this.model.state;
     this.audio.update(this.model);
-    this.ui.showState(this.model, this.platform.scores.best, this.pauseReason);
+    this.ui.showState(this.model, this.platform.scores.best, this.pauseReason, cinematic);
+  }
+
+  private skipDestruction(): void {
+    if (this.model.state !== 'GAME_OVER') return;
+    this.world.destruction.skip(); this.syncState();
   }
 
   dispose(): void {

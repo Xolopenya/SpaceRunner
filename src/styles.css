@@ -16,6 +16,7 @@ canvas:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
 #game[data-state='PLAYING'] .vignette { background: linear-gradient(#050a1480, transparent 16%); }
 #game[data-state='PAUSED'] .vignette { background: linear-gradient(90deg, #050a14f5, #050a14a6 44%, #050a1430); }
 #game[data-state='GAME_OVER'] .vignette { background: linear-gradient(90deg, #070c16f5, #070c1690 44%, #070c1630); }
+#game[data-cinematic='true'] .vignette { background: radial-gradient(ellipse at 50% 50%, transparent 45%, #050a1422); box-shadow:none; }
 #game[data-hit='true'] .vignette { box-shadow: inset 0 0 100px #f56e5544; }
 .overlay { position: absolute; z-index: 2; inset: 0; overflow-y: auto; overscroll-behavior: contain; }
 .menu-copy { position: absolute; top: 19%; left: var(--left); width: min(440px, 44%); }
@@ -224,3 +225,6 @@ strong { font-weight: 500; }
 .result-energy { display: flex; align-items: baseline; gap: 16px; margin: -8px 0 24px; color: #46ffe6; }
 .result-energy strong { font: 500 25px Oxanium, sans-serif; }
 @media(max-height:500px) { .energy-block { top: 42px; } .result-energy { margin: -8px 0 10px; } }
+/* Death presentation only: the original HUD and results layout are retained. */
+.destruction-skip { position:absolute; z-index:8; right:max(20px, env(safe-area-inset-right)); bottom:max(22px, env(safe-area-inset-bottom)); min-height:48px; padding:12px 18px; border:1px solid #7babbf80; border-radius:0; background:#07111ee8; color:#daf5fa; font:14px 'IBM Plex Mono', monospace; cursor:pointer; }
+.destruction-skip kbd { margin-left:12px; opacity:.65; }

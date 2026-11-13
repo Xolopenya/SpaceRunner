@@ -18,6 +18,7 @@ export class ImpactVFX {
   private life = 0;
   private emissions = 0;
   private preset: FeedbackPreset = FEEDBACK.damage;
+  private surfaceOnly = false;
 
   constructor(scene: THREE.Scene) {
     this.root.name = 'impact-vfx';
@@ -56,12 +57,15 @@ export class ImpactVFX {
     this.particles.geometry.getAttribute('position').needsUpdate = true;
   }
 
-  trigger(position: EventPosition, velocityX: number, velocityY: number, preset: FeedbackPreset): void {
+  trigger(position: EventPosition, velocityX: number, velocityY: number, preset: FeedbackPreset, surfaceOnly = false): void {
     this.preset = preset;
+    this.surfaceOnly = surfaceOnly;
     this.life = preset.duration;
     this.emissions++;
     this.particles.position.set(position.x, position.y, position.z);
     this.flash.position.copy(this.particles.position);
+    (this.particles.geometry.getAttribute('position').array as Float32Array).fill(0);
+    this.particles.geometry.getAttribute('position').needsUpdate = true;
     this.particles.rotation.set(velocityY * FEEDBACK.impact.velocityBias, -velocityX * FEEDBACK.impact.velocityBias, 0);
   }
 
@@ -71,7 +75,7 @@ export class ImpactVFX {
     this.life = Math.max(0, this.life - dt);
     const age = this.preset.duration - this.life;
     const fade = this.life / this.preset.duration;
-    this.particles.visible = this.life > 0;
+    this.particles.visible = this.life > 0 && !this.surfaceOnly;
     this.particles.geometry.setDrawRange(0, quality.impactParticles);
     (this.particles.material as THREE.PointsMaterial).opacity = Math.min(1, fade * fade * this.preset.intensity);
     if (this.life > 0 && dt > 0) {

@@ -11,6 +11,7 @@ export interface FeedbackPorts {
   sound(cue: SoundCue): void;
   gameOver(delay: number): void;
   hud(event: GameEvent): void;
+  collision?(event: GameEventMap['obstacle.collision']): void;
 }
 interface ActiveReaction { preset?: FeedbackPreset; age: number }
 const presetFor = (event: ReactionEvent): FeedbackPreset => event.type === 'player.destroyed' ? FEEDBACK.destroyed
@@ -23,6 +24,7 @@ export class FeedbackOrchestrator {
   private readonly ports: FeedbackPorts;
   private readonly active: ActiveReaction[] = Array.from({ length: FEEDBACK.maxActiveReactions }, () => ({ age: 0 }));
   private candidate?: ReactionEvent;
+  private collision?: GameEventMap['obstacle.collision'];
   private runId = 0;
   private disposed = false;
   failures = 0;
@@ -48,6 +50,7 @@ export class FeedbackOrchestrator {
     }
     if (event.payload.runId !== this.runId) return;
     this.safely(() => this.ports.hud(event));
+    if (event.type === 'obstacle.collision') this.collision = event.payload;
     if (event.type !== 'player.damage' && event.type !== 'player.destroyed' && event.type !== 'collectible.collected') return;
     // Fatal damage has its own single Major contact; never double the hit sound/burst.
     if (event.type === 'player.damage' && event.payload.currentHP <= 0) return;
@@ -58,6 +61,7 @@ export class FeedbackOrchestrator {
   flush(): void {
     if (this.disposed) return;
     const event = this.candidate; this.candidate = undefined;
+    const collision = this.collision; this.collision = undefined;
     if (!event) return;
     const preset = presetFor(event);
     if (this.active.some(slot => slot.preset && slot.preset.priority > preset.priority)) return;
@@ -66,6 +70,7 @@ export class FeedbackOrchestrator {
     if (!slot) return; // Saturation affects presentation only.
     slot.preset = preset; slot.age = 0;
     this.safely(() => this.ports.contact(event, preset));
+    if (collision) this.safely(() => this.ports.collision?.(collision));
     this.safely(() => this.ports.sound(preset.sound));
     if (event.type === 'player.destroyed') this.safely(() => this.ports.gameOver(FEEDBACK.gameOverDelay));
   }
@@ -81,6 +86,7 @@ export class FeedbackOrchestrator {
 
   reset(): void {
     this.candidate = undefined;
+    this.collision = undefined;
     for (const slot of this.active) { slot.preset = undefined; slot.age = 0; }
     this.safely(() => this.ports.reset());
   }
