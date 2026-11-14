@@ -1,7 +1,9 @@
 import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { Mesh, Group, Scene, InstancedMesh } from 'three';
+import { Mesh, Group, Scene, InstancedMesh, Vector3, Quaternion, ShaderMaterial, SphereGeometry } from 'three';
+import { ImpactVFX } from '../src/visuals/impact-vfx.ts';
+import { FEEDBACK } from '../src/feedback/settings.ts';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { normalizeModel } from '../src/assets/asset-manager.ts';
 import { MODEL_ASSETS } from '../src/assets/catalog.ts';
@@ -119,4 +121,60 @@ test('debris motion uses time, not frame count; mobile/reduced-motion keep a rec
   const effects = new CollisionVFX(new Scene()); effects.trigger({ ...event, obstacleKind: 9 }, mobile);
   assert.equal((effects.root.getObjectByName('collision-debris') as import('three').InstancedMesh).count, F.mobileFragments);
   assert.equal(effects.activeCount, 1); effects.dispose();
+});
+
+test('protection follows authoritative immunity, bank and pause; restart clears its contact stage', () => {
+  const effect = new ImpactVFX(new Scene()), ship = new Vector3(2, 1, 0), bank = new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), .4);
+  const mesh = effect.root.getObjectByName('invulnerability-shimmer') as Mesh<SphereGeometry, ShaderMaterial>;
+  const geometry = mesh.geometry, material = mesh.material;
+  effect.update(ship, 0, 0, 0, quality, bank); assert.equal(mesh.visible, false);
+  effect.trigger(ship, 0, 0, FEEDBACK.damage, true, { x: 1, y: .2, z: -1 });
+  effect.update(ship, 1.8, 2, .10, quality, bank);
+  assert.equal(mesh.visible, true); assert.deepEqual(mesh.quaternion.toArray(), bank.toArray()); assert.deepEqual(mesh.position.toArray(), ship.toArray());
+  assert.ok(mesh.geometry instanceof SphereGeometry); assert.ok(mesh.material instanceof ShaderMaterial);
+  const attack = material.uniforms.alpha!.value;
+  const before = JSON.stringify(material.uniforms); effect.update(ship, 1.8, 2, 0, quality, bank);
+  assert.equal(JSON.stringify(material.uniforms), before);
+  effect.update(ship, .8, 2.7, .65, quality, bank); assert.ok(material.uniforms.alpha!.value < attack);
+  effect.update(ship, 0, 3.5, 0, quality, bank); assert.equal(mesh.visible, false); assert.equal(material.uniforms.alpha!.value, 0);
+  for (let run = 0; run < 12; run++) { effect.reset(); effect.trigger(ship, 0, 0, FEEDBACK.damage, true); effect.update(ship, 1, 0, .1, mobile, bank); }
+  assert.equal(mesh.geometry, geometry); assert.equal(mesh.material, material);
+  effect.reset(); assert.equal(mesh.visible, false); effect.dispose();
+});
+
+test('mine layers retain the accepted identity, spatial surfaces and bounded material ownership', () => {
+  const effect = new CollisionVFX(new Scene());
+  const geometries = new Set(effect.resources.geometries), materials = new Set(effect.resources.materials);
+  effect.trigger({ ...event, obstacleKind: 9 }, quality);
+  const wave = effect.root.getObjectByName('mine-spatial-wave') as Mesh<SphereGeometry, ShaderMaterial>;
+  const core = effect.root.getObjectByName('mine-plasma-core') as Mesh<SphereGeometry, ShaderMaterial>;
+  assert.ok(wave.visible && core.visible); assert.ok(wave.geometry instanceof SphereGeometry);
+  assert.equal(wave.geometry, core.geometry); assert.notEqual(wave.material, core.material);
+  assert.deepEqual(effect.activeIdentities, [event.obstacleId]);
+  effect.update(.4, quality, 50); assert.ok(wave.scale.x > wave.scale.y);
+  const bright = core.material.uniforms.alpha!.value; effect.update(.45, quality, 50);
+  assert.equal(wave.material.uniforms.alpha!.value, 0); assert.ok(core.material.uniforms.alpha!.value < bright);
+  for (let run = 0; run < 20; run++) { effect.reset(); effect.trigger({ ...event, obstacleKind: run % 2 ? 0 : 9 }, mobile); }
+  assert.deepEqual(effect.resources.geometries, geometries); assert.deepEqual(effect.resources.materials, materials);
+  let releases = 0; materials.forEach(m => m.addEventListener('dispose', () => releases++)); effect.dispose(); effect.dispose();
+  assert.equal(releases, materials.size);
+});
+
+test('fatal overload, staged secondary failures and charred fragment interiors preserve the original breakup', () => {
+  for (const q of [quality, mobile]) {
+    const scene = new Scene(), ship = new Group(), model = template.clone(true); ship.add(model);
+    const death = new ShipDestruction(scene, model); death.trigger(event, ship, q); death.update(q);
+    assert.equal(death.root.getObjectByName('system-failure-arcs')!.visible, !q.reducedMotion);
+    const at = q.reducedMotion ? .29 : .79;
+    for (let i = 0; i < Math.round(at * 120); i++) death.sequence.update('GAME_OVER', 1 / 120);
+    death.applyShipPose(ship); death.update(q); assert.equal(ship.visible, false);
+    const parts = death.root.getObjectsByProperty('type', 'Mesh').filter(n => n.name.startsWith('ship-fragment:')) as Mesh[];
+    assert.equal(parts.length, 6); assert.equal(new Set(parts.map(p => p.material)).size, 1);
+    assert.equal(death.root.getObjectByName('system-failure-arcs')!.visible, !q.reducedMotion);
+    const flashes = death.root.children.filter(n => n.name.startsWith('secondary-failure:') && n.visible);
+    assert.ok(flashes.length > 0 && flashes.length <= (q.reducedMotion ? 1 : 3));
+    for (let i = 0; i < 24; i++) death.sequence.update('GAME_OVER', 1 / 120);
+    death.update(q); assert.equal(death.root.getObjectByName('system-failure-arcs')!.visible, false);
+    death.skip(); death.update(q); assert.equal(death.root.visible, false); death.reset(); assert.equal(death.explosions, 0); death.dispose();
+  }
 });

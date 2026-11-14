@@ -121,3 +121,11 @@ glow/shockwave geometry and effect code are original project-authored runtime co
 There is no new downloaded model, texture, font, sound or music. The existing mine GLB
 and its CC0 provenance above remain unchanged. Review screenshots/video are actual
 renders of this repository's production application, not externally sourced artwork.
+
+## FEEDBACK-001B1 procedural polish — 2026-11-14
+
+Protection, plasma, curved energy contours and tapered sparks use original project
+shader code and once-built Three.js geometry. There are no new downloaded textures,
+models, sounds or dependencies. The original Kenney ship triangles/CC0 license and
+licensed mine model remain unchanged. Scorched fragment interiors are local material
+treatment on the existing derivative, not replacement artwork or sealed mesh fracture.

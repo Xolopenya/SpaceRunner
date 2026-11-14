@@ -6,12 +6,18 @@ import { presentationContact } from '../feedback/collision-presentation.ts';
 import type { CollisionFamily } from '../feedback/collision-presentation.ts';
 import { DAMAGE_FX as F } from '../feedback/visual-settings.ts';
 import type { VisualQuality } from './settings.ts';
+import { energySurface, energySparks } from './energy-materials.ts';
+import { POLISH as P } from '../feedback/polish-settings.ts';
 import { energyGlow } from './energy-glow.ts';
 
 class Burst {
   readonly root = new T.Group();
   readonly debris: T.InstancedMesh;
   readonly particles: T.Points;
+  readonly dust: T.PointsMaterial;
+  readonly energyParticles: T.ShaderMaterial;
+  readonly mineWave: T.Mesh<T.SphereGeometry, T.ShaderMaterial>;
+  readonly mineCore: T.Mesh<T.SphereGeometry, T.ShaderMaterial>;
   readonly streaks: T.LineSegments;
   readonly ring: T.Mesh;
   readonly glow: T.Mesh<T.PlaneGeometry, T.ShaderMaterial>;
@@ -25,21 +31,26 @@ class Burst {
   startDistance = 0;
   major = false;
   radius = 1;
-  constructor(rock: T.BufferGeometry, ring: T.RingGeometry, plane: T.PlaneGeometry) {
+  constructor(rock: T.BufferGeometry, ring: T.RingGeometry, plane: T.PlaneGeometry, sphere: T.SphereGeometry) {
     this.debris = new T.InstancedMesh(rock, new T.MeshStandardMaterial({ color: 0xffffff, roughness: .86,
       metalness: .2, transparent: true, flatShading: true, depthWrite: false }), F.fragments);
     this.debris.name = 'collision-debris'; this.debris.frustumCulled = false;
     this.debris.instanceMatrix.setUsage(T.DynamicDrawUsage);
     for (let i = 0; i < F.fragments; i++) this.debris.setColorAt(i, new T.Color(0xffffff));
     const geometry = new T.BufferGeometry().setAttribute('position', new T.BufferAttribute(new Float32Array(F.particles * 3), 3).setUsage(T.DynamicDrawUsage));
-    this.particles = new T.Points(geometry, new T.PointsMaterial({ color: 0xc6b299, size: .09, transparent: true,
-      depthWrite: false, opacity: 0 })); this.particles.frustumCulled = false;
+    this.dust = new T.PointsMaterial({ color: 0xc6b299, size: .09, transparent: true,
+      depthWrite: false, opacity: 0 });
+    this.energyParticles = energySparks(geometry, F.particles);
+    this.particles = new T.Points(geometry, this.dust); this.particles.frustumCulled = false;
+    this.mineWave = new T.Mesh(sphere, energySurface('wave'));
+    this.mineCore = new T.Mesh(sphere, energySurface('core', 0x1388cc, 0xa1faff));
+    this.mineWave.name = 'mine-spatial-wave'; this.mineCore.name = 'mine-plasma-core';
     const lines = new T.BufferGeometry().setAttribute('position', new T.BufferAttribute(new Float32Array(F.particles * 6), 3).setUsage(T.DynamicDrawUsage));
     this.streaks = new T.LineSegments(lines, new T.LineBasicMaterial({ color: 0xffd8ad, transparent: true, depthWrite: false,
       blending: T.AdditiveBlending })); this.streaks.frustumCulled = false;
     this.ring = new T.Mesh(ring, new T.MeshBasicMaterial({ color: 0x94eaff, transparent: true,
       depthWrite: false, side: T.DoubleSide, blending: T.AdditiveBlending }));
-    this.glow = new T.Mesh(plane, energyGlow()); this.root.add(this.debris, this.particles, this.streaks, this.ring, this.glow);
+    this.glow = new T.Mesh(plane, energyGlow()); this.root.add(this.debris, this.particles, this.streaks, this.ring, this.glow, this.mineWave, this.mineCore);
     this.root.visible = false;
   }
 }
@@ -58,13 +69,14 @@ export class CollisionVFX {
   readonly stats = { triggered: 0, skipped: 0, peak: 0 };
   get activeCount(): number { return this.bursts.filter(b => b.age < b.duration).length; }
   get activeIdentities(): (string | undefined)[] { return this.bursts.filter(b => b.age < b.duration).map(b => b.identity); }
-  warmPanels(enabled: boolean): void { for (const b of this.bursts) b.debris.geometry = enabled ? this.panel : this.rock; }
+  warmPanels(enabled: boolean): void { for (const b of this.bursts) { b.debris.geometry = enabled ? this.panel : this.rock; b.particles.material = enabled ? b.energyParticles : b.dust; } }
   constructor(scene: T.Scene) {
     this.root.name = 'collision-family-vfx';
-    const ring = new T.RingGeometry(.94, 1, 40), plane = new T.PlaneGeometry(1, 1);
-    this.bursts = Array.from({ length: F.bursts }, () => new Burst(this.rock, ring, plane));
+    const ring = new T.RingGeometry(.94, 1, 40), plane = new T.PlaneGeometry(1, 1), sphere = new T.SphereGeometry(1, 32, 20);
+    this.bursts = Array.from({ length: F.bursts }, () => new Burst(this.rock, ring, plane, sphere));
     this.root.add(...this.bursts.map(b => b.root)); scene.add(this.root); this.resources.track(this.root);
     this.resources.geometries.add(this.panel);
+    for (const burst of this.bursts) this.resources.materials.add(burst.energyParticles);
   }
   trigger(event: GameEventMap['obstacle.collision'], quality: VisualQuality, major = false): boolean {
     if (this.disposed) return false;
@@ -81,9 +93,10 @@ export class CollisionVFX {
     const count = quality.reducedMotion ? F.reducedParticles : quality.mobile ? F.mobileParticles : F.particles;
     burst.particles.geometry.setDrawRange(0, count); burst.streaks.geometry.setDrawRange(0, count * 2);
     const material = burst.debris.material as T.MeshStandardMaterial;
-    material.emissive.setHex(family === 'mine' ? settings.light : 0); material.emissiveIntensity = family === 'mine' ? .9 : 0;
-    (burst.particles.material as T.PointsMaterial).color.setHex(family === 'rock' ? settings.color : settings.light);
-    (burst.particles.material as T.PointsMaterial).blending = family === 'rock' ? T.NormalBlending : T.AdditiveBlending;
+    material.emissive.setHex(family === 'mine' ? settings.light : 0); material.emissiveIntensity = family === 'mine' ? .35 : 0;
+    burst.particles.material = family === 'mine' ? burst.energyParticles : burst.dust;
+    burst.dust.color.setHex(family === 'rock' ? settings.color : settings.light);
+    burst.dust.blending = family === 'rock' ? T.NormalBlending : T.AdditiveBlending;
     (burst.streaks.material as T.LineBasicMaterial).color.setHex(settings.light);
     (burst.ring.material as T.MeshBasicMaterial).color.setHex(settings.light);
     burst.glow.material.uniforms.tint!.value.setHex(settings.light);
@@ -124,17 +137,30 @@ export class CollisionVFX {
     const points = b.particles.geometry.getAttribute('position') as T.BufferAttribute;
     const lines = b.streaks.geometry.getAttribute('position') as T.BufferAttribute;
     const particleTravel = -Math.expm1(-F.particleDrag * age) / F.particleDrag * (quality.reducedMotion ? .3 : 1);
-    for (let i = 0; i < F.particles; i++) {
+    for (let i = 0; i < b.particles.geometry.drawRange.count; i++) {
       const k = i * 3, x = b.velocities[k]!, y = b.velocities[k + 1]!, z = b.velocities[k + 2]!;
       points.setXYZ(i, x * particleTravel, y * particleTravel, z * particleTravel);
       lines.setXYZ(i * 2, x * particleTravel, y * particleTravel, z * particleTravel);
-      const tail = Math.max(0, particleTravel - .035); lines.setXYZ(i * 2 + 1, x * tail, y * tail, z * tail);
+      const tail = Math.max(0, particleTravel - (.025 + (i % 4) * .018)); lines.setXYZ(i * 2 + 1, x * tail, y * tail, z * tail);
     }
     points.needsUpdate = lines.needsUpdate = true;
-    b.particles.visible = age < b.duration; (b.particles.material as T.PointsMaterial).opacity = fade * .65;
+    b.particles.visible = age < b.duration; b.dust.opacity = fade * .65;
+    b.energyParticles.uniforms.alpha!.value = fade * .85; b.energyParticles.uniforms.age!.value = age;
     b.streaks.visible = b.family !== 'rock' && !quality.reducedMotion && age < F.sparkSeconds;
     (b.streaks.material as T.LineBasicMaterial).opacity = Math.max(0, 1 - age / F.sparkSeconds);
-    b.ring.visible = b.family === 'mine' || age < F.flashSeconds;
+    const mine = b.family === 'mine';
+    b.ring.visible = !mine && age < F.flashSeconds; b.glow.visible = !mine;
+    b.mineCore.visible = b.mineWave.visible = mine;
+    if (mine) {
+      const size = .20 + .72 * (1 - Math.exp(-age * 16));
+      b.mineCore.scale.set(size, size * .78, size * .92); b.mineCore.rotation.set(.2, age * .7, .1);
+      b.mineCore.material.uniforms.age!.value = age;
+      b.mineCore.material.uniforms.alpha!.value = (Math.exp(-age / P.mine.flash) * 1.3 + fade * .10) * (quality.reducedMotion ? .45 : 1);
+      const radius = .14 + P.mine.radius * (1 - Math.exp(-age * 6));
+      b.mineWave.scale.set(radius, radius * .70, radius * .91); b.mineWave.rotation.set(.27, .4, -.12);
+      b.mineWave.material.uniforms.age!.value = age;
+      b.mineWave.material.uniforms.alpha!.value = Math.max(0, 1 - age / P.mine.wave) ** 1.7 * (quality.reducedMotion ? .55 : 1.8);
+    }
     b.ring.scale.setScalar(b.family === 'mine' ? .2 + F.shockwaveRadius * (1 - Math.exp(-age * 5)) : .12 + age * 2.8);
     (b.ring.material as T.MeshBasicMaterial).opacity = b.family === 'mine' ? fade * .85 : Math.max(0, 1 - age / F.flashSeconds) * .75;
     b.glow.scale.setScalar(b.family === 'mine' ? 1.3 + age * 2.2 : .7 + age * .8);

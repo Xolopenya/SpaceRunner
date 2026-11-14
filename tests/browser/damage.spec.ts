@@ -102,3 +102,25 @@ test('hidden tab freezes the cinematic; real WebGL interruption reveals safe res
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'PLAYING');
   expect(await page.evaluate(() => window.spaceRunner!.world.hullDamage.stage)).toBe(0);
 });
+
+test('polished field follows real immunity and hull state; shader programs are warm before the first hit', async ({ page }) => {
+  await setup(page);
+  const before = await page.evaluate(() => window.spaceRunner!.world.renderer.info.programs!.length);
+  await hit(page); await frames(page, 10);
+  const active = await page.evaluate(() => {
+    const g = window.spaceRunner as any, field = g.world.impacts.root.getObjectByName('invulnerability-shimmer');
+    return { hp: g.model.hull, stage: g.world.hullDamage.stage, visible: field.visible, alpha: field.material.uniforms.alpha.value,
+      quaternion: field.quaternion.toArray(), ship: g.world.ship.quaternion.toArray(), programs: g.world.renderer.info.programs.length };
+  });
+  expect(active.hp).toBe(2); expect(active.stage).toBe(1); expect(active.visible).toBe(true);
+  expect(active.alpha).toBeGreaterThan(0); expect(active.quaternion).toEqual(active.ship); expect(active.programs).toBe(before);
+  await page.evaluate(() => {
+    const g = window.spaceRunner as any;
+    for (let tick = 0; tick < 400 && g.model.invulnerability > 0; tick++) { g.loop.update(1 / 120); g.loop.render(1 / 120); }
+  });
+  const ended = await page.evaluate(() => {
+    const g = window.spaceRunner as any, field = g.world.impacts.root.getObjectByName('invulnerability-shimmer');
+    return { immunity: g.model.invulnerability, hp: g.model.hull, visible: field.visible, stage: g.world.hullDamage.stage };
+  });
+  expect(ended).toEqual({ immunity: 0, hp: 2, visible: false, stage: 1 });
+});

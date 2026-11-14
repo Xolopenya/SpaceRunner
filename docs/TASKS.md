@@ -1,5 +1,13 @@
 # Delivery checklist
 
+## FEEDBACK-001B1 — Shield, Mine Explosion & Ship Destruction Polish, 2026-11-14
+
+- [x] Branched from exact001B `2eb9741`, preserved user files, inspected shield/mine/ship lifetimes and captured38 baseline production frames/six clips before runtime edits.
+- [x] Added banked thin protection/ripple, curved broken mine wave/plasma/sparks and staged ship failure/secondary flares. Reused the existing pools, six GLB sections,2.05/.65s sequence, results/skip and resource ownership. No gameplay/UI/audio architecture changes.
+- [x] Added three unit cases and one browser case;328 units and focused5-case lifecycle/protection/warmup suite pass. Matched38 final frames/six clips and reproducible comparison/packaging tooling prepared; final full-run and measured receipts accompany delivery.
+- [x] Final full114-case browser run passes in13.1min, with typecheck/build,138-path preservation and356 frozen inputs.19,920 measured frames/120 natural death-reset replays retain matching gameplay endpoints, stable GPU/program/subscription counts and3HP through1600m. Initial passive-seed11 smoke failure is reproduced on baseline0/2 versus final2/2; test/seed/assertions/timeouts remain unchanged. Raw history and unresolved cadence/heap observations are retained.
+- [ ] Owner artistic/comfort acceptance of001B1 and physical-phone testing remain open. No push, merge, deployment or001C work is included.
+
 ## FEEDBACK-001B — Collision, Damage & Destruction Visual Slice, 2026-11-11
 
 - [x] Branched from exact001A `5f5a428`; audited actual GLB materials, production obstacle families, retained station rendering, mine identity and results timing. Unrelated user files preserved.

@@ -163,7 +163,7 @@ export class World {
     else {
       this.hullDamage.setHP(event.type === 'player.damage' ? event.payload.currentHP : 0,
         event.payload.obstaclePosition.x - event.payload.position.x);
-      this.impacts.trigger(event.payload.position, event.payload.velocity.x, event.payload.velocity.y, preset, true);
+      this.impacts.trigger(event.payload.position, event.payload.velocity.x, event.payload.velocity.y, preset, true, { x: event.payload.obstaclePosition.x - event.payload.position.x, y: event.payload.obstaclePosition.y - event.payload.position.y, z: event.payload.obstaclePosition.z });
       if (event.type === 'player.destroyed') this.destruction.trigger(event.payload, this.ship, this.quality);
       this.cameraImpulse.trigger(preset);
     }
@@ -217,7 +217,7 @@ export class World {
     this.engines.update(visualDelta(model.state, presentationDt, this.destruction.sequence.active), model.state, model.speed, this.quality,
       model.state === 'GAME_OVER' ? this.destruction.enginePower : this.hullDamage.enginePower(this.quality.reducedMotion),
       this.destruction.sequence.active && !this.destruction.sequence.broken);
-    this.impacts.update(this.ship.position, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, presentationDt, true), this.quality);
+    this.impacts.update(this.ship.position, model.state === 'GAME_OVER' ? 0 : model.invulnerability, model.elapsed, visualDelta(model.state, presentationDt, true), this.quality, this.ship.quaternion);
     this.collisionEffects.update(visualDelta(model.state, presentationDt, true), this.quality, model.distance);
     this.destruction.update(this.quality);
     if (this.destruction.sequence.active && this.destruction.sequence.broken && !this.breakupImpulse) { this.breakupImpulse = true; this.cameraImpulse.trigger(FEEDBACK.destroyed); }
