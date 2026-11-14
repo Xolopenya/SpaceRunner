@@ -7,12 +7,14 @@ export const AUDIO = {
   defaults: { master: 0.65, music: 0.35, sfx: 0.75, muted: false },
   headroom: 0.7,
   sampleRate: 22050,
-  musicSeconds: 16,
-  musicAmplitude: 2,
+  musicSampleRate: 11025,
+  musicSeconds: 64,
   maxVoices: 6,
   voicePeak: 0.14,
   rampSeconds: 0.025,
-  engine: { bassHz: 54, harmonicHz: 81.15, body: 0.105, harmonic: 0.035, rush: 0.07, updateSeconds: 0.04 },
+  engine: { bassHz: 54, harmonicHz: 162.3, body: 0.105, harmonic: 0.024, rush: 0.085, updateSeconds: 0.04 },
+  music: { fadeSeconds: .65, regular: [.90,.36,.08], rising: [.90,.72,.40], high: [.82,.88,.90], recovery: [1,.16,.02] },
+  damage: { damagedInterval: 8.5, criticalInterval: 4.6 },
 } as const;
 
 export function normalizeSettings(value: unknown): AudioSettings {

@@ -52,7 +52,7 @@ test('hotfix production menu music, passive flight, Phase 2 and restart', async 
   await expect(page.locator('#phase-label')).toContainText('PHASE 1');
   await expect(page.locator('#hull')).toHaveAttribute('aria-valuenow', '3');
   expect(await page.locator('#phase-label').getAttribute('data-gap')).toBe('48');
-  expect(downloads).toHaveLength(7); expect(await page.evaluate(() => [window.hotfixAudio.contexts, window.hotfixAudio.loops])).toEqual([1, 2]);
+  expect(downloads).toHaveLength(7); expect(await page.evaluate(() => [window.hotfixAudio.contexts, window.hotfixAudio.loops])).toEqual([1, 4]);
   await page.reload(); await expect(page.locator('#game')).toHaveAttribute('data-state', 'MENU');
   await page.locator('#menu [data-sound-open]').click(); await expect(page.locator('#sound-music')).toHaveValue('80');
   await expect.poll(rms).toBeGreaterThan(.001);
@@ -133,12 +133,12 @@ test('gesture unlock, real output, steering modulation, pause, mute and focus su
   expect(probe).toEqual({ contexts: 1, gestures: [true] });
   const performance = await page.evaluate(() => {
     const game = window.spaceRunner!;
-    const graph = (game.audio as unknown as { graph: { buffers: Map<string, AudioBuffer>; music: AudioBufferSourceNode; engine: { rush: AudioBufferSourceNode } } }).graph;
+    const graph = (game.audio as unknown as { graph: { buffers: Map<string, AudioBuffer>; score: { sources: AudioBufferSourceNode[] }; engine: { rush: AudioBufferSourceNode } } }).graph;
     const start = window.performance.now();
     for (let i = 0; i < 5000; i++) game.audio.update(game.model);
     const stateSyncCpuMs = (window.performance.now() - start) / 5000;
-    const buffers = [graph.music.buffer!, graph.engine.rush.buffer!, ...graph.buffers.values()];
-    return { stateSyncCpuMs, cachedPcmBytes: buffers.reduce((sum, buffer) => sum + buffer.length * buffer.numberOfChannels * 4, 0), fixedSources: 4, temporaryVoiceLimit: 6 };
+    const buffers = [...graph.score.sources.map(source=>source.buffer!), graph.engine.rush.buffer!, ...graph.buffers.values()];
+    return { stateSyncCpuMs, cachedPcmBytes: buffers.reduce((sum, buffer) => sum + buffer.length * buffer.numberOfChannels * 4, 0), fixedSources: 6, temporaryVoiceLimit: 6 };
   });
   const evidence = { playingRms, pausedRms, idleHz, probe, performance, final: await inspect(page) };
   if (process.env.REVIEW_RESULT_DIR) await writeFile(join(process.env.REVIEW_RESULT_DIR, 'audio-live.json'), JSON.stringify(evidence, null, 2));
@@ -206,8 +206,8 @@ test('actual damage emits once, final feedback finishes, five restarts reuse aud
   }
   const final = await inspect(page);
   expect(final.counts!.destruction).toBe(6); expect(final.counts!.gameOver).toBe(6); expect(final.counts!.impact).toBe(12);
-  console.log('Audio five-restart sample:', JSON.stringify({ ...final, downloads: downloads.length, fixedSources: 4 }));
-  if (process.env.REVIEW_RESULT_DIR) await writeFile(join(process.env.REVIEW_RESULT_DIR, 'audio-restarts.json'), JSON.stringify({ ...final, downloads: downloads.length, fixedSources: 4, restarts: 5 }, null, 2));
+  console.log('Audio five-restart sample:', JSON.stringify({ ...final, downloads: downloads.length, fixedSources: 6 }));
+  if (process.env.REVIEW_RESULT_DIR) await writeFile(join(process.env.REVIEW_RESULT_DIR, 'audio-restarts.json'), JSON.stringify({ ...final, downloads: downloads.length, fixedSources: 6, restarts: 5 }, null, 2));
   await page.evaluate(() => window.spaceRunner!.dispose());
   await expect.poll(async () => (await inspect(page)).context).toBe('closed');
 });
@@ -312,4 +312,35 @@ test('actual OfflineAudioContext rendering produces bounded PCM and original rev
   expect(diagnostics.find(item => item.mode === 'muted')!.tailRms).toBeLessThan(0.00001);
   if (process.env.REVIEW_RESULT_DIR) { await mkdir(process.env.REVIEW_RESULT_DIR, { recursive: true }); await writeFile(join(process.env.REVIEW_RESULT_DIR, 'audio-browser.json'), JSON.stringify({ capture: 'Actual native OfflineAudioContext and production synthesis/routing; generated PCM, not a microphone recording or subjective listening test.', diagnostics }, null, 2)); }
   console.log('Native audio render diagnostics:', JSON.stringify(diagnostics));
+});
+
+test('native score sources start together and stay bounded across pacing, mute and twenty resets', async ({ page }) => {
+  await page.addInitScript(()=>{
+    const Native=window.AudioContext, trace={contexts:0,starts:[] as number[]};(window as any).scoreTrace=trace;
+    window.AudioContext=class extends Native {
+      constructor(options?:AudioContextOptions){
+        super(options);trace.contexts++;const create=this.createBufferSource.bind(this);
+        this.createBufferSource=()=>{const source=create(),start=source.start.bind(source);
+          source.start=(...args:Parameters<typeof source.start>)=>{if(source.loop)trace.starts.push(args[0]??this.currentTime);start(...args);};return source;};
+      }
+    };
+  });
+  await launch(page);
+  await expect.poll(async () => (await inspect(page)).status).toBe('running');
+  const result=await page.evaluate(()=>{
+    const a=window.spaceRunner!.audio as any,g=a.graph,sources=[...g.score.sources],buffers=sources.map((s:AudioBufferSourceNode)=>s.buffer);
+    const lengths=buffers.map((b:AudioBuffer)=>({length:b.length,rate:b.sampleRate,seconds:b.duration}));
+    for(let i=0;i<20;i++) {
+      g.setPacing('high');for(let n=0;n<20;n++)g.play('pickup');g.play('mine1');
+      if(g.voices.size>6)throw Error('Voice budget exceeded');
+      a.setSettings({muted:true});a.play('destruction');a.setSettings({muted:false});
+      a.resetRun();g.setPacing('recovery');
+    }
+    return{trace:(window as any).scoreTrace,lengths,stable:sources.every((s:AudioBufferSourceNode,i:number)=>s===g.score.sources[i]&&s.buffer===buffers[i]),voices:g.voices.size,high:g.counts.mine1,skipped:g.counts.destruction,settings:a.settings};
+  });
+  expect(result.lengths).toEqual(Array.from({length:3},()=>({length:705600,rate:11025,seconds:64})));
+  expect(result.stable).toBe(true);expect(result.voices).toBe(0);expect(result.high).toBe(20);expect(result.skipped).toBe(0);
+  expect(result.settings.muted).toBe(false);
+  expect(result.trace.contexts).toBe(1);expect(result.trace.starts).toHaveLength(4);
+  expect(new Set(result.trace.starts.slice(1)).size).toBe(1);
 });

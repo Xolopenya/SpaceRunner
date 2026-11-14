@@ -45,6 +45,7 @@ export class Game {
       gameOver: delay => { if (this.world.destruction.sequence.active) this.pendingResultsCue = true; else this.audio.play('gameOver', delay); },
       hud: event => this.ui.feedback(event),
       collision: event => this.world.collisionFeedback(event),
+      observe: event => this.audio.observe(event),
     });
     this.input = new InputManager(canvas, element('joystick'), () => this.model.state === 'PLAYING', () => this.togglePause());
     this.soundPanel = new SoundPanel(this.audio);
@@ -118,7 +119,7 @@ export class Game {
       this.feedback.update(this.model.state, dt);
       this.world.presentationSuspended = this.contextLost || document.hidden;
       this.syncState();
-      this.audio.update(this.model);
+      this.audio.update(this.model, this.world.destruction.sequence);
       this.soundPanel.update();
       this.ui.update(this.model);
       this.world.render(this.model, dt);
@@ -178,7 +179,7 @@ export class Game {
     if (this.shownCinematic && !cinematic && this.pendingResultsCue) { this.pendingResultsCue = false; this.audio.play('gameOver'); }
     this.shownCinematic = cinematic;
     this.shownState = this.model.state;
-    this.audio.update(this.model);
+    this.audio.update(this.model, this.world.destruction.sequence);
     this.ui.showState(this.model, this.platform.scores.best, this.pauseReason, cinematic);
   }
 

@@ -1,7 +1,9 @@
 import { AUDIO, masterGain } from './settings.ts';
 import type { AudioSettings } from './settings.ts';
-import { audioBuffer, musicSamples, noise, SOUNDS, soundSamples } from './synthesis.ts';
+import { audioBuffer, noise, SOUNDS, soundSamples } from './synthesis.ts';
 import type { Sound } from './synthesis.ts';
+import { AdaptiveScore } from './score.ts';
+import type { PacingState } from '../core/field-director.ts';
 
 export function smooth(parameter: AudioParam, target: number, at: number, seconds: number = AUDIO.rampSeconds): void {
   parameter.cancelScheduledValues(at);
@@ -39,7 +41,7 @@ class EngineAudio {
     this.rush.loop = true;
     this.filter = context.createBiquadFilter();
     this.filter.type = 'lowpass';
-    this.filter.frequency.value = 350;
+    this.filter.frequency.value = 650;
     this.filter.Q.value = 0.5;
     this.rushGain = context.createGain();
     this.rushGain.gain.value = AUDIO.engine.rush;
@@ -54,9 +56,9 @@ class EngineAudio {
     const forward = Math.min(1, Math.max(0, (speed - 20) / 14));
     const steering = Math.min(1, Math.hypot(vx, vy) / 8);
     smooth(this.bass.frequency, AUDIO.engine.bassHz + forward * 8 + steering * 3, at, 0.12);
-    smooth(this.harmonic.frequency, AUDIO.engine.harmonicHz + forward * 12 + steering * 5, at, 0.12);
-    smooth(this.filter.frequency, 280 + forward * 280 + steering * 220, at, 0.10);
-    smooth(this.rushGain.gain, AUDIO.engine.rush * (0.8 + forward * 0.25 + steering * 0.5), at, 0.10);
+    smooth(this.harmonic.frequency, AUDIO.engine.harmonicHz + forward * 32 + steering * 19, at, 0.12);
+    smooth(this.filter.frequency, 600 + forward * 600 + steering * 700, at, 0.10);
+    smooth(this.rushGain.gain, AUDIO.engine.rush * (0.65 + forward * 0.35 + steering * 0.55), at, 0.10);
   }
 
   dispose(): void {
@@ -66,7 +68,9 @@ class EngineAudio {
   }
 }
 
-interface Voice { source: AudioBufferSourceNode; critical: boolean; gain?: GainNode }
+interface Voice { source: AudioBufferSourceNode; priority: number; gain?: GainNode }
+const priority = (kind: Sound): number => kind === 'destruction' || kind === 'rupture' || kind === 'secondary' || kind === 'gameOver' ? 3
+  : /^(impact|rock|metal|station|mine)/.test(kind) ? 2 : kind.startsWith('pickup') ? 1 : 0;
 
 /** Native graph also used unchanged by OfflineAudioContext review captures. */
 export class AudioGraph {
@@ -74,13 +78,14 @@ export class AudioGraph {
   readonly musicBus: GainNode;
   readonly sfxBus: GainNode;
   readonly engine: EngineAudio;
-  readonly counts: Record<Sound, number> = { launch: 0, resume: 0, pause: 0, click: 0, impact: 0, destruction: 0, gameOver: 0, pickup: 0 };
+  readonly counts = Object.fromEntries(SOUNDS.map(kind=>[kind,0])) as Record<Sound,number>;
   readonly voices = new Set<Voice>();
   private readonly context: BaseAudioContext;
   private readonly buffers = new Map<Sound, AudioBuffer>();
-  private readonly music: AudioBufferSourceNode;
-  private readonly musicFilter: BiquadFilterNode;
-  private readonly musicLevel: GainNode;
+  readonly music: AudioBufferSourceNode;
+  readonly musicFilter: BiquadFilterNode;
+  readonly musicLevel: GainNode;
+  readonly score: AdaptiveScore;
   private state = 'LOADING';
   private disposed = false;
 
@@ -94,17 +99,10 @@ export class AudioGraph {
     this.sfxBus.connect(this.master);
     this.master.connect(context.destination);
     this.engine = new EngineAudio(context, this.sfxBus);
-    this.music = context.createBufferSource();
-    this.music.buffer = audioBuffer(context, musicSamples());
-    this.music.loop = true;
-    this.musicFilter = context.createBiquadFilter();
-    this.musicFilter.type = 'lowpass';
-    this.musicFilter.frequency.value = 650;
-    this.musicFilter.Q.value = 0.4;
-    this.musicLevel = context.createGain();
-    this.musicLevel.gain.value = 0;
-    this.music.connect(this.musicFilter).connect(this.musicLevel).connect(this.musicBus);
-    this.music.start();
+    this.score = new AdaptiveScore(context,this.musicBus);
+    this.music = this.score.sources[0]!;
+    this.musicFilter = this.score.filter;
+    this.musicLevel = this.score.level;
     for (const kind of SOUNDS) this.buffers.set(kind, audioBuffer(context, [soundSamples(kind)]));
     this.settings(settings);
   }
@@ -120,9 +118,11 @@ export class AudioGraph {
     this.state = state;
     if (state === 'PAUSED') this.clearVoices();
     smooth(this.engine.output.gain, state === 'PLAYING' ? 0.9 : 0, at, state === 'GAME_OVER' ? 0.15 : 0.04);
-    smooth(this.musicLevel.gain, state === 'PLAYING' ? 0.85 : state === 'MENU' ? 0.5 : state === 'GAME_OVER' ? 0.32 : 0, at, 0.16);
-    smooth(this.musicFilter.frequency, state === 'PLAYING' ? 1600 : 650, at, 0.3);
+    this.score.setState(state,at);
   }
+
+  setPacing(pacing: PacingState, at = this.context.currentTime): void { this.score.setPacing(pacing,at); }
+  resetRun(): void { this.clearVoices(); this.score.reset(this.context.currentTime); }
 
   update(speed: number, vx: number, vy: number): void {
     if (this.state === 'PLAYING') this.engine.update(speed, vx, vy, this.context.currentTime);
@@ -130,9 +130,9 @@ export class AudioGraph {
 
   play(kind: Sound, delay = 0, options?: { readonly rate: number; readonly gain: number }): void {
     if (this.disposed) return;
-    const critical = kind === 'destruction' || kind === 'gameOver';
+    const rank = priority(kind);
     if (this.voices.size >= AUDIO.maxVoices) {
-      const oldest = [...this.voices].find(voice => !voice.critical);
+      const oldest = [...this.voices].find(voice => voice.priority < 3 && voice.priority <= rank);
       if (!oldest) return;
       this.release(oldest, true);
     }
@@ -142,9 +142,13 @@ export class AudioGraph {
     const gain = options && options.gain !== 1 ? this.context.createGain() : undefined;
     if (gain) { gain.gain.value = options!.gain; source.connect(gain).connect(this.sfxBus); }
     else source.connect(this.sfxBus);
-    const voice = { source, critical, gain };
+    const voice = { source, priority: rank, gain };
     this.voices.add(voice);
     this.counts[kind]++;
+    // Retain the established diagnostic counters as family totals.
+    if(rank===2 && kind!=='impact') this.counts.impact++;
+    if(kind==='pickup2' || kind==='pickup3') this.counts.pickup++;
+    if(rank>=2 && kind!=='gameOver') this.score.duckFor(rank===3,this.context.currentTime+Math.max(0,delay));
     source.onended = () => this.release(voice, false);
     source.start(this.context.currentTime + Math.max(0, delay));
   }
@@ -171,9 +175,8 @@ export class AudioGraph {
     this.disposed = true;
     this.clearVoices();
     this.engine.dispose();
-    this.music.stop();
-    this.music.buffer = null;
-    for (const node of [this.music, this.musicFilter, this.musicLevel, this.musicBus, this.sfxBus, this.master]) node.disconnect();
+    this.score.dispose();
+    for (const node of [this.musicBus, this.sfxBus, this.master]) node.disconnect();
     this.buffers.clear();
   }
 }

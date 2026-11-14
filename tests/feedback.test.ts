@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Scene, PerspectiveCamera } from 'three';
 import { GameEvents } from '../src/events/game-events.ts';
+import { AudioManager } from '../src/audio/audio-manager.ts';
 import type { GameEvent, GameEventMap } from '../src/events/game-events.ts';
 import { FeedbackOrchestrator } from '../src/feedback/orchestrator.ts';
 import type { FeedbackPorts } from '../src/feedback/orchestrator.ts';
@@ -119,7 +120,7 @@ test('contact/aftermath/recovery use game time; pause freezes, death finishes, r
 test('failing effect channel cannot prevent sound/HUD or mutate authoritative health', () => {
   const h = harness(); h.ports.contact = () => { throw Error('GPU unavailable'); };
   h.events.emit('player.damage', { ...context, previousHP: 3, currentHP: 2 }); h.flush();
-  assert.equal(h.feedback.failures, 1); assert.ok(h.calls.includes('sound:impact'));
+  assert.equal(h.feedback.failures, 1); assert.ok(h.calls.includes('sound:rock1'));
   assert.equal(h.hud.at(-1)?.type, 'player.damage'); h.feedback.dispose();
 });
 
@@ -169,6 +170,7 @@ test('camera impulse is bounded, FPS independent, frozen on pause, resets and re
 test('subscribed feedback leaves seeded Integrated field, mines, pickups and complete simulation state identical', () => {
   for (const seed of [0, 42]) {
     const a = new IntegratedModel(), b = new IntegratedModel(); a.ready(); b.ready();
+    const audio = new AudioManager(); a.events.subscribe(event=>audio.observe(event));
     const h = harness(a.events); a.start(seed); b.start(seed); h.flush();
     let directorEvents = 0; a.events.on('game.phaseChanged', p => { if (p.scope === 'director') directorEvents++; });
     const state = (m: IntegratedModel) => ({ ship: m.ship, distance: m.distance, elapsed: m.elapsed, hull: m.hull,
@@ -178,11 +180,11 @@ test('subscribed feedback leaves seeded Integrated field, mines, pickups and com
       const input = certifiedInput(a);
       if (tick % 2 === 0) { a.beginPlanningFrame(); b.beginPlanningFrame(); }
       a.step(CONFIG.step, input); b.step(CONFIG.step, input); h.flush();
-      if (tick % 2 === 1) { a.finishPlanningFrame(1 / 60); b.finishPlanningFrame(1 / 60); h.feedback.update(a.state, 1 / 60); }
+      if (tick % 2 === 1) { a.finishPlanningFrame(1 / 60); b.finishPlanningFrame(1 / 60); h.feedback.update(a.state, 1 / 60); audio.update(a); }
       if (tick % 120 === 0) assert.deepEqual(state(a), state(b));
     }
     assert.deepEqual(state(a), state(b)); assert.ok(directorEvents > 0); assert.equal(a.events.dropped, 0);
-    h.feedback.dispose(); a.dispose(); b.dispose();
+    h.feedback.dispose(); audio.dispose(); a.dispose(); b.dispose();
   }
 });
 

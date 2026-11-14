@@ -18,10 +18,17 @@ export interface FeedbackPreset {
   readonly sound: SoundCue;
 }
 const cue = (sound: Sound): SoundCue => ({ variants: [sound], gain: 1, rate: [1, 1] });
+export const COLLISION_SOUNDS: readonly SoundCue[] = [
+  {variants:['rock1','rock2','rock3'],gain:1,rate:[.975,1.025]},
+  {variants:['metal1','metal2','metal3'],gain:.95,rate:[.98,1.02]},
+  {variants:['station1','station2','station3'],gain:1,rate:[.98,1.02]},
+  {variants:['mine1','mine2','mine3'],gain:1,rate:[.98,1.02]},
+];
+export const collisionSound = (kind: number): SoundCue => COLLISION_SOUNDS[kind===9 ? 3 : kind>=3 && kind<9 ? 2 : kind<2 ? 0 : 1]!;
 export const FEEDBACK = {
   maxActiveReactions: 2,
   pickup: { priority: 1, contactSeconds: .06, duration: FRAGMENT.burstSeconds,
-    recoverySeconds: .12, intensity: 1, flash: .85, camera: 0, sound: cue('pickup') },
+    recoverySeconds: .12, intensity: 1, flash: .85, camera: 0, sound: {variants:['pickup','pickup2','pickup3'],gain:1,rate:[.99,1.01]} },
   damage: { priority: 2, contactSeconds: .08, duration: VISUALS.impactSeconds,
     recoverySeconds: .18, intensity: 1, flash: .45, camera: .035, sound: cue('impact') },
   destroyed: { priority: 3, contactSeconds: .10, duration: VISUALS.impactSeconds,

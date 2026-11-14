@@ -1,6 +1,6 @@
 import type { GameEvent, GameEventMap } from '../events/game-events.ts';
 import { GameEvents } from '../events/game-events.ts';
-import { FEEDBACK } from './settings.ts';
+import { FEEDBACK, collisionSound } from './settings.ts';
 import type { FeedbackPreset, SoundCue } from './settings.ts';
 import { visualDelta } from '../visuals/settings.ts';
 
@@ -12,6 +12,7 @@ export interface FeedbackPorts {
   gameOver(delay: number): void;
   hud(event: GameEvent): void;
   collision?(event: GameEventMap['obstacle.collision']): void;
+  observe?(event: GameEvent): void;
 }
 interface ActiveReaction { preset?: FeedbackPreset; age: number }
 const presetFor = (event: ReactionEvent): FeedbackPreset => event.type === 'player.destroyed' ? FEEDBACK.destroyed
@@ -49,6 +50,7 @@ export class FeedbackOrchestrator {
       this.reset();
     }
     if (event.payload.runId !== this.runId) return;
+    this.safely(() => this.ports.observe?.(event));
     this.safely(() => this.ports.hud(event));
     if (event.type === 'obstacle.collision') this.collision = event.payload;
     if (event.type !== 'player.damage' && event.type !== 'player.destroyed' && event.type !== 'collectible.collected') return;
@@ -71,7 +73,7 @@ export class FeedbackOrchestrator {
     slot.preset = preset; slot.age = 0;
     this.safely(() => this.ports.contact(event, preset));
     if (collision) this.safely(() => this.ports.collision?.(collision));
-    this.safely(() => this.ports.sound(preset.sound));
+    this.safely(() => this.ports.sound(event.type==='player.damage' ? collisionSound(event.payload.obstacleKind) : preset.sound));
     if (event.type === 'player.destroyed') this.safely(() => this.ports.gameOver(FEEDBACK.gameOverDelay));
   }
 

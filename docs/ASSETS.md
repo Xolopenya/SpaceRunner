@@ -129,3 +129,15 @@ shader code and once-built Three.js geometry. There are no new downloaded textur
 models, sounds or dependencies. The original Kenney ship triangles/CC0 license and
 licensed mine model remain unchanged. Scorched fragment interiors are local material
 treatment on the existing derivative, not replacement artwork or sealed mesh fracture.
+
+## FEEDBACK-001C original procedural audio — 2026-11-15
+
+The 64-second, 32-bar score, its three synchronized stems, collision families,
+pickup variants, engine, electrical failures and destruction sounds are original
+project-authored synthesis in `src/audio/`. They are not sampled from or derived
+from an external recording or commercial soundtrack. Runtime PCM is synthesized
+locally once per AudioGraph; no downloaded audio, CDN, new dependency or separate
+asset license is required. Review WAV and Opus/WebM files are renders/recordings of
+that same production audio graph. Amber mine plasma uses the existing original
+energy shader and shared pooled sphere geometry. Existing model licenses and
+the approved shield/ship visual effects remain unchanged.

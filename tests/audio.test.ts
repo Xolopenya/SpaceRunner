@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { AUDIO, AudioSettingsStorage, masterGain, normalizeSettings } from '../src/audio/settings.ts';
 import { AudioManager } from '../src/audio/audio-manager.ts';
 import { musicSamples, SOUNDS, soundSamples } from '../src/audio/synthesis.ts';
+import { AudioPressure } from '../src/audio/pressure.ts';
+import { collisionSound } from '../src/feedback/settings.ts';
+import type { PlanningOutcome } from '../src/core/field-scheduler.ts';
+import { musicStems } from '../src/audio/music-synthesis.ts';
 
 class Parameter {
   value = 0;
@@ -48,6 +52,78 @@ class Context {
 const storage = () => new AudioSettingsStorage(() => ({ getItem: () => null, setItem: () => {} }));
 const frame = () => ({ state: 'PLAYING', speed: 20, ship: { vx: 0, vy: 0 }, hitSerial: 0, hull: 3 });
 const graph = (manager: AudioManager) => (manager as unknown as { graph: import('../src/audio/graph.ts').AudioGraph }).graph;
+const contact = {runId:1,elapsed:1,source:'obstacle' as const,obstacleKind:0,position:{x:0,y:0,z:0},obstaclePosition:{x:0,y:0,z:0},velocity:{x:0,y:0}};
+
+test('audio pressure gates future publications by distance, includes repeated phases and clears stale runs', () => {
+  const pressure=new AudioPressure();
+  const field=(id:string,start:number,end:number,pacing:string,status='committed')=>({lastOutcome:{status,section:{id,startDistance:start,endDistance:end,pacing}} as PlanningOutcome});
+  const future=Object.freeze(field('one',160,224,'high'));
+  assert.equal(pressure.update(80,future),'regular');
+  assert.equal(pressure.update(160,future),'high');
+  assert.equal(pressure.update(200,field('two',224,288,'high')),'high');
+  assert.equal(pressure.update(240,field('three',288,352,'rising','omitted-certified')),'high');
+  assert.equal(pressure.update(300),'recovery');
+  assert.equal(pressure.update(400),'recovery');
+  pressure.reset(); assert.equal(pressure.update(0),'regular');
+  assert.equal(future.lastOutcome!.section.startDistance,160);
+});
+
+test('score layers retain exactly synchronized lengths and contain distinct musical chapters', () => {
+  const stems=musicStems(2000), channels=[...stems.ambient,...stems.pulse,...stems.pressure];
+  for(const channel of channels) {
+    assert.equal(channel.length,128000); assert.ok(channel.every(Number.isFinite));
+    assert.ok(Math.abs(channel[0]!-channel.at(-1)!)<.02);
+    assert.notDeepEqual(channel.slice(0,32000),channel.slice(32000,64000));
+  }
+});
+
+test('three score sources crossfade without rebuilding buffers through pacing and restart', async () => {
+  const context=new Context(), audio=new AudioManager(storage(),()=>context as unknown as AudioContext);
+  audio.update(frame()); await audio.unlock(); const g=graph(audio);
+  const buffers=g.score.sources.map(s=>s.buffer), sources=[...g.score.sources];
+  g.setPacing('high'); assert.ok(g.score.layers[2]!.gain.value>.8);
+  g.setPacing('recovery'); assert.ok(g.score.layers[2]!.gain.value<.03);
+  for(let i=0;i<20;i++) { audio.resetRun(); audio.update(frame()); }
+  assert.deepEqual(g.score.sources,sources); assert.deepEqual(g.score.sources.map(s=>s.buffer),buffers);
+  assert.equal(context.starts,6); audio.dispose(); assert.equal(context.sources.size,0);
+});
+
+test('typed damage arms occasional malfunctions; hull snapshots alone and muted intervals cannot replay', async () => {
+  const context=new Context(), audio=new AudioManager(storage(),()=>context as unknown as AudioContext);
+  await audio.unlock(); audio.update({...frame(),hull:1,elapsed:100}); assert.equal(graph(audio).counts.crackle,0);
+  audio.observe({type:'player.damage',payload:{...contact,previousHP:3,currentHP:2}});
+  audio.update({...frame(),elapsed:9}); assert.equal(graph(audio).counts.crackle,0);
+  audio.update({...frame(),elapsed:10}); assert.equal(graph(audio).counts.crackle,1);
+  audio.setSettings({muted:true}); audio.update({...frame(),elapsed:20});
+  audio.setSettings({muted:false}); audio.update({...frame(),elapsed:20.01}); assert.equal(graph(audio).counts.crackle,1);
+  audio.resetRun(); audio.update({...frame(),elapsed:100}); assert.equal(graph(audio).counts.crackle,1); audio.dispose();
+});
+
+test('fatal audio follows visual breakup/secondary thresholds once and skip discards remaining phases', async () => {
+  const context=new Context(), audio=new AudioManager(storage(),()=>context as unknown as AudioContext);
+  await audio.unlock(); audio.observe({type:'player.destroyed',payload:{...contact,score:10}});
+  const model={...frame(),state:'GAME_OVER'}, sequence={active:true,elapsed:.49,breakupAt:.5};
+  audio.update(model,sequence); assert.equal(graph(audio).counts.rupture,0);
+  sequence.elapsed=.51; audio.update(model,sequence); audio.update(model,sequence); assert.equal(graph(audio).counts.rupture,1);
+  sequence.elapsed=.61; audio.update(model,sequence); assert.equal(graph(audio).counts.secondary,1);
+  sequence.active=false; sequence.elapsed=2.05; audio.update(model,sequence); assert.equal(graph(audio).counts.secondary,1);
+  audio.resetRun(); sequence.active=true; sequence.elapsed=.95; audio.update(frame(),sequence);
+  assert.equal(graph(audio).counts.rupture,1); assert.equal(graph(audio).voices.size,0); audio.dispose();
+});
+
+test('collision families vary independently and pickup saturation cannot evict destruction', async () => {
+  const context=new Context(), audio=new AudioManager(storage(),()=>context as unknown as AudioContext);
+  await audio.unlock();
+  for(const kind of [0,2,4,9]) {
+    const cue=collisionSound(kind); assert.equal(cue.variants.length,3);
+    for(let i=0;i<6;i++) audio.playCue(cue);
+    assert.ok(cue.variants.every(name=>graph(audio).counts[name]>0));
+  }
+  assert.equal(graph(audio).counts.impact,24); audio.clearFeedback();
+  for(let i=0;i<6;i++) audio.play('destruction'); const sources=[...graph(audio).voices].map(v=>v.source);
+  for(let i=0;i<20;i++) audio.play('pickup');
+  assert.deepEqual([...graph(audio).voices].map(v=>v.source),sources); assert.equal(graph(audio).counts.pickup,0); audio.dispose();
+});
 
 test('explicit pickup cues respect independent Master/SFX/mute and never replay muted requests', async () => {
   const context = new Context(), audio = new AudioManager(storage(), () => context as unknown as AudioContext);
@@ -92,10 +168,10 @@ test('no context before gesture; unlock and restarts reuse one engine/music grap
   const model = frame(); audio.update(model);
   assert.equal(created, 0); assert.equal(audio.status, 'locked');
   await Promise.all([audio.unlock(), audio.unlock()]);
-  assert.equal(created, 1); assert.equal(context.resumes, 1); assert.equal(context.starts, 4);
+  assert.equal(created, 1); assert.equal(context.resumes, 1); assert.equal(context.starts, 6);
   const identity = graph(audio);
   for (let run = 0; run < 10; run++) { audio.resetRun(); audio.update(model); await audio.unlock(); }
-  assert.equal(graph(audio), identity); assert.equal(context.starts, 4); assert.equal(created, 1);
+  assert.equal(graph(audio), identity); assert.equal(context.starts, 6); assert.equal(created, 1);
   audio.dispose(); audio.dispose();
   assert.equal(audio.status, 'disposed'); assert.equal(context.state, 'closed'); assert.equal(context.sources.size, 0);
   assert.ok(context.nodes.every(node => !node.connected));
@@ -143,7 +219,7 @@ test('explicit contacts, distinct final sounds, bounded voices and completed cle
   assert.equal(graph(audio).counts.impact, 2); assert.equal(graph(audio).counts.destruction, 1); assert.equal(graph(audio).counts.gameOver, 1);
   for (let i = 0; i < 50; i++) audio.play('click');
   assert.ok(graph(audio).voices.size <= AUDIO.maxVoices);
-  assert.ok(context.sources.size <= AUDIO.maxVoices + 4);
+  assert.ok(context.sources.size <= AUDIO.maxVoices + 6);
   for (const voice of graph(audio).voices) (voice.source as unknown as Node).finish();
   assert.equal(graph(audio).voices.size, 0);
   audio.resetRun(); model.hitSerial = 0; model.hull = 3; model.state = 'PLAYING'; audio.update(model);

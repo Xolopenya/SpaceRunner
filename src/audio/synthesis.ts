@@ -1,7 +1,10 @@
 import { AUDIO } from './settings.ts';
+import { musicStems } from './music-synthesis.ts';
 
-export type Sound = 'launch' | 'resume' | 'pause' | 'click' | 'impact' | 'destruction' | 'gameOver' | 'pickup';
-export const SOUNDS: readonly Sound[] = ['launch', 'resume', 'pause', 'click', 'impact', 'destruction', 'gameOver', 'pickup'];
+export const SOUNDS = ['launch','resume','pause','click','impact','destruction','gameOver','pickup',
+  'rock1','rock2','rock3','metal1','metal2','metal3','station1','station2','station3',
+  'mine1','mine2','mine3','pickup2','pickup3','crackle','rupture','secondary'] as const;
+export type Sound = typeof SOUNDS[number];
 const TAU = Math.PI * 2;
 const frequency = (midi: number) => 440 * 2 ** ((midi - 69) / 12);
 
@@ -10,87 +13,70 @@ export function noise(seconds = 2, sampleRate: number = AUDIO.sampleRate): Float
   const output = new Float32Array(Math.ceil(seconds * sampleRate));
   let seed = 71883, previous = 0;
   for (let i = 0; i < output.length; i++) {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    previous = previous * 0.88 + (seed / 2147483648 - 1) * 0.12;
-    const edge = Math.min(1, i / (sampleRate * 0.01), (output.length - 1 - i) / (sampleRate * 0.01));
-    output[i] = previous * edge;
+    seed = (Math.imul(seed,1664525)+1013904223)>>>0;
+    previous = previous*.88+(seed/2147483648-1)*.12;
+    output[i] = previous*Math.min(1,i/(sampleRate*.01),(output.length-1-i)/(sampleRate*.01));
   }
   return output;
 }
 
 export function soundSamples(kind: Sound, sampleRate: number = AUDIO.sampleRate): Float32Array {
-  const seconds = kind === 'destruction' ? 1.3 : kind === 'impact' ? 0.55 : kind === 'gameOver' ? 0.9 : 0.18;
-  const output = new Float32Array(Math.ceil(seconds * sampleRate));
-  let seed = 92347, low = 0;
+  const rock = kind === 'impact' || kind.startsWith('rock'), metal = kind.startsWith('metal');
+  const station = kind.startsWith('station'), mine = kind.startsWith('mine');
+  const pickup = kind.startsWith('pickup'), fatal = kind === 'destruction' || kind === 'rupture';
+  const seconds = kind === 'rupture' ? 1.4 : kind === 'destruction' ? .6 : mine ? 1.1 : station ? .85
+    : metal ? .65 : rock ? .48 : kind === 'gameOver' ? 1.8 : kind === 'secondary' ? .48 : kind === 'crackle' ? .22 : .24;
+  const output = new Float32Array(Math.ceil(seconds*sampleRate));
+  const variant = Number(kind.at(-1)) || 1;
+  let seed = 92347+SOUNDS.indexOf(kind)*7417, low = 0, lower = 0;
   for (let i = 0; i < output.length; i++) {
-    const t = i / sampleRate;
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    const white = seed / 2147483648 - 1;
-    low = low * 0.8 + white * 0.2;
-    const attack = Math.min(1, t / 0.004);
+    const t = i/sampleRate;
+    seed = (Math.imul(seed,1664525)+1013904223)>>>0;
+    const white = seed/2147483648-1;
+    low = low*.82+white*.18; lower = lower*.97+white*.03;
+    const attack = Math.min(1,t/.003), sin = (f: number) => Math.sin(TAU*f*t);
     let value = 0;
-    if (kind === 'impact' || kind === 'destruction') {
-      const final = kind === 'destruction';
-      const decay = Math.exp(-t * (final ? 4.5 : 12));
-      const body = Math.sin(TAU * ((final ? 76 : 112) * t - (final ? 19 : 70) * t * t));
-      const metal = Math.sin(TAU * 327 * t) * Math.sin(TAU * 419 * t) * Math.exp(-t * 23);
-      // A delayed, quiet two-partial shield resonance belongs to this one hit.
-      const shield = final ? 0 : (Math.sin(TAU * 440 * t) + Math.sin(TAU * 660 * t)) * (1 - Math.exp(-t * 24)) * Math.exp(-t * 9) * 0.013;
-      value = attack * (body * (final ? 0.23 : 0.17) * decay + low * 0.24 * decay + metal * 0.027 + shield);
-    } else if (kind === 'gameOver') {
-      for (let note = 0; note < 3; note++) {
-        const age = t - note * 0.19;
-        if (age >= 0) value += Math.sin(TAU * frequency([62, 57, 50][note]!) * age) * Math.min(1, age / 0.018) * Math.exp(-age * 8) * 0.055;
-      }
-    } else if (kind === 'pickup') {
-      const phase = TAU * (660 * t + 1200 * t * t);
-      value = attack * (Math.sin(phase) * .075 + Math.sin(phase * 1.5) * .025) * Math.exp(-t * 19);
-    } else if (kind === 'click') value = attack * (low * 0.11 + Math.sin(TAU * 310 * t) * 0.018) * Math.exp(-t * 42);
+    if (rock) value = (.11*Math.sin(TAU*(92*t+1.8*(1-Math.exp(-t*20))))+low*.34)*Math.exp(-t*16)
+      +(white-low)*.022*Math.exp(-t*35)+sin(261+variant*11)*.018*Math.exp(-t*22);
+    else if (metal) value = (white-low)*.08*Math.exp(-t*48)+low*.14*Math.exp(-t*20)
+      +(sin(293+variant*13)*.058+sin(457+variant*21)*.043+sin(731+variant*9)*.018)*Math.exp(-t*9)
+      +sin(109)*.055*Math.exp(-t*22);
+    else if (station) value = (sin(57)*.12+lower*.55)*Math.exp(-t*6.5)
+      +(sin(173+variant*7)*.045+sin(387+variant*17)*.025)*Math.exp(-t*10)
+      +(white-low)*.035*Math.exp(-t*24)*(1+.4*sin(31));
+    else if (mine) value = Math.sin(TAU*(47*t+3.6*(1-Math.exp(-t*25))))*.12*Math.exp(-t*5)
+      +low*.3*Math.exp(-t*11)+(white-low)*.045*Math.exp(-t*40)
+      +Math.sin(TAU*(740*t-185*t*t)+variant*.15)*.034*Math.exp(-t*7)*(1-Math.exp(-t*35));
+    else if (fatal) {
+      const main = kind === 'rupture';
+      value = Math.sin(TAU*((main ? 42 : 85)*t+2.8*(1-Math.exp(-t*25))))*.13*Math.exp(-t*(main ? 4 : 10))
+        +low*.35*Math.exp(-t*(main ? 6 : 15))+(sin(217)*sin(353))*.04*Math.exp(-t*14)
+        +(white-low)*.026*Math.exp(-t*32);
+    } else if (kind === 'secondary') value = (low*.27+sin(72)*.1+sin(449)*.025)*Math.exp(-t*13);
+    else if (kind === 'crackle') value = ((white-low)*.07+sin(173)*.02)*Math.max(0,sin(43))**8*Math.exp(-t*9);
+    else if (pickup) {
+      const f = frequency(variant === 3 ? 81 : variant === 2 ? 77 : 74);
+      value = (sin(f)*.065+sin(f*1.5)*.023+sin(f*2)*.008)*Math.exp(-t*18);
+    } else if (kind === 'gameOver') value = (sin(frequency(50))*.045+sin(frequency(57))*.025+sin(frequency(64))*.018)*Math.min(1,t/.12)*Math.exp(-t*2.8);
+    else if (kind === 'click') value = (low*.08+sin(310)*.018)*Math.exp(-t*42);
     else {
-      const upward = kind !== 'pause';
-      const base = kind === 'launch' ? 294 : 330;
-      const phase = TAU * (base * t + (upward ? 650 : -420) * t * t);
-      value = attack * (Math.sin(phase) * 0.045 + Math.sin(phase * 1.5) * 0.018 + low * 0.02) * Math.exp(-t * 21);
+      const phase = TAU*((kind==='launch' ? 147 : 165)*t+(kind==='pause' ? -180 : 320)*t*t);
+      value = (Math.sin(phase)*.045+Math.sin(phase*2)*.012+low*.03)*Math.exp(-t*18);
     }
-    output[i] = value * Math.min(1, (output.length - 1 - i) / (sampleRate * 0.025));
+    output[i] = value*attack*Math.min(1,(output.length-1-i)/(sampleRate*.025));
   }
-  let peak = 0;
-  for (const sample of output) peak = Math.max(peak, Math.abs(sample));
-  // Six simultaneous voices plus continuous layers retain explicit headroom.
-  if (peak > AUDIO.voicePeak) for (let i = 0; i < output.length; i++) output[i]! *= AUDIO.voicePeak / peak;
+  let peak=0; for(const sample of output) peak=Math.max(peak,Math.abs(sample));
+  if(peak>AUDIO.voicePeak) for(let i=0;i<output.length;i++) output[i]! *= AUDIO.voicePeak/peak;
   return output;
 }
 
-/** Dm9 → Bbmaj7 → Fmaj7 → Cadd9. Crossfaded voicings, no random melody. */
-export function musicSamples(sampleRate: number = AUDIO.sampleRate): [Float32Array, Float32Array] {
-  const length = Math.round(AUDIO.musicSeconds * sampleRate);
-  const left = new Float32Array(length), right = new Float32Array(length);
-  const chords = [[50, 57, 60, 64], [46, 53, 57, 62], [41, 48, 52, 57], [48, 55, 60, 62]];
-  for (let chord = 0; chord < chords.length; chord++) {
-    const notes = chords[chord]!;
-    for (let i = 0; i < length; i++) {
-      const t = i / sampleRate;
-      const age = (t - chord * 4 + AUDIO.musicSeconds) % AUDIO.musicSeconds;
-      if (age >= 4.8) continue;
-      const envelope = Math.min(1, age / 0.8) * Math.min(1, (4.8 - age) / 0.8);
-      let l = 0, r = 0;
-      for (let voice = 0; voice < notes.length; voice++) {
-        const hz = frequency(notes[voice]!);
-        const level = voice === 0 ? 0.025 : 0.017;
-        l += Math.sin(TAU * hz * 0.9993 * age) * level;
-        r += Math.sin(TAU * hz * 1.0007 * age) * level;
-      }
-      const beat = age % 1;
-      const accent = Math.sin(TAU * frequency(notes[Math.floor(age) % 4]! + 12) * beat) * Math.min(1, beat / 0.03) * Math.exp(-beat * 9) * 0.010;
-      left[i]! += (l + accent) * envelope * AUDIO.musicAmplitude;
-      right[i]! += (r + accent * 0.65) * envelope * AUDIO.musicAmplitude;
-    }
-  }
-  return [left, right];
+/** Ambient-score preview; the runtime renders all stems once. */
+export function musicSamples(sampleRate: number = AUDIO.sampleRate): [Float32Array,Float32Array] {
+  return musicStems(sampleRate).ambient;
 }
 
-export function audioBuffer(context: BaseAudioContext, channels: readonly Float32Array[]): AudioBuffer {
-  const buffer = context.createBuffer(channels.length, channels[0]!.length, AUDIO.sampleRate);
-  channels.forEach((data, index) => { buffer.getChannelData(index).set(data); });
+export function audioBuffer(context: BaseAudioContext, channels: readonly Float32Array[], sampleRate: number = AUDIO.sampleRate): AudioBuffer {
+  const buffer = context.createBuffer(channels.length,channels[0]!.length,sampleRate);
+  channels.forEach((data,index)=>buffer.getChannelData(index).set(data));
   return buffer;
 }
