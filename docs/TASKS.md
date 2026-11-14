@@ -1,12 +1,23 @@
 # Delivery checklist
 
+## FEEDBACK-001C — Audio, Adaptive Music, Flight Feel & Mine Enhancement, 2026-11-15
+
+- [x] Exact001B1 base4ad10e8; preserved unrelated files, audited current audio/director clocks, froze production before captures and original audio.
+- [x] Added pooled amber/white-hot mine core inside retained cyan release. All38 endpoint pairs match; all26 shield/ship PNGs remain byte-identical. No model/input/camera/UI/approved destruction edits.
+- [x] Three variants per collision family, related pickups, movement-driven engine, accepted-damage irregularities, visual-clock fatal phases, priority/ducking and preserved audio ownership/settings/lifecycle.
+- [x] Original64-second/32-bar/four-chapter synchronized score. Read-only16-section adapter activates pressure by actual distance, handles omissions and resets, never alters the director or gameplay RNG.
+- [x] 334 unit and115 full browser cases pass against frozen source hashes; typecheck/build pass. 12,720 measured frames and120 natural death/reset cycles retain all10 matched gameplay hashes and roughly60FPS. Fixed audio PCM12.27MiB versus3.17MiB; cold synthesis cost and old unresolved cadence/heap observations are documented.
+- [x] Native audible recordings, canvas/audio clips, three-minute score/flight, adaptive/collision/lifecycle/headroom WAVs, playback/signal checks and seven reports prepared. Exact commit and ZIP integrity receipts accompany delivery.
+- [ ] Owner artistic/listening acceptance and physical-phone checks remain open before001D. No push, merge or publication.
+
 ## FEEDBACK-001B1 — Shield, Mine Explosion & Ship Destruction Polish, 2026-11-14
 
 - [x] Branched from exact001B `2eb9741`, preserved user files, inspected shield/mine/ship lifetimes and captured38 baseline production frames/six clips before runtime edits.
 - [x] Added banked thin protection/ripple, curved broken mine wave/plasma/sparks and staged ship failure/secondary flares. Reused the existing pools, six GLB sections,2.05/.65s sequence, results/skip and resource ownership. No gameplay/UI/audio architecture changes.
 - [x] Added three unit cases and one browser case;328 units and focused5-case lifecycle/protection/warmup suite pass. Matched38 final frames/six clips and reproducible comparison/packaging tooling prepared; final full-run and measured receipts accompany delivery.
 - [x] Final full114-case browser run passes in13.1min, with typecheck/build,138-path preservation and356 frozen inputs.19,920 measured frames/120 natural death-reset replays retain matching gameplay endpoints, stable GPU/program/subscription counts and3HP through1600m. Initial passive-seed11 smoke failure is reproduced on baseline0/2 versus final2/2; test/seed/assertions/timeouts remain unchanged. Raw history and unresolved cadence/heap observations are retained.
-- [ ] Owner artistic/comfort acceptance of001B1 and physical-phone testing remain open. No push, merge, deployment or001C work is included.
+- [x] Owner personally playtested: shield and ship destruction approved, game runs smoothly. Requested additional mine thermal component proceeds in001C.
+- [ ] Physical-phone testing remains open. No push, merge or deployment was included in001B1.
 
 ## FEEDBACK-001B — Collision, Damage & Destruction Visual Slice, 2026-11-11
 
