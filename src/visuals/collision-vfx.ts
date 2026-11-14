@@ -18,6 +18,7 @@ class Burst {
   readonly energyParticles: T.ShaderMaterial;
   readonly mineWave: T.Mesh<T.SphereGeometry, T.ShaderMaterial>;
   readonly mineCore: T.Mesh<T.SphereGeometry, T.ShaderMaterial>;
+  readonly mineHot: T.Mesh<T.SphereGeometry, T.ShaderMaterial>;
   readonly streaks: T.LineSegments;
   readonly ring: T.Mesh;
   readonly glow: T.Mesh<T.PlaneGeometry, T.ShaderMaterial>;
@@ -44,13 +45,15 @@ class Burst {
     this.particles = new T.Points(geometry, this.dust); this.particles.frustumCulled = false;
     this.mineWave = new T.Mesh(sphere, energySurface('wave'));
     this.mineCore = new T.Mesh(sphere, energySurface('core', 0x1388cc, 0xa1faff));
+    this.mineHot = new T.Mesh(sphere, energySurface('core', 0xff6618, 0xffefb5));
+    this.mineHot.name = 'mine-hot-plasma';
     this.mineWave.name = 'mine-spatial-wave'; this.mineCore.name = 'mine-plasma-core';
     const lines = new T.BufferGeometry().setAttribute('position', new T.BufferAttribute(new Float32Array(F.particles * 6), 3).setUsage(T.DynamicDrawUsage));
     this.streaks = new T.LineSegments(lines, new T.LineBasicMaterial({ color: 0xffd8ad, transparent: true, depthWrite: false,
       blending: T.AdditiveBlending })); this.streaks.frustumCulled = false;
     this.ring = new T.Mesh(ring, new T.MeshBasicMaterial({ color: 0x94eaff, transparent: true,
       depthWrite: false, side: T.DoubleSide, blending: T.AdditiveBlending }));
-    this.glow = new T.Mesh(plane, energyGlow()); this.root.add(this.debris, this.particles, this.streaks, this.ring, this.glow, this.mineWave, this.mineCore);
+    this.glow = new T.Mesh(plane, energyGlow()); this.root.add(this.debris, this.particles, this.streaks, this.ring, this.glow, this.mineWave, this.mineCore, this.mineHot);
     this.root.visible = false;
   }
 }
@@ -150,8 +153,17 @@ export class CollisionVFX {
     (b.streaks.material as T.LineBasicMaterial).opacity = Math.max(0, 1 - age / F.sparkSeconds);
     const mine = b.family === 'mine';
     b.ring.visible = !mine && age < F.flashSeconds; b.glow.visible = !mine;
-    b.mineCore.visible = b.mineWave.visible = mine;
+    b.mineCore.visible = b.mineWave.visible = b.mineHot.visible = mine;
     if (mine) {
+      // Same volumetric plasma surface as the approved ship effect; a smaller,
+      // shorter thermal release nested inside the unchanged cyan wave.
+      const thermal=F.mine.thermal;
+      const heat = .18 + thermal.expansion * (1 - Math.exp(-age * 22));
+      b.mineHot.position.set(0, thermal.lift, thermal.forward);
+      b.mineHot.scale.set(heat, heat * .72, heat * .85);
+      b.mineHot.rotation.set(.4, -age * 1.1, -.2);
+      b.mineHot.material.uniforms.age!.value = age;
+      b.mineHot.material.uniforms.alpha!.value = Math.exp(-age / thermal.decay) * thermal.brightness * (quality.reducedMotion ? .40 : 1);
       const size = .20 + .72 * (1 - Math.exp(-age * 16));
       b.mineCore.scale.set(size, size * .78, size * .92); b.mineCore.rotation.set(.2, age * .7, .1);
       b.mineCore.material.uniforms.age!.value = age;
