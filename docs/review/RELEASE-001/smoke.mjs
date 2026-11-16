@@ -6,10 +6,12 @@ import {openGame,chromium} from '../../../scripts/release-browser-lib.mjs';
 const live=process.argv.includes('--live'),prefix=live?'public':'local';
 const url=live?'https://xolopenya.github.io/SpaceRunner/':'http://127.0.0.1:5188/SpaceRunner/';
 const dir=resolve('.cache/review/RELEASE-001'),evidence=resolve(dir,'evidence');await mkdir(evidence,{recursive:true});
-const server=live?null:spawn(process.execPath,[resolve('node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','5188','--strictPort'],{stdio:'ignore',windowsHide:true});
+const server=live?null:spawn(process.execPath,[resolve('node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','5188','--strictPort'],{env:{...process.env,GITHUB_ACTIONS:'true'},stdio:'ignore',windowsHide:true});
 const browser=await chromium.launch({channel:'chrome',headless:true});
 try{
  if(server){let ready=false;for(let i=0;i<100;i++){try{ready=(await fetch(url)).ok;if(ready)break;}catch{}await new Promise(r=>setTimeout(r,100));}assert.ok(ready);}
+ const html=await(await fetch(url)).text(),entry=html.match(/src="([^"]+\.js)"/)[1];
+ const entryResponse=await fetch(new URL(entry,url));assert.equal(entryResponse.status,200);assert.ok(entryResponse.headers.get('content-type')?.includes('javascript'),'Preview must serve project-prefixed JavaScript, not HTML fallback');
  const r=await openGame(browser,url,{seed:42,viewport:{width:1280,height:800}}),shots=[];
  const shot=async name=>{const path=`${prefix}-${name}.png`;await r.page.screenshot({path:resolve(evidence,path)});shots.push({path,...await r.page.evaluate(()=>{const g=window.releaseQA;return{state:g.model.state,elapsed:g.model.elapsed,distance:g.model.distance,hull:g.model.hull,energy:g.model.fragments.count,best:g.platform.scores.best,focus:document.activeElement?.id,cinematic:g.world.destruction.sequence.active};})});};
  await r.page.waitForFunction(()=>window.releaseQA.audio.status==='running',null,{polling:100});
