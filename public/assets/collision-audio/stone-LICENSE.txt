@@ -1,0 +1,6 @@
+CC0 1.0 Universal
+Author: Julie Damsgaard / Spring Spring / Spring Enterprises
+Source: https://opengameart.org/content/various-sound-effects-0
+Files: small_rock_impact.wav, break_stone.wav
+Commercial use and redistribution under https://creativecommons.org/publicdomain/zero/1.0/
+Verified2026-11-16; source page/provenance retained in docs/ASSETS.md.

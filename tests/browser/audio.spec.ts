@@ -133,11 +133,11 @@ test('gesture unlock, real output, steering modulation, pause, mute and focus su
   expect(probe).toEqual({ contexts: 1, gestures: [true] });
   const performance = await page.evaluate(() => {
     const game = window.spaceRunner!;
-    const graph = (game.audio as unknown as { graph: { buffers: Map<string, AudioBuffer>; score: { sources: AudioBufferSourceNode[] }; engine: { rush: AudioBufferSourceNode } } }).graph;
+    const graph = (game.audio as unknown as { graph: { buffers: Map<string, AudioBuffer>; samples:{buffers:Map<string,AudioBuffer>}; score: { sources: AudioBufferSourceNode[] }; engine: { rush: AudioBufferSourceNode } } }).graph;
     const start = window.performance.now();
     for (let i = 0; i < 5000; i++) game.audio.update(game.model);
     const stateSyncCpuMs = (window.performance.now() - start) / 5000;
-    const buffers = [...graph.score.sources.map(source=>source.buffer!), graph.engine.rush.buffer!, ...graph.buffers.values()];
+    const buffers = [...graph.score.sources.map(source=>source.buffer!), graph.engine.rush.buffer!, ...graph.buffers.values(),...graph.samples.buffers.values()];
     return { stateSyncCpuMs, cachedPcmBytes: buffers.reduce((sum, buffer) => sum + buffer.length * buffer.numberOfChannels * 4, 0), fixedSources: 6, temporaryVoiceLimit: 6 };
   });
   const evidence = { playingRms, pausedRms, idleHz, probe, performance, final: await inspect(page) };

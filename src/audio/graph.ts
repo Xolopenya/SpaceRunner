@@ -4,6 +4,8 @@ import { audioBuffer, noise, SOUNDS, soundSamples } from './synthesis.ts';
 import type { Sound } from './synthesis.ts';
 import { AdaptiveScore } from './score.ts';
 import type { PacingState } from '../core/field-director.ts';
+import { CollisionSamples } from './samples.ts';
+import {SAMPLED_AUDIO} from './sample-settings.ts';
 
 export function smooth(parameter: AudioParam, target: number, at: number, seconds: number = AUDIO.rampSeconds): void {
   parameter.cancelScheduledValues(at);
@@ -68,7 +70,7 @@ class EngineAudio {
   }
 }
 
-interface Voice { source: AudioBufferSourceNode; priority: number; gain?: GainNode }
+interface Voice { source: AudioBufferSourceNode; priority: number; gain?: GainNode; panner?:StereoPannerNode }
 const priority = (kind: Sound): number => kind === 'destruction' || kind === 'rupture' || kind === 'secondary' || kind === 'gameOver' ? 3
   : /^(impact|rock|metal|station|mine)/.test(kind) ? 2 : kind.startsWith('pickup') ? 1 : 0;
 
@@ -86,6 +88,7 @@ export class AudioGraph {
   readonly musicFilter: BiquadFilterNode;
   readonly musicLevel: GainNode;
   readonly score: AdaptiveScore;
+  readonly samples:CollisionSamples;
   private state = 'LOADING';
   private disposed = false;
 
@@ -104,6 +107,7 @@ export class AudioGraph {
     this.musicFilter = this.score.filter;
     this.musicLevel = this.score.level;
     for (const kind of SOUNDS) this.buffers.set(kind, audioBuffer(context, [soundSamples(kind)]));
+    this.samples=new CollisionSamples(context,this.buffers);
     this.settings(settings);
   }
 
@@ -128,7 +132,7 @@ export class AudioGraph {
     if (this.state === 'PLAYING') this.engine.update(speed, vx, vy, this.context.currentTime);
   }
 
-  play(kind: Sound, delay = 0, options?: { readonly rate: number; readonly gain: number }): void {
+  play(kind: Sound, delay = 0, options?: { readonly rate: number; readonly gain: number; readonly pan?:number }): void {
     if (this.disposed) return;
     const rank = priority(kind);
     if (this.voices.size >= AUDIO.maxVoices) {
@@ -137,12 +141,15 @@ export class AudioGraph {
       this.release(oldest, true);
     }
     const source = this.context.createBufferSource();
-    source.buffer = this.buffers.get(kind)!;
+    source.buffer = this.samples.get(kind)??this.buffers.get(kind)!;
     if (options) source.playbackRate.value = options.rate;
     const gain = options && options.gain !== 1 ? this.context.createGain() : undefined;
-    if (gain) { gain.gain.value = options!.gain; source.connect(gain).connect(this.sfxBus); }
-    else source.connect(this.sfxBus);
-    const voice = { source, priority: rank, gain };
+    const panner=options?.pan&&typeof this.context.createStereoPanner==='function'?this.context.createStereoPanner():undefined;
+    if(panner)panner.pan.value=Math.max(-SAMPLED_AUDIO.minePan,Math.min(SAMPLED_AUDIO.minePan,options!.pan!));
+    const destination=panner??this.sfxBus;if(panner)panner.connect(this.sfxBus);
+    if (gain) { gain.gain.value = options!.gain; source.connect(gain).connect(destination); }
+    else source.connect(destination);
+    const voice = { source, priority: rank, gain, panner };
     this.voices.add(voice);
     this.counts[kind]++;
     // Retain the established diagnostic counters as family totals.
@@ -159,6 +166,7 @@ export class AudioGraph {
     if (stop) voice.source.stop();
     voice.source.disconnect();
     voice.gain?.disconnect();
+    voice.panner?.disconnect();
     voice.source.buffer = null;
   }
 
@@ -176,6 +184,7 @@ export class AudioGraph {
     this.clearVoices();
     this.engine.dispose();
     this.score.dispose();
+    this.samples.dispose();
     for (const node of [this.musicBus, this.sfxBus, this.master]) node.disconnect();
     this.buffers.clear();
   }

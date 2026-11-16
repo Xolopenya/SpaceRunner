@@ -1,11 +1,13 @@
 import { VISUALS } from '../visuals/settings.ts';
 import { FRAGMENT } from '../collectibles/settings.ts';
 import type { Sound } from '../audio/synthesis.ts';
+import {SAMPLED_AUDIO} from '../audio/sample-settings.ts';
 
 export interface SoundCue {
   readonly variants: readonly Sound[];
   readonly gain: number;
   readonly rate: readonly [number, number];
+  readonly pan?:number;
 }
 export interface FeedbackPreset {
   readonly priority: 1 | 2 | 3;
@@ -24,7 +26,11 @@ export const COLLISION_SOUNDS: readonly SoundCue[] = [
   {variants:['station1','station2','station3'],gain:1,rate:[.98,1.02]},
   {variants:['mine1','mine2','mine3'],gain:1,rate:[.98,1.02]},
 ];
-export const collisionSound = (kind: number): SoundCue => COLLISION_SOUNDS[kind===9 ? 3 : kind>=3 && kind<9 ? 2 : kind<2 ? 0 : 1]!;
+export const collisionSound = (kind: number,offsetX=0): SoundCue => {
+  const cue=COLLISION_SOUNDS[kind===9 ? 3 : kind>=3 && kind<9 ? 2 : kind<2 ? 0 : 1]!;
+  const limit=kind===9?SAMPLED_AUDIO.minePan:SAMPLED_AUDIO.hullPan;
+  return offsetX?{...cue,pan:Math.max(-limit,Math.min(limit,offsetX*SAMPLED_AUDIO.panScale))}:cue;
+};
 export const FEEDBACK = {
   maxActiveReactions: 2,
   pickup: { priority: 1, contactSeconds: .06, duration: FRAGMENT.burstSeconds,

@@ -73,7 +73,7 @@ export class FeedbackOrchestrator {
     slot.preset = preset; slot.age = 0;
     this.safely(() => this.ports.contact(event, preset));
     if (collision) this.safely(() => this.ports.collision?.(collision));
-    this.safely(() => this.ports.sound(event.type==='player.damage' ? collisionSound(event.payload.obstacleKind) : preset.sound));
+    this.safely(() => this.ports.sound(event.type==='player.damage' ? collisionSound(event.payload.obstacleKind,event.payload.obstaclePosition.x-event.payload.position.x) : preset.sound));
     if (event.type === 'player.destroyed') this.safely(() => this.ports.gameOver(FEEDBACK.gameOverDelay));
   }
 

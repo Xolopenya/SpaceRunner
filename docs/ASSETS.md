@@ -141,3 +141,34 @@ asset license is required. Review WAV and Opus/WebM files are renders/recordings
 that same production audio graph. Amber mine plasma uses the existing original
 energy shader and shared pooled sphere geometry. Existing model licenses and
 the approved shield/ship visual effects remain unchanged.
+
+## FEEDBACK-001C1 sampled collisions — 2026-11-16
+
+Eight selected CC0 derivatives live in `public/assets/collision-audio/`. Their
+`manifest.json` records each original filename, creator/page/license URL, original
+and derivative SHA256, trim, duration and processing. Only these selected WAVs and
+their notices are production assets; downloaded packs/candidate auditions remain
+in ignored review cache. Commercial use, modification and redistribution were
+verified on the source pages and CC0 deed.
+
+| Production files | Original source | Creator / license |
+|---|---|---|
+| rock-a.wav, rock-b.wav | small_rock_impact.wav, break_stone.wav; [Various Sound Effects](https://opengameart.org/content/various-sound-effects-0) | Julie Damsgaard / Spring Spring / Spring Enterprises; CC0-1.0 |
+| metal-a.wav, metal-b.wav | impactMetal_medium_000.ogg, impactMetal_light_000.ogg; [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney; CC0-1.0 |
+| station-a.wav, station-b.wav | impactPlate_heavy_000.ogg, impactPlate_heavy_002.ogg; same Impact Sounds pack | Kenney; CC0-1.0 |
+| mine-a.wav, mine-b.wav | explosionCrunch_000.ogg, explosionCrunch_001.ogg; [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds) | Kenney; CC0-1.0 |
+
+Kenney's original notices accompany the derivatives, with line endings normalized.
+Stone attribution: produced by Julie Damsgaard / Spring Spring / Spring Enterprises,
+https://spring-enterprises.neocities.org. License: https://creativecommons.org/publicdomain/zero/1.0/.
+The Digital Audio pack was auditioned but not selected. The suggested Metal Impact
+OpenGameArt page returned403 and supplies no production asset here. Fresh Kenney
+downloads used the public download-link flow published by the official pages;
+cached direct links had redirected to HTML and were rejected as non-ZIP data.
+
+Preparation uses native Chromium decode/resampling to22050Hz mono, bounded crops,
+.85 peak and short edge fades. Runtime mixes physical contact/granular rock texture
+with restrained original hull/electrical layers, high-passes excess sub-bass and
+caps composite peaks at .14. No copyrighted recording, melody, global reverb,
+external audio engine or new runtime dependency is introduced. Guidance geometry
+and its soft cyan shader are original project-authored code.

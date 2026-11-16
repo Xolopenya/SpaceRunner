@@ -136,7 +136,7 @@ export class AudioManager {
     const rate = Math.max(.5, Math.min(2, cue.rate[0] + (cue.rate[1] - cue.rate[0]) * value));
     const gain = Math.max(0, Math.min(1, cue.gain)) * (supplied ? 1 : 1-.035*Math.sin(value*Math.PI));
     if (!Number.isFinite(rate) || !Number.isFinite(gain)) return;
-    try { if (this.status === 'running') this.graph?.play(kind, 0, { rate, gain }); }
+    try { if (this.status === 'running') this.graph?.play(kind, 0, { rate, gain,pan:cue.pan }); }
     catch { this.disable(); }
   }
 

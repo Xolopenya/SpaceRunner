@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    { name: 'sample-guidance', testMatch: 'sample-guidance.spec.ts', timeout:90_000 },
     { name: 'damage', testMatch: 'damage.spec.ts', timeout: 90_000 },
     { name: 'feedback', testMatch: 'feedback.spec.ts', timeout: 90_000 },
     { name: 'visuals', testMatch: 'visuals.spec.ts', timeout: 120_000 },
