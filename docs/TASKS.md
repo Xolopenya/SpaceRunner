@@ -1,5 +1,15 @@
 # Delivery checklist
 
+## FEEDBACK-001C2 — Shard Trails, 2026-11-16
+
+- [x] Exact10cc436 base, requested feature branch, unrelated owner files preserved. Owner approved C1 sampled audio/stability and rejected the wing guidance.
+- [x] Removed the entire production guidance lifecycle and its three modules; no replacement overlay. Extended existing successful-publication collectible placement with bounded straight/curve/offset triples,22m spacing, full-profile route checks, no hazard RNG/planner/director change.
+- [x] Ordinary threshold mean3→2.75; at most one triple per12 groups, fixed8 slots, reward1. Common/wing assistance .36/.10→.405/.1125 (+12.5%), effective transverse union about+8.1%; naturalRouteOffset1.55 and all damage geometry/visible models preserved.
+- [x] 347 unit and7 focused Chrome tests pass, including natural3/3 and2/3 trails, keyboard/body/wing/magnet/pause/restart and portrait reduced motion. Four matched180s reference routes retain exact inputs/hazard hashes/3HP;50→56 shards,50→52 groups. Four passive controls collect0 in both versions. Simulated pursuit deaths/risk retained; no human satisfaction claim.
+- [x] Final full Chrome run121/121 in9.7min,0 skipped/flaky;244 frozen inputs, typecheck/build pass. Retained first120/121 and fixed historical wing regression with1167 exact C1 inputs rather than current-layout greedy steering; original collider/HP/hit assertions retained.
+- [x] Twenty sequential native profiles/10320frames preserve10 protected gameplay hashes;128 PNGs/nine natural videos cover all shapes/full/partial/mobile. Forty natural death/UI resets and120s continuous playback retain owned PCM/source identities. Original dense RAF episode is retained; six exact repeats are about60FPS/max17.5ms. Seven reports and canonical-source/bidirectional-diff/ZIP tooling prepared; final archive/gallery receipts accompany delivery.
+- [ ] Owner balance/readability and physical-phone follow-up remain open. No push, merge or publication.
+
 ## FEEDBACK-001C1 — Sampled Collision Audio & Energy Shard Guidance, 2026-11-16
 
 - [x] Exact0348c2a base and requested feature branch; unrelated owner files preserved. Owner's approved music/adjustable engine retained.
@@ -7,7 +17,7 @@
 - [x] Audited Hybrid projection, three-part pickup/assists, placement/occlusion/reachability. Added two thin gameplay-axis wing paths plus one true-depth current transverse contour; no homing, physics/radius/size/camera/generator/RNG changes.
 - [x] 342 units/118 full browser tests pass with244 frozen runtime/test/asset inputs; typecheck/build pass. 143 baseline inputs checked/138 unchanged; exact10 broad gameplay endpoints and66 baseline/OFF plus66 ON/OFF screenshot states. Eight reports and exact-source package tooling prepared.
 - [x] Native paired body/wing/Phase2/miss screenshots/videos, geometry obstruction/depth fixtures, real WAV/live audio/playback/signal evidence,20 performance rows/10320frames,40 natural death/restart cycles and60s continuous audio. About60FPS retained; raw cold loading, one36.9ms frame and finite heap observations documented.
-- [ ] Owner/new-player usability and collision artistic acceptance, physical-phone checks remain open. No fabricated human results or collection-rate claim. No push, merge or publication.
+- [x] Owner playtested C1: sampled collisions approved, no noticeable latency, stable game. Guidance rejected; replacement proceeds inC2. New-player/physical-phone follow-up remains open. No fabricated human results, push, merge or publication.
 
 ## FEEDBACK-001C — Audio, Adaptive Music, Flight Feel & Mine Enhancement, 2026-11-15
 
