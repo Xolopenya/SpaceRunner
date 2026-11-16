@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## FEEDBACK-001D-A — Comprehensive UX/UI/playtest audit, 2026-11-16
+
+- [x] Exact `54d5819` baseline and requested `feature/feedback-001d-a-ux-audit` branch; four pre-existing untracked owner paths preserved. Game Studio game-playtest, game-ui-frontend, three-webgl-game and local space-runner-ui-design read and applied; approved Concept A/Hybrid/Combined C preserved.
+- [x] Audit only: 428 tracked production/test/tool inputs remain unchanged. Three actual native production runs cover 37.892/70.708/58.008 gameplay seconds, three pickups, seven accepted damage events, mines, two natural deaths and replays. Eight main viewports plus rotation/small desktop; 115 evidence screenshots and silent browser videos. Accelerated continuations and one DOM-only fixture explicitly labelled; no human or physical-phone claim.
+- [x] Ten scoped findings distinguish confirmed defects from hypotheses/opportunities. Natural Hull hit/phase overlap confirmed in seven main sizes; compact desktop touch-only hints reproduced. Nine reports, source excerpts, raw receipts, severity/category gallery and staged FEEDBACK-001D-B onward plan prepared. Existing fragmented warp boundaries acknowledged; no camera, balance, economy, audio or VFX redesign implemented.
+- [x] Typecheck, 347 units and build pass. Full Chrome run: 119 pass, two optional JSON-write failures caused by absent audit output directory; original contexts/screenshots/traces retained. Directory corrected; both unchanged audio tests pass on focused repeat. No skipped/flaky cases in either receipt; no claim of a second all-green full run.
+- [x] Review package tooling verifies production preservation, local gallery links/images/filter, ZIP CRC and per-file SHA-256; archive SHA-256 sidecar is delivery metadata. No push, merge or deployment.
+- [ ] Owner review, first-time-player validation, physical devices/other browsers/true page zoom and motion-sensitive comfort acceptance remain open; recommendations are not implemented.
+
 ## FEEDBACK-001C2 — Shard Trails, 2026-11-16
 
 - [x] Exact10cc436 base, requested feature branch, unrelated owner files preserved. Owner approved C1 sampled audio/stability and rejected the wing guidance.
