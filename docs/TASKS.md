@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## FEEDBACK-001C1 — Sampled Collision Audio & Energy Shard Guidance, 2026-11-16
+
+- [x] Exact0348c2a base and requested feature branch; unrelated owner files preserved. Owner's approved music/adjustable engine retained.
+- [x] Audited23 decoded candidates; selected8 CC0 physical derivatives with originals/authors/licenses/hashes. Four material families, two physical variants each, quiet hull/energy layers, optional fallback, bounded pan and existing6-voice lifecycle.
+- [x] Audited Hybrid projection, three-part pickup/assists, placement/occlusion/reachability. Added two thin gameplay-axis wing paths plus one true-depth current transverse contour; no homing, physics/radius/size/camera/generator/RNG changes.
+- [x] 342 units/118 full browser tests pass with244 frozen runtime/test/asset inputs; typecheck/build pass. 143 baseline inputs checked/138 unchanged; exact10 broad gameplay endpoints and66 baseline/OFF plus66 ON/OFF screenshot states. Eight reports and exact-source package tooling prepared.
+- [x] Native paired body/wing/Phase2/miss screenshots/videos, geometry obstruction/depth fixtures, real WAV/live audio/playback/signal evidence,20 performance rows/10320frames,40 natural death/restart cycles and60s continuous audio. About60FPS retained; raw cold loading, one36.9ms frame and finite heap observations documented.
+- [ ] Owner/new-player usability and collision artistic acceptance, physical-phone checks remain open. No fabricated human results or collection-rate claim. No push, merge or publication.
+
 ## FEEDBACK-001C — Audio, Adaptive Music, Flight Feel & Mine Enhancement, 2026-11-15
 
 - [x] Exact001B1 base4ad10e8; preserved unrelated files, audited current audio/director clocks, froze production before captures and original audio.
@@ -8,7 +17,7 @@
 - [x] Original64-second/32-bar/four-chapter synchronized score. Read-only16-section adapter activates pressure by actual distance, handles omissions and resets, never alters the director or gameplay RNG.
 - [x] 334 unit and115 full browser cases pass against frozen source hashes; typecheck/build pass. 12,720 measured frames and120 natural death/reset cycles retain all10 matched gameplay hashes and roughly60FPS. Fixed audio PCM12.27MiB versus3.17MiB; cold synthesis cost and old unresolved cadence/heap observations are documented.
 - [x] Native audible recordings, canvas/audio clips, three-minute score/flight, adaptive/collision/lifecycle/headroom WAVs, playback/signal checks and seven reports prepared. Exact commit and ZIP integrity receipts accompany delivery.
-- [ ] Owner artistic/listening acceptance and physical-phone checks remain open before001D. No push, merge or publication.
+- [x] Owner playtested: adaptive transitions approved; adjustable engine acceptable. Flat/boomy collision texture and shard alignment feedback are addressed in001C1; physical-phone checks remain open. No push, merge or publication.
 
 ## FEEDBACK-001B1 — Shield, Mine Explosion & Ship Destruction Polish, 2026-11-14
 
