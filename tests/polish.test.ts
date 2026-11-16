@@ -55,7 +55,8 @@ test('pickup assistance .36 clears deterministic high-speed near tangencies, .34
   assert.equal(r.count,assist===.36?1:0);
  }
  for(const p of SHIP_COLLIDER.parts.slice(1))for(const epsilon of [-.001,.001]){
-  const r=reward(new FragmentRun(SHIP_COLLIDER,FRAGMENT.pickupAssist,FRAGMENT.wingPickupAssist),p.offsetX+Math.sign(p.offsetX)*(.96+epsilon),p.offsetY);
+  const radius=p.radius+FRAGMENT.pickupRadius+FRAGMENT.pickupAssist+FRAGMENT.wingPickupAssist;
+  const r=reward(new FragmentRun(SHIP_COLLIDER,FRAGMENT.pickupAssist,FRAGMENT.wingPickupAssist),p.offsetX+Math.sign(p.offsetX)*(radius+epsilon),p.offsetY);
   r.step(0,0,8,0,0,12,120);assert.equal(r.count,epsilon<0?1:0);r.step(0,0,8,0,0,12,121);assert.ok(r.count<=1);
  }
  assert.equal(FRAGMENT.magnetSeconds,.14);
@@ -63,7 +64,7 @@ test('pickup assistance .36 clears deterministic high-speed near tangencies, .34
 test('normal and Phase2 production use independently compensated wings with single-event damage and pickup',()=>{
  for(const distance of [100,700])for(const p of SHIP_COLLIDER.parts.slice(1)){
   const m=new ReleaseModel();m.ready();m.start(42);m.field.update=()=>{};m.distance=distance;m.elapsed=120;
-  assert.equal(m.fragments.pickupProfile,m.shipColliderProfile);assert.equal(m.fragments.wingPickupAssist,.10);
+  assert.equal(m.fragments.pickupProfile,m.shipColliderProfile);assert.equal(m.fragments.wingPickupAssist,.1125);
   Object.assign(m.fragments.slots[0]!,{state:'active',proposal:{id:'wing',x:p.offsetX+Math.sign(p.offsetX)*.90,y:p.offsetY,passDistance:distance-p.offsetZ}});
   m.step(CONFIG.step,{x:0,y:0});assert.equal(m.fragments.count,1);assert.equal(m.fragments.lastPickup.part,p.id);
   for(let i=0;i<20;i++)m.step(CONFIG.step,{x:0,y:0});assert.equal(m.fragments.count,1);assert.equal(m.hull,3);m.dispose();

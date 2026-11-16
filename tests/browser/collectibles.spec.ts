@@ -1,17 +1,17 @@
 import { test, expect } from './helpers';
-import { ReleaseModel } from '../../src/release/model.ts';
+import { IntegratedModel } from '../../src/integrated/model.ts';
 import { certifiedInput } from '../fixtures/fragment-flight.ts';
 
 test('normal production Play collects through keyboard movement with no query or debug seam', async ({ page }) => {
   test.setTimeout(90_000);
-  const m = new ReleaseModel(); m.ready(); m.start(42);
+  const m = new IntegratedModel(); m.ready(); m.start(42);
   const frames: { x: number; y: number }[] = [];
   for (let frame = 0; frame < 950; frame++) {
     const p = m.fragments.active[0], steer = p ? { x: (p.x-m.ship.x)*1.6-m.ship.vx*.3, y: (p.y-m.ship.y)*1.6-m.ship.vy*.3 } : certifiedInput(m);
     const input = { x: Math.abs(steer.x) > .24 ? Math.sign(steer.x) : 0, y: Math.abs(steer.y) > .24 ? Math.sign(steer.y) : 0 };
-    frames.push(input); m.step(1/120,input); m.step(1/120,input);
+    frames.push(input);m.beginPlanningFrame();m.step(1/120,input);m.step(1/120,input);m.finishPlanningFrame(1/60);
   }
-  expect(m.fragments.count).toBeGreaterThan(0); m.dispose();
+  expect(m.fragments.count).toBeGreaterThan(0);const expected=String(m.fragments.count).padStart(2,'0');m.dispose();
   await page.addInitScript(() => {
     let now = 0, next = 0; const pending = new Map<number, FrameRequestCallback>();
     crypto.getRandomValues = (<T extends ArrayBufferView | null>(a: T): T => { if(a) new Uint32Array(a.buffer).fill(42); return a; }) as Crypto['getRandomValues'];
@@ -31,10 +31,10 @@ test('normal production Play collects through keyboard movement with no query or
       (window as unknown as { advance(): void }).advance();
     }
   }, frames);
-  await expect(page.locator('#energy-count')).toHaveText('01');
+  await expect(page.locator('#energy-count')).toHaveText(expected);
   await page.locator('#pause').click();
   await page.evaluate(() => { for(let i=0;i<100;i++) (window as unknown as { advance(): void }).advance(); });
-  await expect(page.locator('#energy-count')).toHaveText('01');
+  await expect(page.locator('#energy-count')).toHaveText(expected);
   await page.locator('#restart-pause').click();
   await page.evaluate(() => (window as unknown as { advance(): void }).advance());
   await expect(page.locator('#energy-count')).toHaveText('00');

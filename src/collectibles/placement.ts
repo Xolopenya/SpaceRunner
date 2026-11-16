@@ -16,6 +16,8 @@ export interface FragmentProposal {
   readonly situation: 'debris' | 'aperture';
   readonly x: number; readonly y: number; readonly passDistance: number;
   readonly approach?: Readonly<{ x: number; y: number }>;
+  readonly trail?:string; readonly pattern?:'straight'|'curve'|'offset';
+  readonly trailIndex?:number; readonly trailLength?:number;
 }
 export function fragmentHash(value: string): number {
   let hash = 2166136261;

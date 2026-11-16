@@ -103,8 +103,10 @@ test('D/L: real ReleaseModel publishes only owned fragments and collects using u
   while (m.distance < 350 && m.state === 'PLAYING') {
     const target = m.fragments.active[0]; m.step(CONFIG.step, fragmentInput(m, target));
     for (const f of m.fragments.active) {
-      assert.ok(m.field.ledger.knownHazards(m.distance).some(h => h.id === f.anchor));
-      assert.ok(fragmentClear(f, m.field.ledger.knownHazards(m.distance)));
+      // A trailing member may outlive its anchor hazard by22m; its section was
+      // still admitted atomically, with the complete short route checked.
+      if(f.trail){assert.ok(m.field.events.some(e=>e.ids.includes(f.anchor)));assert.ok(fragmentClear(f,m.field.ledger.knownHazards(m.distance),{profile:m.fragments.pickupProfile,assist:m.fragments.pickupAssist,wingAssist:m.fragments.wingPickupAssist}));}
+      else {assert.ok(m.field.ledger.knownHazards(m.distance).some(h => h.id === f.anchor));assert.ok(fragmentClear(f,m.field.ledger.knownHazards(m.distance)));}
     }
     collected ||= m.fragments.count > 0;
   }
@@ -119,6 +121,6 @@ test('I: identical recorded movement reproduces pickup tick, count and final sta
   const end = { ship: { ...m.ship }, count: m.fragments.count, distance: m.distance, hull: m.hull, witness: m.field.certificate?.hash };
   m.state = 'GAME_OVER'; m.start(42); const replay: number[] = [];
   inputs.forEach((input, i) => { const before=m.fragments.count; m.step(CONFIG.step,input); if(m.fragments.count > before) replay.push(i+1); });
-  assert.deepEqual(replay, pickups); assert.equal(pickups.length, 1);
+  assert.deepEqual(replay, pickups); assert.equal(pickups.length, 3);
   assert.deepEqual({ship:{...m.ship}, count:m.fragments.count,distance:m.distance,hull:m.hull,witness:m.field.certificate?.hash}, end); m.dispose();
 });

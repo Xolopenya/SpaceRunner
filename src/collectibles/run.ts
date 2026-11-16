@@ -10,6 +10,7 @@ import { BODY_COLLIDER } from '../core/ship-collider.ts';
 import type { ShipColliderProfile, ShipColliderPart } from '../core/ship-collider.ts';
 import { ShipHazardCollision } from '../core/ship-hazard-collision.ts';
 import type { GameEventMap } from '../events/game-events.ts';
+import {proposeTrail,trailScheduled} from './trails.ts';
 
 interface PickupFeedback { x:number; y:number; distance:number; elapsed:number; z?:number; slot?:number; assisted?:boolean; part?:ShipColliderPart['id'] }
 type PickupHazard = PlannedHazard | { readonly planned?: PlannedHazard };
@@ -22,7 +23,8 @@ export class FragmentRun {
   count = 0;
   lastPickup: PickupFeedback = { x: 0, y: 0, distance: 0, elapsed: -1 };
   readonly stats = { published: 0, ordinary: 0, opportunities: 0, placed: 0, skipped: 0, candidatesRejected: 0,
-    collected: 0, retired: 0, checks: 0, peakActive: 0, debris: 0, aperture: 0, occluded:0 };
+    collected: 0, retired: 0, checks: 0, peakActive: 0, debris: 0, aperture: 0, occluded:0,
+    groups:0,trails:0,trailRejected:0,straight:0,curve:0,offset:0 };
   private ordinarySince = 0;
   private nextOrdinary = 2;
   private lastSection = -1;
@@ -64,8 +66,17 @@ export class FragmentRun {
     const proposal = proposeFragment(transaction, root, known, this.active, () => this.stats.candidatesRejected++,
       this.pickupAssist?{profile:this.pickupProfile,assist:this.pickupAssist,wingAssist:this.wingPickupAssist}:undefined);
     if (!proposal) { this.stats.skipped++; return; }
-    slot.proposal = proposal; slot.state = 'active'; this.stats.placed++; this.stats[proposal.situation]++;
-    this.ordinarySince = 0; this.nextOrdinary = 2 + fragmentHash(proposal.id + '/cadence') % 3;
+    const policy={profile:this.pickupProfile,assist:this.pickupAssist,wingAssist:this.wingPickupAssist};
+    let group:readonly FragmentProposal[]=[proposal];
+    if(trailScheduled(transaction.provenance.seed,this.stats.groups)){
+      const trail=proposeTrail(proposal,transaction,root,known,this.active,policy);
+      // Keep the same fixed pool and reserve every member atomically.
+      if(trail&&this.slots.filter(s=>s.state!=='active').length>=trail.length){group=trail;this.stats.trails++;this.stats[trail[0]!.pattern!]++;}
+      else this.stats.trailRejected++;
+    }
+    for(const p of group){const target=this.slots.find(s=>s.state!=='active')!;target.proposal=p;target.state='active';this.stats.placed++;this.stats[p.situation]++;}
+    this.stats.groups++;
+    this.ordinarySince = 0; this.nextOrdinary = S.ordinaryCadence[fragmentHash(proposal.id + '/cadence') % S.ordinaryCadence.length]!;
     this.stats.peakActive = Math.max(this.stats.peakActive, this.active.length);
   }
 

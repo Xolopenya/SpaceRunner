@@ -25,7 +25,6 @@ import { HullDamage } from './visuals/hull-damage.ts';
 import { CollisionVFX } from './visuals/collision-vfx.ts';
 import { ShipDestruction } from './visuals/ship-destruction.ts';
 import { FEEDBACK } from './feedback/settings.ts';
-import { PickupGuidance } from './collectibles/guidance.ts';
 
 export class World {
   readonly renderer: THREE.WebGLRenderer;
@@ -43,7 +42,6 @@ export class World {
   private readonly engines: EngineVFX;
   private readonly impacts: ImpactVFX;
   private readonly fragments: FragmentView;
-  readonly guidance:PickupGuidance;
   private readonly cameraImpulse = new CameraImpulse();
   readonly hullDamage: HullDamage;
   readonly destruction: ShipDestruction;
@@ -97,7 +95,6 @@ export class World {
     this.engines = new EngineVFX(this.scene, this.ship);
     this.impacts = new ImpactVFX(this.scene);
     this.fragments = new FragmentView(this.scene, this.reveal);
-    this.guidance=new PickupGuidance(this.scene);
     this.collisionDebug = debugFactory?.(this.scene);
     this.collisionDebug?.setReveal?.(this.reveal);
     this.warmFeedback();
@@ -107,7 +104,7 @@ export class World {
    * real framebuffer preserves its color-space shader variants. No gameplay facts
    * are synthesized; restore all state before the browser can present a frame. */
   private warmFeedback(): void {
-    const roots = [this.hullDamage.root, this.destruction.root, this.collisionEffects.root, this.impacts.root, this.engines.trails,this.guidance.root];
+    const roots = [this.hullDamage.root, this.destruction.root, this.collisionEffects.root, this.impacts.root, this.engines.trails];
     const visibility = new Map<THREE.Object3D, boolean>(), opacity = new Map<THREE.Material, number>();
     for (const child of this.scene.children) { visibility.set(child, child.visible); if (!(child instanceof THREE.Light) && child !== this.ship && !roots.includes(child as typeof roots[number])) child.visible = false; }
     for (const root of roots) root.traverse(node => {
@@ -154,7 +151,6 @@ export class World {
     this.engines.reset();
     this.impacts.reset();
     this.fragments.reset();
-    this.guidance.reset();
     this.ship.rotation.set(0, 0, 0);
     this.flightCamera.reset();
     this.cameraImpulse.reset();
@@ -230,7 +226,6 @@ export class World {
     // has an accumulating recurrence, so it deliberately receives no impulse.
     const shake = (model.state === 'PLAYING' || model.state === 'PAUSED' || this.destruction.sequence.active) && !this.quality.reducedMotion && this.flightCamera.mode !== 'baseline' ? this.cameraImpulse.amplitude : 0;
     this.flightCamera.update(model.ship.x, model.ship.y, model.elapsed, shake, dt);
-    this.guidance.update(model,this.ship,this.camera,this.width,this.height);
     this.collisionDebug?.update(model);
     this.renderer.render(this.scene, this.camera);
   }
@@ -245,7 +240,6 @@ export class World {
     this.engines.dispose();
     this.impacts.dispose();
     this.fragments.dispose();
-    this.guidance.dispose();
     this.hullDamage.dispose(); this.destruction.dispose(); this.collisionEffects.dispose();
     this.resources.dispose();
     this.renderer.dispose();
