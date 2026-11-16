@@ -1,5 +1,16 @@
 # Delivery checklist
 
+## FEEDBACK-001D-B — HUD readability, events and input hints, 2026-11-16
+
+- [x] Requested branch from exact `54d5819` gameplay baseline; audit `fbfde04` consulted separately. Four unrelated owner paths preserved. Applied Game Studio game-ui-frontend/game-playtest and local space-runner-ui-design.
+- [x] Hull-owned energy/phase/event stack, stable transparent transient slot, damage/protection priority over the three-second phase notice, synchronous run-start cleanup. Current phase stays visible; existing gameplay clock and shield remain.
+- [x] Capability/recent-pointer/keyboard hint observer independent of viewport width, with abortable lifecycle. Actual InputManager/steering unchanged. Simplified phase copy and accurate Audio footer; no C/D/E work.
+- [x] 347 units, final typecheck and build pass. Added ten browser regressions covering nine real-event geometry/lifecycle sizes plus hybrid input/settings. Original assertions preserved; four existing test scenarios now await asynchronous readiness after reload and before teardown/disposal/intentional fault injection.
+- [x] 27 matched natural production normal/phase/hit state pairs, 120 PNGs, two silent timing videos and separate coarse/hybrid captures. Protected gameplay/render/audio/assets and menu/pause/results markup verified unchanged; Game differs only by the hint adapter lifecycle.
+- [x] Final complete browser run: 129 first-attempt passes, two existing resource-heavy cases pass on retry; zero failed/skipped. Earlier interrupted/128-pass/130-pass receipts retained. Sequential 600 native frames per version retain RAF p95 16.8ms; ten measured UI resets per version keep listener counts constant (63 baseline/66 final), both dispose to 27. No phone or speedup claim.
+- [x] Six reports, paired gallery, full source/diff and reproducible CRC/SHA inventory tooling prepared. Final implementation commit/archive identities are delivery metadata. No push, merge or deployment.
+- [ ] Physical devices, other engines, true browser zoom and owner/human readability acceptance remain open. FEEDBACK-001D-C is the next separate implementation scope.
+
 ## FEEDBACK-001C2 — Shard Trails, 2026-11-16
 
 - [x] Exact10cc436 base, requested feature branch, unrelated owner files preserved. Owner approved C1 sampled audio/stability and rejected the wing guidance.

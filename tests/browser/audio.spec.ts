@@ -161,6 +161,7 @@ test('settings route, persist and restore without autoplay; desktop menu and pau
   await page.getByRole('button', { name: 'Mute sound', exact: true }).click();
   await expect(page.locator('#sound-mute')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
+  await page.waitForFunction(() => !!window.spaceRunner);
   expect((await inspect(page)).context).toBe(null);
   expect((await inspect(page)).settings).toEqual({ master: 0.52, music: 0.21, sfx: 0.64, muted: true });
   await page.getByRole('button', { name: 'Sound settings · muted', exact: true }).click();
@@ -220,6 +221,11 @@ for (const failure of ['missing', 'rejected', 'runtime'] as const) test(`silent 
   await launch(page);
   if (failure === 'runtime') {
     await expect.poll(async () => (await inspect(page)).status).toBe('running');
+    // Inject the intentional failure after preload, so disposal does not abort fixture requests.
+    await page.evaluate(async () => {
+      const audio = window.spaceRunner!.audio as unknown as { graph: { samples: { ready: Promise<void> } } };
+      await audio.graph.samples.ready;
+    });
     await page.evaluate(() => {
       const graph = (window.spaceRunner!.audio as unknown as { graph: import('../../src/audio/graph').AudioGraph }).graph;
       graph.engine.update = () => { throw new Error('Intentional runtime audio failure'); };
@@ -274,6 +280,8 @@ test('actual OfflineAudioContext rendering produces bounded PCM and original rev
       const seconds = mode === 'music' ? 16 : mode === 'flight' ? 8 : 3;
       const context = new OfflineAudioContext(2, seconds * AUDIO.sampleRate, AUDIO.sampleRate);
       const graph = new AudioGraph(context, mode === 'headroom' ? { master: 1, music: 1, sfx: 1, muted: false } : AUDIO.defaults);
+      // Complete optional asynchronous loading before disposing this offline fixture.
+      await graph.samples.ready;
       graph.setState(mode === 'music' ? 'MENU' : 'PLAYING', 0);
       if (mode === 'flight') {
         graph.engine.update(34, 8, 0, 1); graph.play('launch'); graph.play('impact', 2);

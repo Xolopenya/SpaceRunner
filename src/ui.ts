@@ -36,6 +36,8 @@ export class HUD {
   private readonly hint = element('flight-hint');
   private readonly damage = element('damage');
   private readonly telemetry = element('telemetry');
+  private readonly phaseLabel = element('phase-label');
+  private readonly phaseNotice = element('phase-notice');
   private phaseAt=0;
   private phaseShown=1;
   private lastScore = -1;
@@ -48,6 +50,13 @@ export class HUD {
     switch (event.type) {
       case 'run.started':
         this.pickupAt = -1;
+        this.phaseShown = 1;
+        this.phaseAt = 0;
+        this.phaseNotice.hidden = true;
+        this.damage.hidden = true;
+        this.lastHit = false;
+        this.game.dataset.hit = 'false';
+        text(this.phaseLabel, 'PHASE 1 · Normal flight');
         delete this.game.dataset.damageAt;
         this.game.dataset.recordBroken = 'false';
         this.game.dataset.runEnded = 'false';
@@ -88,11 +97,11 @@ export class HUD {
     const phase='phase' in model ? Number(model.phase) : 1;
     if(phase===1){this.phaseShown=1;this.phaseAt=0;}
     if(phase===2&&this.phaseShown===1){this.phaseShown=2;this.phaseAt=model.elapsed;}
-    element('phase-label').textContent=phase===2?'PHASE 2 / DANGEROUS SECTOR':'PHASE 1 / NORMAL FLIGHT';
+    text(this.phaseLabel, phase===2?'PHASE 2 · Dangerous sector':'PHASE 1 · Normal flight');
     element('phase-label').dataset.speed=String(model.speed);
     element('phase-label').dataset.gap=String(phase===1?RELEASE.phase1ExtraCells*RELEASE.cellSize:0);
-    element('phase-notice').textContent='PHASE 2 / DANGEROUS SECTOR / SPEED +'+Math.round((RELEASE.phase2SpeedMultiplier-1)*100)+'% / RECOVERY GAP -'+RELEASE.phase1ExtraCells*RELEASE.cellSize;
-    element('phase-notice').hidden=phase!==2||model.elapsed-this.phaseAt>3;
+    text(this.phaseNotice, 'Faster flight ahead');
+    this.phaseNotice.hidden = model.state !== 'PLAYING' || phase !== 2 || model.elapsed - this.phaseAt > 3 || model.invulnerability > 0;
 
     if (this.lastScore !== model.score) {
       this.lastScore = model.score;

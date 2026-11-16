@@ -1,0 +1,7 @@
+# HUD architecture
+
+The existing HUD grid retains hull at left, distance at right and pause. A relative hull-instruments anchor owns hud-status below hull, using intrinsic layout instead of independent phase/damage top offsets. Energy and current phase are permanent rows. A bounded transparent hud-event region contains either damage/protection or the phase notice. It does not move the permanent rows or buttons.
+
+Priority is deterministic: active invulnerability displays the existing damage/protection message and suppresses phase notice; phase notice may return only within its original three-second window. No queue, callbacks or wall timers. Hull count/pips still show critical state. The current phase label stays visible throughout damage. All timing uses model.elapsed/invulnerability; pause stops that clock. run.started resets the window and transient presentation, preventing a stale new-run announcement. No DOM rectangles are measured at runtime.
+
+Phase nodes are cached; text writes use the existing change-only helper. Input observation has one AbortController owned/disposed by Game. Existing gameplay event architecture and orchestration priorities are retained. Portrait/short landscape use the same hierarchy and smaller existing type scale. Nine geometry tests inspect actual rendered leaf rectangles, clipping, pause/resume and restart after natural accepted damage. Existing center reservation and safe-area tests remain unchanged.

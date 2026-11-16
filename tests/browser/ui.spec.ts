@@ -225,3 +225,67 @@ test('focus loss reason, reduced motion and stable DOM ownership survive repeate
   expect(await page.locator('#game *').count()).toBe(nodeCount);
   expect(await page.locator('#launch').evaluate(node => getComputedStyle(node).transitionDuration)).toBe('0s');
 });
+
+for (const [width,height] of [[1920,1080],[1366,768],[1280,720],[1024,600],[390,844],[360,800],[932,430],[768,1024],[800,450]]) {
+  rawTest(`HUD event geometry and lifecycle ${width}x${height}`, async ({ page }) => {
+    rawTest.setTimeout(90000);
+    await page.setViewportSize({width:width!,height:height!});
+    await launch(page, '/?debug=integrated&seed=42');
+    await page.evaluate(() => {
+      const g=window.spaceRunner as any;g.loop.stop();
+      while(g.model.distance<505){g.loop.update(1/120);g.loop.render(1/120);}
+    });
+    await expect(page.locator('#phase-notice')).toBeVisible();
+    await expect(page.locator('#phase-notice')).toHaveText('Faster flight ahead');
+    await page.evaluate(() => {
+      const g=window.spaceRunner as any;
+      for(let i=0;i<10000 && g.model.hull===3;i++){g.loop.update(1/120);g.loop.render(1/120);}
+      g.loop.render(0);
+    });
+    await expect(page.locator('#damage')).toBeVisible();
+    await expect(page.locator('#phase-notice')).toBeHidden();
+    await expect(page.locator('#phase-label')).toContainText('PHASE 2');
+    const inspect = () => page.evaluate(() => {
+      const ids=['hull','energy-block','phase-label','damage','phase-notice','pause'];
+      const nodes=ids.map(id=>document.getElementById(id)!).filter(n=>n.getClientRects().length);
+      const pairs:string[]=[];
+      for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) {
+        const a=nodes[i]!,b=nodes[j]!,x=a.getBoundingClientRect(),y=b.getBoundingClientRect();
+        if(Math.min(x.right,y.right)>Math.max(x.left,y.left)&&Math.min(x.bottom,y.bottom)>Math.max(x.top,y.top))pairs.push(a.id+'/'+b.id);
+      }
+      return {pairs,clipped:nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left<0||r.right>innerWidth||r.top<0||r.bottom>innerHeight||n.scrollWidth>n.clientWidth+1;}).map(n=>n.id)};
+    });
+    expect(await inspect()).toEqual({pairs:[],clipped:[]});
+    await page.locator('#pause').click();
+    const elapsed=await page.evaluate(()=>window.spaceRunner!.model.elapsed);
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(()=>window.spaceRunner!.model.elapsed)).toBe(elapsed);
+    await page.locator('#resume').click();
+    await page.evaluate(()=> (window.spaceRunner as any).loop.render(0));
+    await expect(page.locator('#damage')).toBeVisible();
+    await page.locator('#pause').click();await page.locator('#restart-pause').click();
+    await expect(page.locator('#damage')).toBeHidden();
+    await expect(page.locator('#phase-notice')).toBeHidden();
+    await page.evaluate(()=> (window.spaceRunner as any).loop.render(0));
+    await expect(page.locator('#damage')).toBeHidden();await expect(page.locator('#phase-notice')).toBeHidden();
+    await expect(page.locator('#hull-count')).toHaveText('3');
+    await expect(page.locator('#phase-label')).toContainText('PHASE 1');
+    await page.evaluate(()=>{const g=window.spaceRunner as any;while(g.model.elapsed<29 && g.model.state==='PLAYING'){g.loop.update(1/120);g.loop.render(1/120);}});
+    await expect(page.locator('#game')).toHaveAttribute('data-state','PLAYING');
+    await expect(page.locator('#phase-notice')).toBeHidden();
+    await expect(page.locator('#damage')).toBeHidden();
+    await expect(page.locator('#phase-label')).toContainText('PHASE 2');
+  });
+}
+rawTest('input hints follow actual method and not window size', async ({browser})=>{
+  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  const page=await context.newPage();await page.goto('http://127.0.0.1:5173/');await page.locator('#launch').waitFor();
+  await expect(page.locator('#game')).toHaveAttribute('data-input','touch');
+  await expect(page.locator('#menu .touch-control')).toBeVisible();
+  await page.keyboard.press('KeyW');await expect(page.locator('#menu .desktop-control')).toBeVisible();
+  await page.setViewportSize({width:800,height:450});await expect(page.locator('#menu .desktop-control')).toBeVisible();
+  await page.locator('#menu-title').tap();await expect(page.locator('#menu .touch-control')).toBeVisible();
+  await page.mouse.click(700,400);await expect(page.locator('#menu .desktop-control')).toBeVisible();
+  await page.locator('#menu [data-sound-open]').click();await expect(page.locator('.sound-note')).toContainText('Adjust music and sound effects independently.');
+  await page.keyboard.press('Escape');await expect(page.locator('#sound-settings')).toBeHidden();await context.close();
+});

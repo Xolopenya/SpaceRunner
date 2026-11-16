@@ -15,9 +15,9 @@
       <canvas id="flight" aria-label="Space Runner flight area. Steer with WASD, arrow keys, or drag. Avoid the incoming obstacles."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <section id="hud" class="hud" aria-label="Flight status" hidden>
-        <div id="phase-label" class="phase-label">PHASE 1 · NORMAL FLIGHT</div><div id="phase-notice" class="phase-notice" hidden>PHASE 2 · DANGEROUS SECTOR<br>Speed +8% · Shorter encounter spacing</div><div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="hull-count">3</span><small>/3</small></span></div></div>
+        <div class="hull-instruments"><div class="hull-block"><span class="label">HULL</span><div class="hull-row"><div id="hull" class="hull" role="meter" aria-label="Hull points" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div><span class="hull-count" aria-hidden="true"><span id="hull-count">3</span><small>/3</small></span></div></div><div id="hud-status" class="hud-status"><div id="energy-block" class="energy-block"><span class="energy-icon" aria-hidden="true">◇</span><span class="label">ENERGY</span><strong id="energy-count" aria-label="Energy fragments collected">00</strong><span class="energy-plus" aria-hidden="true">+1</span></div><div id="phase-label" class="phase-label">PHASE 1 · Normal flight</div><div class="hud-event"><div id="phase-notice" class="phase-notice" role="status" hidden>Faster flight ahead</div><div id="damage" class="damage" role="status" hidden><strong>Hull hit</strong><span>Impact protection active</span></div></div></div></div>
         <div class="distance-block"><span class="label">DISTANCE</span><div class="number-line"><strong id="distance">0</strong><span class="unit">m</span></div></div>
-        <div id="energy-block" class="energy-block"><span class="energy-icon" aria-hidden="true">◇</span><span class="label">ENERGY</span><strong id="energy-count" aria-label="Energy fragments collected">00</strong><span class="energy-plus" aria-hidden="true">+1</span></div>
+
         <button id="pause" class="pause-button" aria-label="Pause flight" hidden><span class="pause-mark" aria-hidden="true"></span><span>Pause</span></button>
       </section>
       <section id="loading" class="loading" aria-labelledby="loading-title"><span class="mode-label">SPACE RUNNER</span><h1 id="loading-title">Preparing flight.</h1><p id="loading-message" role="status">Preparing flight systems…</p><button id="retry" class="primary" hidden>Retry loading <span aria-hidden="true">↻</span></button></section>
@@ -40,7 +40,7 @@
         <aside class="record"><span class="label">PERSONAL BEST</span><div class="number-line"><strong id="final-best">0</strong><span class="unit">m</span></div></aside>
       </section>
       <div id="flight-hint" class="flight-hint" hidden><span class="desktop-control">WASD / arrows to steer</span><span class="touch-control">Drag to steer</span><span class="hint-divider" aria-hidden="true">·</span>Avoid the debris</div>
-      <div id="damage" class="damage" role="status" hidden><strong>Hull hit</strong><span>Impact protection active</span></div>
+
       <div id="joystick" class="joystick" aria-hidden="true" hidden><i></i></div>
       <button id="skip-destruction" class="destruction-skip" hidden>Skip to results <kbd>Space</kbd></button>
       <div id="telemetry" class="flight-speed" hidden></div>
@@ -53,7 +53,7 @@
           <div class="sound-channel"><label for="sound-sfx">Sound effects volume <output id="sound-sfx-value" for="sound-sfx" aria-hidden="true">75%</output></label><input id="sound-sfx" type="range" min="0" max="100" step="1" value="75" /></div>
         </div>
         <button id="sound-mute" class="secondary" aria-pressed="false">Mute sound</button>
-        <p class="sound-note"><kbd>M</kbd> to mute · Preferences save on this device.<br /> Original synthesized sounds and ambient music.</p>
+        <p class="sound-note"><kbd>M</kbd> to mute · Preferences save on this device.<br /> Adjust music and sound effects independently.</p>
       </dialog>
     </main>
     <script type="module" src="/src/main.ts"></script>

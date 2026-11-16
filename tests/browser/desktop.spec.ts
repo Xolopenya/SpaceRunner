@@ -148,6 +148,11 @@ test('incoming waves render and scrolling remains bounded over an unmodified run
   expect(telemetry.activeHazards).toBeGreaterThan(0);
   expect(telemetry.drawCalls).toBeLessThan(100);
   await page.screenshot({ path: 'test-results/desktop-hazards.png' });
+  // The page fixture checks failed requests; finish sample loading before teardown.
+  await page.evaluate(async () => {
+    const audio = window.spaceRunner!.audio as unknown as { graph?: { samples: { ready: Promise<void> } } };
+    await audio.graph?.samples.ready;
+  });
 });
 
 test('visibility pause and graphics context recovery require deliberate resume', async ({ page }) => {

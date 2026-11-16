@@ -1,3 +1,4 @@
+import { InputHints } from './ui-input-hints.ts';
 import { GameModel } from './core/game-model.ts';
 import type { GameState } from './core/game-model.ts';
 import { GameLoop } from './game-loop.ts';
@@ -18,6 +19,7 @@ export class Game {
   readonly audio = new AudioManager();
   private readonly soundPanel: SoundPanel;
   private readonly ui = new HUD();
+  private readonly hints = new InputHints(element('game'));
   private readonly input: InputManager;
   private readonly loop: GameLoop;
   private readonly events = new AbortController();
@@ -193,6 +195,7 @@ export class Game {
     this.feedback.dispose();
     (this.model as GameModel & { dispose?: () => void }).dispose?.();
     this.input.dispose();
+    this.hints.dispose();
     this.events.abort();
     this.soundPanel.dispose();
     this.audio.dispose();

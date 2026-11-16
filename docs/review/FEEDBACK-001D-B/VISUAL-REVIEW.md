@@ -1,0 +1,7 @@
+# Visual review
+
+Open index.html for labelled matched comparisons at 1920x1080, 1366x768, 1280x720, 1024x600, 390x844, 360x800, 932x430, 768x1024 and 800x450. Original production seed42 is advanced with neutral input to identical simulation ticks. Normal, phase and accepted-hit coordinates/HP/elapsed match. Phase2 without damage is captured before the first hit; hit frames show suppression while the persistent phase stays readable. A two-second native-RAF post-contact segment covers critical hull. Accelerated prefixes are not ordinary continuous playtime.
+
+Before captures reproduce Hull hit through the phase label. After captures separate energy, current phase and damage vertically with aligned left anchors and no panel. Automatic leaf-rectangle tests detect intersection/clipping rather than checking CSS declarations. Existing viewport center tests remain active. Separate coarse-pointer menu/flight images demonstrate touch instructions; keyboard/mouse switching is tested and pictured. Audio screenshots expose the corrected footer.
+
+Typography, palette, hull pips, numerical hierarchy, pause target and scene remain recognizable. Small peripheral labels still need human glance testing. No claim that these changes improve retention or novice performance. True browser zoom at 125%/200% and physical notches/devices were not independently validated; smaller viewports are not claimed as zoom tests. Reduced motion, orientation, large scores and safe-area emulation remain covered by existing browser tests.
