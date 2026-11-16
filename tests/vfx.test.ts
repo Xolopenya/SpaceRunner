@@ -8,7 +8,7 @@ import { ImpactVFX } from '../src/visuals/impact-vfx.ts';
 import { SpaceBackground } from '../src/visuals/space-background.ts';
 import { VISUALS, visualDelta, visualQuality } from '../src/visuals/settings.ts';
 import { GameModel } from '../src/core/game-model.ts';
-import { withoutFeedbackInstrumentation } from './fixtures/feedback-instrumentation.ts';
+import { withoutFeedbackInstrumentation, withoutResultsNavigation } from './fixtures/feedback-instrumentation.ts';
 import { FEEDBACK } from '../src/feedback/settings.ts';
 
 const quality = visualQuality(1280, 800, false, false);
@@ -32,7 +32,7 @@ const approvedFiles: Record<string, string> = {
 const hash = (source: string) => createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex');
 
 test('VFX preserves approved movement, collision, spawning, input, loop and camera formulas', () => {
-  for (const [file, approvedHash] of Object.entries(approvedFiles)) assert.equal(hash(file === 'src/core/game-model.ts' ? withoutFeedbackInstrumentation(readFileSync(file, 'utf8')) : readFileSync(file, 'utf8')), approvedHash, file);
+  for (const [file, approvedHash] of Object.entries(approvedFiles)) assert.equal(hash(file === 'src/core/game-model.ts' ? withoutResultsNavigation(withoutFeedbackInstrumentation(readFileSync(file, 'utf8'))) : readFileSync(file, 'utf8')), approvedHash, file);
   let newWorld = readFileSync('src/world.ts', 'utf8');
   // CAMERA-001 extracts the presentation camera into FlightCamera. Reverse ONLY
   // those three call-site moves to retain the original approved source digest;

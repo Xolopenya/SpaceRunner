@@ -3,6 +3,7 @@ import { GameModel } from './core/game-model.ts';
 import { fragmentsOf } from './collectibles/state.ts';
 import type { GameEvent } from './events/game-events.ts';
 import { FEEDBACK } from './feedback/settings.ts';
+import type { CompletedRun } from './run-results.ts';
 
 export function element<T extends HTMLElement = HTMLElement>(id: string): T {
   const node = document.getElementById(id);
@@ -68,10 +69,11 @@ export class HUD {
     }
   }
 
-  showState(model: GameModel, best: number, pauseReason: string, cinematic = false): void {
+  showState(model: GameModel, best: number, pauseReason: string, cinematic = false, result?: CompletedRun): void {
     const state = model.state;
     this.game.dataset.state = state;
     this.game.dataset.cinematic = String(cinematic);
+    element('flight').tabIndex = state === 'PLAYING' ? 0 : -1;
     element('skip-destruction').hidden = !cinematic;
     element('loading').hidden = state !== 'LOADING';
     element('menu').hidden = state !== 'MENU';
@@ -81,11 +83,16 @@ export class HUD {
     element('pause').hidden = state !== 'PLAYING';
     this.telemetry.hidden = state !== 'PLAYING';
     score(element('menu-best'), best);
-    score(element('final-score'), model.score);
+    score(element('final-score'), result?.score ?? model.score);
     score(element('final-best'), best);
-    text(element('final-energy'), String(fragmentsOf(model)?.count ?? 0).padStart(2, '0'));
+    text(element('final-energy'), String(result?.energy ?? fragmentsOf(model)?.count ?? 0).padStart(2, '0'));
+    const newRecord = state === 'GAME_OVER' && result?.newRecord === true;
+    element('new-record').hidden = !newRecord;
+    element('result-label').hidden = newRecord;
+    element('record-comparison').hidden = !newRecord;
+    text(element('record-comparison'), result?.previousBest ? `Previous best · ${result.previousBest.toLocaleString('en-US')} m` : 'First personal best');
     text(element('pause-reason'), pauseReason);
-    text(element('seed'), `Route ${model.seed}`);
+    text(element('seed'), `Route ${result?.seed ?? model.seed}`);
     const focusId = { MENU: 'launch', PLAYING: 'flight', PAUSED: 'resume', GAME_OVER: 'replay', LOADING: 'loading' }[state];
     element(cinematic ? 'skip-destruction' : focusId).focus({ preventScroll: true });
   }

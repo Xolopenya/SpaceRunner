@@ -36,6 +36,20 @@ export class GameModel {
 
   ready(): void { if (this.state === 'LOADING') this.state = 'MENU'; }
 
+  // FEEDBACK-001D-C menu navigation begin
+  /** Completed flight -> idle menu. No new run, score write or end event. */
+  returnToMenu(): boolean {
+    if (this.state !== 'GAME_OVER') return false;
+    this.ship.reset();
+    this.field.reset(this.seed);
+    this.elapsed = this.distance = this.invulnerability = this.hitSerial = 0;
+    this.hull = CONFIG.ship.hull;
+    this.events.clear();
+    this.state = 'MENU';
+    return true;
+  }
+  // FEEDBACK-001D-C menu navigation end
+
   start(seed: number): void {
     if (this.state !== 'MENU' && this.state !== 'GAME_OVER') return;
     this.seed = seed >>> 0;

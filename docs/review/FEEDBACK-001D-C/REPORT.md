@@ -1,0 +1,13 @@
+# FEEDBACK-001D-C — Results and menu navigation
+
+UX-06 and UX-07 are implemented within approved Concept A. A restrained cyan NEW PERSONAL BEST label replaces HULL DEPLETED for the completed run; the distance remains dominant, energy remains an informational count, and route seed stays tertiary. The personal-best area shows the updated best plus the previous best (or First personal best). Equal/lower scores do not announce a record.
+
+RunResults captures a run-specific baseline on the existing run.started fact, before final persistence. The immutable final snapshot includes runId, score, energy, seed, previousBest and newRecord. Final score > previousBest is authoritative; comparison with already-updated storage is never used. The existing model record baseline/event and score/storage algorithms and key remain unchanged. Persistence happens once on the existing GAME_OVER transition, before cinematic completion; skip/show/menu do not save again.
+
+Fly again remains the primary one-step replay. Back to menu is a native secondary button. A guarded GameModel.returnToMenu transitions only an already completed GAME_OVER flight to MENU; release collectible/collision and pending-field state reset. Game clears input, obsolete results-cue intent, feedback and world effects, resets the existing audio run, clears the snapshot and restores menu focus/audio. No Game reconstruction or reload, duplicate run.ended, abandonment rule or new shortcut.
+
+The only core/release changes are additive navigation/reset methods. All original executable flight, start, collision, score and generation lines remain exact. Existing historical source hashes are retained: a narrowly labelled method-strip helper excludes only the separately tested additive core transition. Two old tests use that helper; no approved hash or original assertion is weakened. package.py checks the entire protected source/asset/test set against the exact baseline and checks core/release after removal of those methods.
+
+Applied Game Studio game-ui-frontend and game-playtest plus local space-runner-ui-design. These skills guide repository Playwright/Chrome tooling; no unavailable hosted Game Studio service is claimed. three-webgl-game was not needed. No subagents, assets, dependencies, progression, onboarding D, boundary E, camera/VFX/SFX changes, push, merge or deployment.
+
+Owner/physical-device acceptance remains open. See TESTING.md for actual receipts and initial harness failures, PERFORMANCE.md for measured limits, metadata.json for exact final Git identity. Ready to begin FEEDBACK-001D-D as a separate task after review.

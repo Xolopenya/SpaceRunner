@@ -49,6 +49,10 @@ export class ReleaseModel extends RuntimeGameModel {
   if (playing && previousPhase === 1 && this.phase === 2) this.events.emit('game.phaseChanged', {
     runId: this.runId, elapsed: this.elapsed, scope: 'progression', previous: 1, current: 2 });
  }
+ override returnToMenu():boolean{
+  if(!super.returnToMenu())return false;
+  this.fragments.reset();this.collisions.reset();return true;
+ }
  override dispose():void{this.fragments.onCollected=undefined;this.fragments.reset();this.collisions.reset();super.dispose();}
 }
 /** Production visuals reuse the real wreck renderer, without diagnostic panels. */

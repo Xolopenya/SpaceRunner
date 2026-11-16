@@ -223,6 +223,24 @@ strong { font-weight: 500; }
 .destruction-skip { position:absolute; z-index:8; right:max(20px, env(safe-area-inset-right)); bottom:max(22px, env(safe-area-inset-bottom)); min-height:48px; padding:12px 18px; border:1px solid #7babbf80; border-radius:0; background:#07111ee8; color:#daf5fa; font:14px 'IBM Plex Mono', monospace; cursor:pointer; }
 .destruction-skip kbd { margin-left:12px; opacity:.65; }
 
+/* Results extend Flight Instrumentation; the record replaces the existing label. */
+.game-over #new-record { color: var(--cyan); }
+.results-menu { width: 100%; margin-top: 8px; }
+.record-comparison { font-size: 11px; line-height: 1.5; color: var(--muted); margin: 8px 0 0; }
+@media (min-width: 601px) and (min-height: 521px) and (max-height: 650px) {
+  .game-over .state-copy { top: var(--top); }
+}
+@media (max-height: 520px) and (min-width: 601px) {
+  .game-over .state-copy { top: var(--top); width: min(500px, 60%); }
+  .game-over .state-title { font-size: 32px; margin: 10px 0 12px; }
+  .game-over .result-number { margin: 6px 0 10px; }
+  .game-over .result-number strong[data-size='normal'] { font-size: 56px; }
+  .results-actions { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 140px; column-gap: 16px; align-items: center; }
+  .results-actions .primary { width: 100%; }
+  .results-menu { margin: 0; }
+  .results-actions .route { grid-column: 1 / -1; margin-top: 12px; }
+}
+
 /* Hull owns related status and one bounded event slot; no independent offsets. */
 .hull-instruments { position: relative; }
 .hud-status { position: absolute; top: 100%; left: 0; width: min(230px, calc(100vw - var(--left) - var(--right))); display: grid; gap: 6px; padding-top: 10px; }

@@ -1,5 +1,16 @@
 # Delivery checklist
 
+## FEEDBACK-001D-C — Results, personal records and menu navigation, 2026-11-17
+
+- [x] Created requested branch `feature/feedback-001d-c-results-navigation` from exact `f7827c2cad673a56d27cedff444ad56cc4b7fb26`. Preserved the four unrelated owner paths. Applied Game Studio game-ui-frontend/game-playtest and local space-runner-ui-design; no subagents or 3D redesign.
+- [x] Immutable run-specific result snapshots use the best captured before the run and strict greater-than comparison. First positive/improved records receive a restrained cyan label and previous-best comparison; equal/lower scores do not. Distance remains dominant, energy informational, route tertiary. Existing score/storage key/record event remain.
+- [x] Native secondary Back to menu uses an explicit guarded GAME_OVER -> MENU transition and existing reset functions; clears input, queued feedback, destruction state and pending results cue, preserving best/audio settings. Replay stays primary/default focus; duplicate starts are rejected. No new global shortcut, page reload, duplicate end or second persistence call.
+- [x] 357 unit tests, typecheck and build pass. Final focused17/17 and full148/148 browser cases pass on the first attempt, zero retries/failures/skips. All original131 browser cases/assertions remain. Historical gameplay hashes are unchanged; a narrow helper excludes only the additive, separately tested menu method. Initial stale-Vite/RAF-polling harness failures are retained in logs.
+- [x] Nine matched before/after production sizes plus ordinary equal/skipped results, preserved-best menu, Launch and Replay states captured. Ten geometry cases include667x320 and a separately labelled large-number fixture. Native keyboard/mouse/touch/focus, reduced motion, reload/denied storage and ten mixed lifecycle cycles pass.
+- [x] Sequential600 native frames/version and ten natural-death cycles/version retain RAF p95 16.8ms. DOM elements171->175 and listeners66->67 are fixed; both dispose to27 listeners. GPU51 geometries/1 texture/26 programs and audio graph/source identities stay stable. Both versions retain a66.7ms RAF outlier; no unrelated stall fix or phone performance claim.
+- [x] Six reports, source/diff, labelled offline gallery, raw receipts and reproducible SHA/CRC/exact-source ZIP verification prepared. Final commit and archive identity are delivery metadata. No push, merge or deployment.
+- [ ] Owner readability/comfort acceptance, physical phones, other browser engines and true browser zoom remain open. Ready for FEEDBACK-001D-D as a separate scope after review.
+
 ## FEEDBACK-001D-B — HUD readability, events and input hints, 2026-11-16
 
 - [x] Requested branch from exact `54d5819` gameplay baseline; audit `fbfde04` consulted separately. Four unrelated owner paths preserved. Applied Game Studio game-ui-frontend/game-playtest and local space-runner-ui-design.

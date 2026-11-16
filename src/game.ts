@@ -1,4 +1,6 @@
 import { InputHints } from './ui-input-hints.ts';
+import { RunResults } from './run-results.ts';
+import { fragmentsOf } from './collectibles/state.ts';
 import { GameModel } from './core/game-model.ts';
 import type { GameState } from './core/game-model.ts';
 import { GameLoop } from './game-loop.ts';
@@ -32,6 +34,7 @@ export class Game {
   readonly feedback: FeedbackOrchestrator;
   private shownCinematic = false;
   private pendingResultsCue = false;
+  private readonly results = new RunResults();
 
   constructor(assets: AssetManager, platform: PlatformAdapter = new StandalonePlatform(), debugFactory?: ColliderDebugFactory, model: GameModel = new GameModel()) {
     this.model = model;
@@ -45,7 +48,10 @@ export class Game {
       contact: (event, preset) => this.world.feedback(event, preset),
       sound: cue => this.audio.playCue(cue),
       gameOver: delay => { if (this.world.destruction.sequence.active) this.pendingResultsCue = true; else this.audio.play('gameOver', delay); },
-      hud: event => this.ui.feedback(event),
+      hud: event => {
+        if (event.type === 'run.started') this.results.begin(event.payload.runId, this.platform.scores.best);
+        this.ui.feedback(event);
+      },
       collision: event => this.world.collisionFeedback(event),
       observe: event => this.audio.observe(event),
     });
@@ -59,6 +65,7 @@ export class Game {
     element('launch').addEventListener('click', () => this.start(), options);
     element('restart-pause').addEventListener('click', () => { if(this.model.state==='PAUSED'){this.model.state='GAME_OVER';this.start();} }, options);
     element('replay').addEventListener('click', () => this.start(), options);
+    element('back-menu').addEventListener('click', () => this.returnToMenu(), options);
     element('skip-destruction').addEventListener('click', () => this.skipDestruction(), options);
     window.addEventListener('keydown', event => {
       if (this.world.destruction.sequence.active && !event.repeat && ['Space', 'Enter', 'Escape'].includes(event.code)) {
@@ -133,7 +140,7 @@ export class Game {
   }
 
   private start(): void {
-    if (this.contextLost) return;
+    if (this.contextLost || (this.model.state !== 'MENU' && this.model.state !== 'GAME_OVER') || this.world.destruction.sequence.active) return;
     const parameter = new URLSearchParams(window.location.search).get('seed');
     const parsed = parameter === null || parameter.trim() === '' ? NaN : Number(parameter);
     const seed = Number.isFinite(parsed) ? parsed >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0]!;
@@ -171,18 +178,31 @@ export class Game {
     else if (this.model.state === 'PAUSED') this.resume();
   }
 
+  private returnToMenu(): void {
+    if (this.world.destruction.sequence.active || !this.model.returnToMenu()) return;
+    this.input.clear();
+    this.pendingResultsCue = false;
+    this.audio.resetRun();
+    this.feedback.reset();
+    this.world.reset();
+    this.results.clear();
+    this.syncState();
+    this.audio.activate();
+  }
+
   private syncState(): void {
     const changed = this.shownState !== this.model.state;
     const cinematic = this.model.state === 'GAME_OVER' && this.world.destruction.sequence.active;
     if (!changed && this.shownCinematic === cinematic) return;
     this.input.clear();
-    if (changed && this.model.state === 'GAME_OVER') this.platform.scores.record(this.model.score);
+    if (changed && this.model.state === 'GAME_OVER') this.results.finish(this.model.runId,
+      this.model.score, fragmentsOf(this.model)?.count ?? 0, this.model.seed, this.platform.scores);
     if (changed) this.platform.gameplayChanged(this.model.state === 'PLAYING');
     if (this.shownCinematic && !cinematic && this.pendingResultsCue) { this.pendingResultsCue = false; this.audio.play('gameOver'); }
     this.shownCinematic = cinematic;
     this.shownState = this.model.state;
     this.audio.update(this.model, this.world.destruction.sequence);
-    this.ui.showState(this.model, this.platform.scores.best, this.pauseReason, cinematic);
+    this.ui.showState(this.model, this.platform.scores.best, this.pauseReason, cinematic, this.results.completed);
   }
 
   private skipDestruction(): void {
