@@ -48,6 +48,8 @@ captures were rerun before final playback. Initial preservation assertions expec
 every whole PNG/PCM value to be identical. Investigation isolated five CSS ENERGY
 glyph pulses and eight1LSB engine PCM values. Exact scene bounds, source identity
 and raw deltas are recorded; those cases are not described as bit-identical.
+The gallery helper's initial seek listener also paused a later play request;
+it is removed after the seek, and the real pair-button playback check was rerun.
 
 ## Evidence and reproducibility
 
@@ -64,5 +66,8 @@ Packaging requires clean committed tracked files, final342/118 gates, frozen
 inputs, gameplay/scene/audio preservation, performance/endurance/playback receipts,
 complete diff and isolated-index forward/reverse exact trees. ZIP CRC, all file
 sizes/SHA256, every canonical source Git blob SHA1 and gallery links are verified.
+Two patch whitespace warnings originate in preserved supplied license notices;
+their canonical bytes are retained. Native gallery images, pair-video playback
+and desktop/portrait fit are checked separately from the118 product tests.
 No hardware phone, independent human listening/usability, Yandex SDK or remote
 deployment test is claimed.
