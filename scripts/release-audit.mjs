@@ -7,11 +7,11 @@ import {createHash} from 'node:crypto';
 import {IntegratedModel,INTEGRATED_GEOMETRY} from '../src/integrated/model.ts';
 import {beginTrajectoryReplay} from '../src/core/field-validator.ts';
 import {certifiedInput} from '../tests/fixtures/fragment-flight.ts';
-const approved='a5906ef0baaeb5cfce6b59c29df6d378e1e141ad',directory=process.env.REVIEW_RESULT_DIR??'.cache/review/RELEASE-007/final',ci=process.argv.includes('--ci');
+const approved='b34b5a6a3f8b04ab8f4254abaf432c5e2bfb9127',directory=process.env.REVIEW_RESULT_DIR??'.cache/review/RELEASE-001',ci=process.argv.includes('--ci');
 await mkdir(directory,{recursive:true});
 const git=(...args)=>execFileSync('git',args,{maxBuffer:128*1024*1024}),hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 assert.equal(git('diff',approved,'--','src','public','package.json','package-lock.json','vite.config.ts').toString().trim(),'','Approved runtime/assets/tuning must remain unchanged');
-const names=git('ls-tree','-r','--name-only',approved,'src','public','index.html','package.json','vite.config.ts').toString().trim().split('\n'),frozen=resolve('.cache/review/RELEASE-007/approved');
+const names=git('ls-tree','-r','--name-only',approved,'src','public','index.html','package.json','vite.config.ts').toString().trim().split('\n'),frozen=resolve('.cache/review/RELEASE-001/approved');
 const batch=execFileSync('git',['cat-file','--batch'],{input:names.map(p=>`${approved}:${p}`).join('\n')+'\n',maxBuffer:128*1024*1024});let cursor=0;
 for(const p of names){const end=batch.indexOf(10,cursor),size=Number(batch.subarray(cursor,end).toString().split(' ')[2]);cursor=end+1;const dest=resolve(frozen,p);assert.ok(dest.startsWith(frozen));await mkdir(dirname(dest),{recursive:true});await writeFile(dest,batch.subarray(cursor,cursor+size));cursor+=size+1;}
 const Old=await import(pathToFileURL(resolve(frozen,'src/integrated/model.ts'))),oldReplay=await import(pathToFileURL(resolve(frozen,'src/core/field-validator.ts')));

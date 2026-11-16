@@ -1,5 +1,14 @@
 # Delivery checklist
 
+## RELEASE-001 — Vertical-slice submission and publication, 2026-11-17
+
+- [x] Exact approved `b34b5a6` base and `release/vertical-slice-playtest-submission`; fetched original main/origin main `d5b02d8` and verified ancestry. Preserved four unrelated owner paths. All implementation history was already included; separately merged documentation-only D-A audit, retaining both checklist sides in its sole conflict. No blind branch merges or duplicate cherry-picks.
+- [x] Russian PLAYTEST_NOTES records four in-person sessions, including two at home, without invented participants/timestamps/outcomes. Traces rejected guidance, removal, pickup assistance/trails and owner-reported improvement; original home-participant retest remains unconfirmed. README/CHANGELOG retain style and cover actual D-A/B/C and missing feedback/visual milestones.
+- [x] Six original neutral flights (seed0/11/42/99/123/2026) reach natural death in17–40s with continued publication and no fault. No prolonged generator-stop defect confirmed; model-space gaps do not prove screen emptiness. Debris/collectible distinction remains open. Existing menu ambient layer and actual WebAudio output confirmed; no new music/model/generation change.
+- [x] 357 unit and148 full browser tests pass, zero retries/failures/skips; typecheck/build pass. Existing assignment audit and updated CI safety gate pass (48 independent replays, four cadence schedules). Old a5906ef approved pin rejected the current approved game; pin updated to b34b5a6 without removing assertions. Runtime/assets/dependencies/tests remain exact approved inputs.
+- [x] Existing main-triggered Pages workflow/base-path retained; release metadata identifies RELEASE-001 and approved implementation. Canonical-build, local/public smoke, deployment/asset fingerprint and review ZIP verification tooling prepared. Final preparation/main/remote/deployed SHA and publication receipts are delivery metadata in RELEASE-001-review.zip.
+- [ ] Original-player retest, human distinction/readability acceptance, physical phones, other engines and true browser zoom remain open. Final balance, economy, new complex patterns, onboarding and menu soundtrack redesign remain separate tasks.
+
 ## FEEDBACK-001D-C — Results, personal records and menu navigation, 2026-11-17
 
 - [x] Created requested branch `feature/feedback-001d-c-results-navigation` from exact `f7827c2cad673a56d27cedff444ad56cc4b7fb26`. Preserved the four unrelated owner paths. Applied Game Studio game-ui-frontend/game-playtest and local space-runner-ui-design; no subagents or 3D redesign.
